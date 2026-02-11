@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Shared card-style drop shadow (no outline) – matches Card, Dialog, chat, etc. */
+  .shadow-card {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+  }
+  .dark .shadow-card {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -2px rgba(0, 0, 0, 0.25);
+  }
+  /* Slightly stronger for floating panels (dropdowns, popovers) */
+  .shadow-panel {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 12px 28px -4px rgba(0, 0, 0, 0.12);
+  }
+  .dark .shadow-panel {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 12px 28px -4px rgba(0, 0, 0, 0.4);
+  }
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-lg;
+  }
+  .glass-dark {
+    @apply bg-slate-900/70 backdrop-blur-xl border border-white/10 shadow-xl;
+  }
+  /* Sleek sidebar: dark indigo, always same look */
+  .sidebar-sleek {
+    background-color: #1e1e3f;
+  }
+  .sidebar-sleek-nav:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .sidebar-sleek-nav-active {
+    background-color: rgba(255, 255, 255, 0.12);
+    position: relative;
+  }
+  .sidebar-sleek-nav-active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    background-color: hsl(var(--primary));
+    border-radius: 1px;
+  }
+}
+
+
+
+/* Figma Clinical Ops CRM: blue primary #155DFC, 14px card radius, muted labels */
+@layer base {
+  :root {
+    --background: 0 0% 99%;
+    --foreground: 0 0% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 4%;
+    --primary: 221 96% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 0 0% 4%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 223 11% 42%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 0 0% 4%;
+    --destructive: 351 84% 47%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 221 96% 54%;
+    --sidebar: 220 14% 97%;
+    --chart-1: 221 96% 54%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.875rem;
+  }
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 221 96% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 351 84% 47%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --border: 217 33% 22%;
+    --input: 217 33% 22%;
+    --ring: 221 96% 58%;
+    --sidebar: 222 47% 12%;
+    --chart-1: 221 96% 58%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground text-sm antialiased;
+  }
+  /* Untitled UI–style page and section hierarchy */
+  h1 {
+    @apply tracking-tight;
+  }
+  h2, h3 {
+    @apply tracking-tight font-semibold;
+  }
+}
