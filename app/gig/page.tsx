@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { memo, useState, useMemo, useDeferredValue } from "react";
+import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   gigJobs,
   gigContacts,
@@ -20,18 +22,17 @@ import {
   Calendar,
   DollarSign,
   Pencil,
-} from "lucide-react";
+} from "@/components/ui/solar-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { KpiCard } from "@/components/pro360/KpiCard";
+
+const CreateJobDialog = dynamic(
+  () => import("@/components/gig/CreateJobDialog").then((m) => m.CreateJobDialog),
+  { ssr: false }
+);
 
 const STATUS_STYLES: Record<GigJobStatus, string> = {
   open: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-0",
@@ -39,17 +40,10 @@ const STATUS_STYLES: Record<GigJobStatus, string> = {
   completed: "bg-muted text-muted-foreground border-0",
 };
 
-const METRIC_ICON_WRAP = "flex h-10 w-10 shrink-0 items-center justify-center rounded-full";
-const METRIC_ICONS = {
-  total: `${METRIC_ICON_WRAP} bg-muted text-muted-foreground`,
-  open: `${METRIC_ICON_WRAP} bg-primary/10 text-primary`,
-  approved: `${METRIC_ICON_WRAP} bg-emerald-500/15 text-emerald-600 dark:text-emerald-400`,
-  completed: `${METRIC_ICON_WRAP} bg-muted text-muted-foreground`,
-};
 
 const AVATAR_STACK_MAX = 6;
 
-function StackedAvatars({ applicantIds }: { applicantIds: string[] }) {
+const StackedAvatars = memo(function StackedAvatars({ applicantIds }: { applicantIds: string[] }) {
   const userMap = useMemo(
     () => new Map(gigApplicants.map((a) => [a.id, a])),
     []
@@ -69,7 +63,7 @@ function StackedAvatars({ applicantIds }: { applicantIds: string[] }) {
             )}
             title={user.name}
           >
-            <img
+            <Image
               src={user.avatar}
               alt=""
               className="h-full w-full object-cover"
@@ -81,9 +75,9 @@ function StackedAvatars({ applicantIds }: { applicantIds: string[] }) {
       })}
     </div>
   );
-}
+});
 
-function JobCard({
+const JobCard = memo(function JobCard({
   job,
   onEdit,
 }: {
@@ -167,11 +161,12 @@ function JobCard({
       </CardContent>
     </Card>
   );
-}
+});
 
 export default function GigPage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
   const [statusFilter, setStatusFilter] = useState<GigJobStatus | "all">("all");
 
   const filteredJobs = useMemo(() => {
@@ -179,7 +174,7 @@ export default function GigPage() {
     if (statusFilter !== "all") {
       list = list.filter((j) => j.status === statusFilter);
     }
-    const q = search.trim().toLowerCase();
+    const q = deferredSearch.trim().toLowerCase();
     if (q) {
       list = list.filter(
         (j) =>
@@ -188,7 +183,7 @@ export default function GigPage() {
       );
     }
     return list;
-  }, [search, statusFilter]);
+  }, [deferredSearch, statusFilter]);
 
   const filters: { id: GigJobStatus | "all"; label: string; count: number }[] = [
     { id: "all", label: "All", count: gigStats.total },
@@ -199,67 +194,22 @@ export default function GigPage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={METRIC_ICONS.total}>
-              <Briefcase className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Total Jobs
-              </p>
-              <p className="text-2xl font-semibold text-foreground">
-                {gigStats.total}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={METRIC_ICONS.open}>
-              <Cloud className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Open Jobs
-              </p>
-              <p className="text-2xl font-semibold text-foreground">
-                {gigStats.open}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={METRIC_ICONS.approved}>
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Approved Jobs
-              </p>
-              <p className="text-2xl font-semibold text-foreground">
-                {gigStats.approved}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={METRIC_ICONS.completed}>
-              <User className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Completed Jobs
-              </p>
-              <p className="text-2xl font-semibold text-foreground">
-                {gigStats.completed}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-base font-semibold text-foreground">Gig opportunities</h2>
+          <p className="text-sm text-muted-foreground">Track activation jobs, applicant demand, and posting status in one queue.</p>
+        </div>
+        <Button onClick={() => setCreateModalOpen(true)} className="shrink-0">
+          <Plus className="h-4 w-4" />
+          Create Job
+        </Button>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard title="Total Jobs" value={gigStats.total} icon={<Briefcase className="h-5 w-5" />} />
+        <KpiCard title="Open Jobs" value={gigStats.open} icon={<Cloud className="h-5 w-5" />} />
+        <KpiCard title="Approved Jobs" value={gigStats.approved} icon={<CheckCircle2 className="h-5 w-5" />} />
+        <KpiCard title="Completed Jobs" value={gigStats.completed} icon={<User className="h-5 w-5" />} />
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -287,10 +237,6 @@ export default function GigPage() {
             ))}
           </div>
         </div>
-        <Button onClick={() => setCreateModalOpen(true)} className="shrink-0">
-          <Plus className="h-4 w-4" />
-          Create Job
-        </Button>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -303,42 +249,9 @@ export default function GigPage() {
         ))}
       </div>
 
-      <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create job</DialogTitle>
-            <p className="text-sm text-muted-foreground">
-              Add a new job under Activation. (Placeholder – no backend.)
-            </p>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Title
-              </label>
-              <Input placeholder="Job title" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Description
-              </label>
-              <Input placeholder="Full details..." className="min-h-[80px]" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Claim categories
-              </label>
-              <Input placeholder="e.g. Supervision, Hotline" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setCreateModalOpen(false)}>Create job</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {createModalOpen && (
+        <CreateJobDialog open={createModalOpen} onOpenChange={setCreateModalOpen} />
+      )}
     </div>
   );
 }

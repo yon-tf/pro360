@@ -1,0 +1,13 @@
+---
+description: Prefer shadcn/ui primitives for UI work
+alwaysApply: true
+---
+
+# Shadcn UI First
+
+- Use shadcn/ui components from `@/components/ui/*` as the default for new UI.
+- Before creating custom controls, check whether shadcn already provides the primitive (e.g. `Button`, `Input`, `Select`, `Popover`, `Dialog`, `Calendar`, `Tabs`, `Table`).
+- Keep custom wrappers thin and compositional; do not re-implement behavior that shadcn primitives already handle.
+- For date picking, use the shared `DatePicker` + `Calendar` composition instead of inline custom calendars.
+- For interactive surfaces, prefer shadcn + Radix accessibility patterns (keyboard support, focus handling, aria labels).
+- If a needed shadcn primitive is missing from the repo, add it under `components/ui/` first, then consume it in feature code.

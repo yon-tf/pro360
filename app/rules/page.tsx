@@ -6,8 +6,9 @@ import {
   predefinedActions,
   rulesList,
 } from "@/lib/mock/rules";
-import { Plus, Zap } from "lucide-react";
+import { Plus, Zap, CheckCircle, AlertTriangle } from "@/components/ui/solar-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { KpiCard } from "@/components/pro360/KpiCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,11 +26,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Switch } from "@/components/ui/switch";
+
 export default function RulesPage() {
   const [variable, setVariable] = useState("");
   const [condition, setCondition] = useState("");
   const [action, setAction] = useState("");
   const [ruleName, setRuleName] = useState("");
+  const [rules, setRules] = useState(rulesList);
 
   const handleCreateRule = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,44 +45,28 @@ export default function RulesPage() {
   };
 
   const ruleStats = useMemo(() => {
-    const enabled = rulesList.filter((r) => r.enabled).length;
-    const totalTriggers = rulesList.reduce((s, r) => s + r.timesTriggered, 0);
+    const enabled = rules.filter((r) => r.enabled).length;
+    const totalTriggers = rules.reduce((s, r) => s + r.timesTriggered, 0);
     return {
-      totalRules: rulesList.length,
+      totalRules: rules.length,
       enabledCount: enabled,
       totalTriggersAllTime: totalTriggers,
       activeToday: 1,
     };
-  }, []);
+  }, [rules]);
+
+  const toggleRuleEnabled = (ruleId: string, enabled: boolean) => {
+    setRules((current) =>
+      current.map((rule) => (rule.id === ruleId ? { ...rule, enabled } : rule))
+    );
+  };
 
   return (
     <div className="space-y-8">
-      {/* Top section stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="relative overflow-hidden">
-          <CardContent className="pt-5 pb-5">
-            <Zap className="absolute right-3 top-3 h-5 w-5 text-muted-foreground" />
-            <p className="text-sm font-medium text-muted-foreground">Total Rules</p>
-            <p className="text-2xl font-semibold text-foreground">{ruleStats.totalRules}</p>
-            <p className="text-xs text-muted-foreground">{ruleStats.enabledCount} enabled</p>
-          </CardContent>
-        </Card>
-        <Card className="relative overflow-hidden">
-          <CardContent className="pt-5 pb-5">
-            <Zap className="absolute right-3 top-3 h-5 w-5 text-muted-foreground" />
-            <p className="text-sm font-medium text-muted-foreground">Total Triggers</p>
-            <p className="text-2xl font-semibold text-foreground">{ruleStats.totalTriggersAllTime}</p>
-            <p className="text-xs text-muted-foreground">All time</p>
-          </CardContent>
-        </Card>
-        <Card className="relative overflow-hidden">
-          <CardContent className="pt-5 pb-5">
-            <Zap className="absolute right-3 top-3 h-5 w-5 text-muted-foreground" />
-            <p className="text-sm font-medium text-muted-foreground">Active Today</p>
-            <p className="text-2xl font-semibold text-foreground">{ruleStats.activeToday}</p>
-            <p className="text-xs text-muted-foreground">Rules triggered</p>
-          </CardContent>
-        </Card>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <KpiCard title="Total Rules" value={<>{ruleStats.enabledCount} <span className="text-sm font-normal text-muted-foreground">of {ruleStats.totalRules} enabled</span></>} icon={<Zap className="h-5 w-5" />} />
+        <KpiCard title="Total Triggers" value={ruleStats.totalTriggersAllTime} icon={<CheckCircle className="h-5 w-5" />} badge="All time" />
+        <KpiCard title="Active Today" value={<>{ruleStats.activeToday} <span className="text-sm font-normal text-muted-foreground">rules triggered</span></>} icon={<AlertTriangle className="h-5 w-5" />} />
       </div>
 
       <Card>
@@ -154,15 +142,17 @@ export default function RulesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rulesList.map((r) => (
+              {rules.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">{r.name}</TableCell>
                   <TableCell className="text-muted-foreground">{r.trigger}</TableCell>
                   <TableCell className="text-muted-foreground">{r.action}</TableCell>
                   <TableCell>
-                    <span className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border transition-colors ${r.enabled ? "border-primary bg-primary" : "border-input bg-muted"}`}>
-                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition translate-y-0.5 ${r.enabled ? "translate-x-5" : "translate-x-0.5"}`} />
-                    </span>
+                    <Switch
+                      checked={r.enabled}
+                      onCheckedChange={(enabled) => toggleRuleEnabled(r.id, enabled)}
+                      aria-label={`Toggle rule ${r.name}`}
+                    />
                   </TableCell>
                   <TableCell className="font-medium">{r.timesTriggered}</TableCell>
                 </TableRow>

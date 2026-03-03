@@ -22,9 +22,10 @@ isProject: false
 - **React 18** — UI.
 - **Tailwind CSS** — layout and styling; design tokens in `app/globals.css` (e.g. `--primary`, `--card`, `--muted`, `--border`).
 - **UI primitives**: **Radix UI** — Dialog, DropdownMenu, Select, Tabs, Slot. Custom wrappers in `components/ui/` (button, card, input, badge, table, dialog, dropdown-menu, select, tabs).
-- **Icons**: **Lucide React** (main); **@iconify/react** for **Solar** icon set (e.g. warning/danger in SpiderChart).
+- **Icons**: **Solar icons via @iconify/react** (shared app icons + warning/danger in SpiderChart).
 - **Utilities**: **clsx**, **tailwind-merge**, **class-variance-authority**, **tailwindcss-animate**.
 - **Charts**: Custom **SpiderChart** (radar) for Professional 360 Performance strengths; no Recharts/Tremor.
+- **Docs**: **react-markdown**, **remark-gfm** for the in-app Documentation page (`/docs`).
 
 ---
 
@@ -46,17 +47,20 @@ isProject: false
 
 ## Global shell and navigation
 
-- **Sidebar**: "Pro360" logo/link; nav items with icons: **Professional 360** (`/professional/1`), **Payout** (`/payout`), **Rule Engine** (`/rules`), **Chat** (`/chat`), **Growth** (`/lms`), **Gig** (`/gig`), **Appointments** (`/appointments`). Active state: highlight + left accent bar. Collapsible to icon-only on desktop; on mobile, overlay drawer with close on navigate.
-- **Top bar**: Breadcrumbs (left), theme toggle (Light/Dark/System), user avatar + "Sarah Lee" + "Clinical Ops", logout icon. No duplicate nav; breadcrumbs reflect current route (and run id for payout run).
-- **Root**: `/` redirects to `/professional/1`.
+- **Sidebar**: "Pro360" logo/link; nav items with icons: **Professionals** (`/professionals`), **Payout** (`/payout`), **Rule Engine** (`/rules`), **Chat** (`/chat`), **Growth** (`/lms`), **Gig** (`/gig`), **Appointments** (`/appointments`). Below nav: **Documentation** (`/docs`), Help and Support, Settings. Active state: highlight + left accent bar. Collapsible to icon-only on desktop; on mobile, overlay drawer with close on navigate.
+- **Top bar**: Breadcrumbs (left), theme toggle (Light/Dark/System), user avatar + "Sarah Lee" + "Clinical Ops", logout icon. Breadcrumbs reflect current route (e.g. `/docs` → "Documentation", payout run id in breadcrumb).
+- **Root**: `/` redirects to `/professionals/PRO-001/performance`.
 
 ---
 
 ## Page-by-page specification
 
-### 1) Professional 360 – Profile
+### 1) Professional Performance + Account
 
-- **Route**: `/professional/[id] `(e.g. `/professional/1`).
+- **Routes**:
+  - `/professionals/[id]/performance` (default Pro360 view)
+  - `/professionals/[id]/account`
+  - `/professionals/[id]/account/edit`
 - **Top**: Profile header — photo placeholder, name, license/expiry, role/status.
 - **Tabs** (line-style): **Dashboard** | **Client** | **Calendar** | **Learn** | **Gig**.
   - **Dashboard**: Performance strengths & AI analysis card (electric blue gradient in light/dark; spider chart with white/transparent "webs", Solar warning icon for axes below threshold; AI recommendation for flagged rows; "Generate improvement summary" CTA). Metric cards: SLA/TFP+, Messages 24h, Avg Response Time, Client Chat Hours, TFP Chat Score, Payout Multiplier, Feedback, Rating, Missed/Late Sessions, Excessive Sessions, Late/Missing Case Notes. **Case Notes Submission Log**: title **outside** card; card contains table (Date, Client, Submitted At, Status) + TablePagination.
@@ -78,7 +82,8 @@ isProject: false
 ### 3) Rule Engine
 
 - **Route**: `/rules`.
-- **Create new rule**: Card with form — variable, condition, action; "Create rule" adds to list (mock).
+- **Top stats**: Three cards — Total Rules (with enabled count), Total Triggers (all time), Active Today (rules triggered).
+- **Create new rule**: Card with form — **Rule name**, variable, condition, action; "Create rule" adds to list (mock).
 - **Rules created**: **Title "Rules created" outside card**. Card contains table: Rule name, Trigger, Action, Enabled (toggle), Times triggered. Mock rules.
 
 ### 4) Chat
@@ -103,11 +108,16 @@ isProject: false
 ### 7) Appointments
 
 - **Route**: `/appointments`.
-- **Features**: Type filter (User, Pod, Townhall). Table: date, type, participants, duration, attendance, AI rating, AI review. Icons per type (e.g. User, Users, Megaphone from Lucide).
+- **Features**: Type filter (User, Pod, Townhall). Table: date, type, participants, duration, attendance, AI rating, AI review. Icons per type use Solar set (e.g. user/group/megaphone).
 
 ### 8) Calendar (standalone)
 
 - **Route**: `/calendar`. Optional standalone day view (same mock data as Professional 360 Calendar tab). Event type styling with shadow-card; selected event detail card.
+
+### 9) Documentation
+
+- **Route**: `/docs`.
+- **Content**: Rendered markdown from `docs/PRO360_PITCH_PLAN.md` (this pitch plan). Linked from sidebar as "Documentation". Breadcrumb: "Documentation".
 
 ---
 
@@ -140,6 +150,7 @@ flowchart LR
     LMS["Growth"]
     Gig["Gig"]
     Appts["Appointments"]
+    Docs["Documentation"]
   end
   Sidebar --> P360
   Sidebar --> Payout
@@ -148,6 +159,7 @@ flowchart LR
   Sidebar --> LMS
   Sidebar --> Gig
   Sidebar --> Appts
+  Sidebar --> Docs
   Payout --> PayoutRun
   P360 -->|View chat| Chat
 ```
@@ -205,7 +217,7 @@ flowchart TD
   Entry["Nav: Rule Engine"]
   Entry --> Create["Create new rule card"]
   Entry --> Table["Rules created table"]
-  Create --> Form["Variable, condition, action"]
+  Create --> Form["Rule name, variable, condition, action"]
   Form --> Save["Create rule"]
   Save --> Table
   Table --> Toggle["Enable or disable"]
@@ -235,8 +247,10 @@ flowchart TD
 ## File structure (current)
 
 - `app/layout.tsx` — Root layout, AppShell.
-- `app/page.tsx` — Redirect to `/professional/1`.
-- `app/professional/[id]/page.tsx` — Professional 360 with tabs.
+- `app/page.tsx` — Redirect to `/professionals/PRO-001/performance`.
+- `app/professionals/[id]/performance/page.tsx` — Professional performance (Pro360) with tabs.
+- `app/professionals/[id]/account/page.tsx` — Professional account view.
+- `app/professionals/[id]/account/edit/page.tsx` — Account edit route.
 - `app/payout/page.tsx` — Payout dashboard (Reports, Tasks).
 - `app/payout/run/[runId]/page.tsx` — Payout run wizard (4 steps, drawer, bulk, exceptions tabs).
 - `app/rules/page.tsx` — Rule Engine (create form + rules table).
@@ -245,6 +259,7 @@ flowchart TD
 - `app/gig/page.tsx` — Gig (jobs).
 - `app/appointments/page.tsx` — Appointments table.
 - `app/calendar/page.tsx` — Standalone calendar day view (optional).
+- `app/docs/page.tsx` — Documentation page; reads and renders `docs/PRO360_PITCH_PLAN.md`.
 - `app/globals.css` — Tokens, shadow-card / shadow-panel, sidebar styles.
 - `components/AppShell.tsx` — Sidebar + TopBar + main content; ThemeProvider, BreadcrumbProvider, PathnameBreadcrumbSync.
 - `components/Sidebar.tsx` — Nav links, collapse, mobile drawer.
@@ -253,9 +268,11 @@ flowchart TD
 - `components/Tabs.tsx` — Line-style tabs (underline active).
 - `components/TablePagination.tsx` — Shared pagination.
 - `components/SpiderChart.tsx` — Radar chart (Performance card); Solar warning icon.
+- `components/MarkdownContent.tsx` — Renders markdown (react-markdown) for `/docs`.
 - `components/ThemeProvider.tsx` — Light/Dark/System.
 - `components/ui/*` — Card, Button, Input, Badge, Table, Dialog, Select, Dropdown, Tabs (Radix).
 - `lib/mock/*` — professionals, payout, payoutRun, rules, chat, lms, gig, appointments.
+- `docs/PRO360_PITCH_PLAN.md` — Pitch plan (source for `/docs`). Optional: `docs/PRO360_FLYONUI_MAP.md`.
 
 ---
 

@@ -1,6 +1,6 @@
 # Pro360 – Clinical Ops Pitch
 
-Frontend-only pitch/demo for the Clinical Ops experience (persona: Sarah Lee). Built with Next.js 14, Tailwind CSS, and a clean, modern, light design inspired by Supabase and Vercel.
+Frontend-only pitch/demo for the Clinical Ops experience (persona: Sarah Lee). Built with Next.js 16, Tailwind CSS, and a clean, modern, light design inspired by Supabase and Vercel.
 
 ## Design language
 
@@ -16,11 +16,11 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The app redirects to `/professional/1` (Professional 360).
+Open [http://localhost:3000](http://localhost:3000). The app redirects to `/professionals/PRO-001/performance` (Professional Performance / Pro360).
 
 ## Pages
 
-### Professional 360 (`/professional/1`)
+### Professional Performance (`/professionals/PRO-001/performance`)
 
 - **Profile header**: Name, license number, expiry, role.
 - **Dashboard tab**  
@@ -66,6 +66,39 @@ Open [http://localhost:3000](http://localhost:3000). The app redirects to `/prof
 ### Appointments (`/appointments`)
 
 - Table with type filter (User / Pod / Townhall), attendance, AI rating.
+
+---
+
+## Documentation
+
+The **Pro360 Pitch Plan** (journey, stacks, UI patterns, page specs, design direction) is available in the app:
+
+- **In app**: Sidebar → **Documentation** (or go to [/docs](/docs)). Rendered from `docs/PRO360_PITCH_PLAN.md`.
+
+---
+
+## Deploy to Vercel
+
+1. **Push this repo to GitHub**
+   - Create a new repository on [GitHub](https://github.com/new) (e.g. `pro360`).
+   - Add the remote and push:
+     ```bash
+     git remote add origin https://github.com/YOUR_USERNAME/pro360.git
+     git branch -M main
+     git push -u origin main
+     ```
+
+2. **Connect and deploy on Vercel**
+   - Go to [vercel.com](https://vercel.com) → **Add New** → **Project**.
+   - Import your GitHub repo (e.g. `pro360`).
+   - Leave **Framework Preset** as Next.js and **Root Directory** as `.`; click **Deploy**.
+   - Your app will be live at `https://your-project.vercel.app`. The plan is readable at `https://your-project.vercel.app/docs`.
+
+Alternatively, from the project root:
+   ```bash
+   npx vercel
+   ```
+   Follow the prompts (login if needed, link or create a project). Use `npx vercel --prod` for production.
 
 ---
 

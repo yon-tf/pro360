@@ -8,7 +8,7 @@ import {
   calendarDayShort,
   calendarDayWeekday,
 } from "@/lib/mock/professionals";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "@/components/ui/solar-icons";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +42,7 @@ export default function CalendarPage() {
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/professional/1">Back to Professional 360</Link>
+            <Link href="/pro360/PRO7862025001">Back to Professional 360</Link>
           </Button>
         </div>
         }

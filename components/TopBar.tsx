@@ -1,6 +1,9 @@
 "use client";
 
-import { LogOut, Menu, Sun, Moon, Monitor } from "lucide-react";
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { LogOut, Menu, Sun, Moon, Monitor, Bell, User, BookOpen, Calendar } from "@/components/ui/solar-icons";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,15 +11,38 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTheme } from "@/components/ThemeProvider";
 import { useBreadcrumb } from "@/components/BreadcrumbContext";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { notifications as initialNotifications, formatTimeAgo, type Notification } from "@/lib/mock/notifications";
 
 const TOPBAR_USER_AVATAR = "https://i.pravatar.cc/128?img=32";
+
+const NOTIFICATION_ICON: Record<Notification["type"], typeof User> = {
+  profile_update: User,
+  on_leave: User,
+  learn_activity: BookOpen,
+  upcoming_event: Calendar,
+};
 
 export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { setTheme, resolved } = useTheme();
   const { items } = useBreadcrumb();
+  const [notifs, setNotifs] = useState(initialNotifications);
+  const [open, setOpen] = useState(false);
+
+  const unreadCount = notifs.filter((n) => !n.read).length;
+
+  const markAllRead = () => {
+    setNotifs((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const handleOpen = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen && unreadCount > 0) markAllRead();
+  };
 
   return (
     <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-4 border-b border-border/50 bg-card px-4 shadow-card sm:px-6">
@@ -33,6 +59,63 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
         <Breadcrumbs items={items} />
       </div>
       <div className="flex shrink-0 items-center gap-2">
+          {/* Notifications */}
+          <Popover open={open} onOpenChange={handleOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative shrink-0" aria-label="Notifications">
+                <Bell className="h-4 w-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+                    {unreadCount}
+                  </span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-80 p-0">
+              <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+                <p className="text-sm font-semibold text-foreground">Notifications</p>
+                {notifs.some((n) => !n.read) && (
+                  <button type="button" className="text-xs text-primary hover:underline" onClick={markAllRead}>
+                    Mark all read
+                  </button>
+                )}
+              </div>
+              <ScrollArea className="max-h-80">
+                {notifs.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">No notifications</p>
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {notifs.map((n) => {
+                      const Icon = NOTIFICATION_ICON[n.type];
+                      return (
+                        <li key={n.id}>
+                          <Link
+                            href={n.href ?? "#"}
+                            className="flex gap-3 px-4 py-3 transition-colors hover:bg-muted/50"
+                            onClick={() => setOpen(false)}
+                          >
+                            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted">
+                              <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium text-foreground leading-snug">
+                                {n.title}
+                                {!n.read && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-primary" />}
+                              </p>
+                              <p className="text-xs text-muted-foreground line-clamp-2">{n.body}</p>
+                              <p className="mt-0.5 text-[11px] text-muted-foreground/70">{formatTimeAgo(n.timestamp)}</p>
+                            </div>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </ScrollArea>
+            </PopoverContent>
+          </Popover>
+
+          {/* Theme toggle */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="shrink-0" aria-label="Theme">
@@ -58,9 +141,11 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* User avatar + name */}
           <div className="flex items-center gap-2">
             <div className="hidden h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border bg-muted sm:flex">
-              <img
+              <Image
                 src={TOPBAR_USER_AVATAR}
                 alt=""
                 className="h-full w-full object-cover"

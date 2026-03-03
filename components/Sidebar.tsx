@@ -1,12 +1,11 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
-  LayoutDashboard,
   DollarSign,
   Zap,
-  MessageSquare,
   BookOpen,
   Briefcase,
   Calendar,
@@ -15,151 +14,156 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
+  UsersRound,
+  Contact,
+  LayoutDashboard,
+  Users,
+  MessageSquare,
+} from "@/components/ui/solar-icons";
 import { clsx } from "clsx";
 
-const navItems = [
-  { href: "/professional/1", label: "Professional 360", icon: LayoutDashboard },
-  { href: "/payout", label: "Payout", icon: DollarSign },
-  { href: "/rules", label: "Rule Engine", icon: Zap },
-  { href: "/chat", label: "Chat", icon: MessageSquare },
-  { href: "/lms", label: "Growth", icon: BookOpen },
-  { href: "/gig", label: "Gig", icon: Briefcase },
-  { href: "/appointments", label: "Appointments", icon: Calendar },
+interface NavItem {
+  href: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  matchPath?: string;
+  matchParam?: { key: string; value: string };
+}
+
+interface NavGroup {
+  heading: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    heading: "Quality",
+    items: [
+      { href: "/pro360", label: "Professional 360", icon: LayoutDashboard },
+      { href: "/appointments?context=internal", label: "Internal appointments", icon: Users, matchPath: "/appointments", matchParam: { key: "context", value: "internal" } },
+    ],
+  },
+  {
+    heading: "Commercial",
+    items: [
+      { href: "/payout", label: "Payout", icon: DollarSign },
+      { href: "/appointments?context=external", label: "External appointments", icon: Calendar, matchPath: "/appointments", matchParam: { key: "context", value: "external" } },
+      { href: "/gig", label: "Gig", icon: Briefcase },
+    ],
+  },
+  {
+    heading: "Administration",
+    items: [
+      { href: "/team", label: "Pod Management", icon: UsersRound },
+      { href: "/chat", label: "Chat", icon: MessageSquare },
+      { href: "/rules", label: "Rule Engine", icon: Zap },
+      { href: "/lms", label: "Learn", icon: BookOpen },
+      { href: "/professionals", label: "Profile management", icon: Contact },
+    ],
+  },
 ];
+
+const PREFIX_MATCH_PATHS = ["/professionals", "/pro360", "/team", "/payout", "/chat"];
+
+function isItemActive(item: NavItem, pathname: string, searchParams: URLSearchParams): boolean {
+  if (item.matchPath && item.matchParam) {
+    return pathname === item.matchPath && searchParams.get(item.matchParam.key) === item.matchParam.value;
+  }
+  const basePath = item.href.split("?")[0];
+  if (PREFIX_MATCH_PATHS.includes(basePath) && pathname.startsWith(basePath)) return true;
+  return pathname === basePath;
+}
 
 const PLATFORM_VERSION = "Pro360 V1.29";
 
-export function Sidebar({
-  onNavigate,
-  collapsed = false,
-  onToggleCollapse,
-}: {
+interface SidebarProps {
   onNavigate?: () => void;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
-}) {
-  const pathname = usePathname();
+}
 
+function SidebarNav({ onNavigate, collapsed = false }: Pick<SidebarProps, "onNavigate" | "collapsed">) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  return (
+    <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto p-2" aria-label="Main">
+      {NAV_GROUPS.map((group) => (
+        <div key={group.heading} className="space-y-0.5">
+          {!collapsed && (
+            <p className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-white/40">
+              {group.heading}
+            </p>
+          )}
+          {collapsed && <div className="mx-auto my-1 h-px w-6 bg-white/10" aria-hidden />}
+          {group.items.map((item) => {
+            const active = isItemActive(item, pathname, searchParams);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onNavigate}
+                title={collapsed ? item.label : undefined}
+                className={clsx(
+                  "sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors",
+                  collapsed && "justify-center px-2",
+                  active && "sidebar-sleek-nav-active text-white",
+                  !active && "hover:text-white",
+                )}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {!collapsed && <span className="truncate">{item.label}</span>}
+              </Link>
+            );
+          })}
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+export function Sidebar({ onNavigate, collapsed = false, onToggleCollapse }: SidebarProps) {
   return (
     <aside
       className={clsx(
         "sidebar-sleek flex h-full min-h-0 flex-col border-r border-white/10 text-white transition-[width] duration-200 ease-out",
-        collapsed ? "w-[4rem]" : "w-64"
+        collapsed ? "w-[4rem]" : "w-64",
       )}
     >
       <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 px-3">
         {collapsed ? (
           onToggleCollapse && (
-            <button
-              type="button"
-              onClick={onToggleCollapse}
-              className="flex w-full justify-center rounded p-1.5 text-white/70 hover:bg-white/10 hover:text-white"
-              aria-label="Expand sidebar"
-            >
+            <button type="button" onClick={onToggleCollapse} className="flex w-full justify-center rounded p-1.5 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Expand sidebar">
               <ChevronRight className="h-4 w-4" />
             </button>
           )
         ) : (
           <>
-            <Link
-              href="/professional/1"
-              className="text-lg font-semibold tracking-tight text-white"
-              onClick={onNavigate}
-            >
-              Pro360
-            </Link>
+            <Link href="/pro360" className="text-lg font-semibold tracking-tight text-white" onClick={onNavigate}>Pro360</Link>
             {onToggleCollapse && (
-              <button
-                type="button"
-                onClick={onToggleCollapse}
-                className="rounded p-1.5 text-white/70 hover:bg-white/10 hover:text-white"
-                aria-label="Collapse sidebar"
-              >
+              <button type="button" onClick={onToggleCollapse} className="rounded p-1.5 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Collapse sidebar">
                 <ChevronLeft className="h-4 w-4" />
               </button>
             )}
           </>
         )}
       </div>
-      <nav
-        className="min-h-0 flex-1 space-y-0.5 overflow-y-auto p-2"
-        aria-label="Main"
-      >
-        {navItems.map(({ href, label, icon: Icon }) => {
-          const isActive =
-            pathname === href ||
-            (href === "/professional/1" && pathname.startsWith("/professional")) ||
-            (href !== "/professional/1" && pathname.startsWith(href));
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={onNavigate}
-              title={collapsed ? label : undefined}
-              className={clsx(
-                "sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors",
-                collapsed && "justify-center px-2",
-                isActive && "sidebar-sleek-nav-active text-white",
-                !isActive && "hover:text-white"
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span className="truncate">{label}</span>}
-            </Link>
-          );
-        })}
-      </nav>
+
+      <Suspense><SidebarNav onNavigate={onNavigate} collapsed={collapsed} /></Suspense>
+
       <div className="shrink-0 border-t border-white/10 p-2">
-        <Link
-          href="/docs"
-          onClick={onNavigate}
-          title={collapsed ? "Documentation" : undefined}
-          className={clsx(
-            "sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white",
-            collapsed && "justify-center px-2"
-          )}
-        >
-          <FileText className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="truncate">Documentation</span>}
+        <Link href="/docs" onClick={onNavigate} title={collapsed ? "Documentation" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
+          <FileText className="h-4 w-4 shrink-0" />{!collapsed && <span className="truncate">Documentation</span>}
         </Link>
-        <Link
-          href="#"
-          onClick={onNavigate}
-          title={collapsed ? "Help and Support" : undefined}
-          className={clsx(
-            "sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white",
-            collapsed && "justify-center px-2"
-          )}
-        >
-          <HelpCircle className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="truncate">Help and Support</span>}
+        <Link href="#" onClick={onNavigate} title={collapsed ? "Help and Support" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
+          <HelpCircle className="h-4 w-4 shrink-0" />{!collapsed && <span className="truncate">Help and Support</span>}
         </Link>
-        <Link
-          href="#"
-          onClick={onNavigate}
-          title={collapsed ? "Settings" : undefined}
-          className={clsx(
-            "sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white",
-            collapsed && "justify-center px-2"
-          )}
-        >
-          <Settings className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="truncate">Settings</span>}
+        <Link href="#" onClick={onNavigate} title={collapsed ? "Settings" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
+          <Settings className="h-4 w-4 shrink-0" />{!collapsed && <span className="truncate">Settings</span>}
         </Link>
-        {!collapsed && (
-          <p className="mt-2 px-3 py-1 text-xs text-white/50">
-            Platform version: {PLATFORM_VERSION}
-          </p>
-        )}
-        {collapsed && (
-          <p
-            className="mt-2 text-center text-[10px] text-white/50"
-            title={`Platform version: ${PLATFORM_VERSION}`}
-          >
-            V1.29
-          </p>
-        )}
+        {!collapsed && <p className="mt-2 px-3 py-1 text-xs text-white/50">Platform version: {PLATFORM_VERSION}</p>}
+        {collapsed && <p className="mt-2 text-center text-[10px] text-white/50" title={`Platform version: ${PLATFORM_VERSION}`}>V1.29</p>}
       </div>
     </aside>
   );

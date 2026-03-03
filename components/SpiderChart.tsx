@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Icon } from "@iconify/react";
 
 /**
@@ -44,7 +45,11 @@ function WarningIconSvg({ x, y }: { x: number; y: number }) {
   return (
     <g transform={`translate(${x - half}, ${y - half})`}>
       <foreignObject width={WARNING_ICON_SIZE} height={WARNING_ICON_SIZE} className="overflow-visible">
-        <div xmlns="http://www.w3.org/1999/xhtml" className="flex items-center justify-center" style={{ width: WARNING_ICON_SIZE, height: WARNING_ICON_SIZE }}>
+        <div
+          {...({ xmlns: "http://www.w3.org/1999/xhtml" } as React.HTMLAttributes<HTMLDivElement>)}
+          className="flex items-center justify-center"
+          style={{ width: WARNING_ICON_SIZE, height: WARNING_ICON_SIZE }}
+        >
           <Icon
             icon="solar:danger-triangle-bold"
             width={WARNING_ICON_SIZE}

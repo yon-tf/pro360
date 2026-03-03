@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
+import Image from "next/image";
 import { lmsModules, lmsEnrolledUsers, lmsStats } from "@/lib/mock/lms";
 import type { LMSModule, LMSCategory } from "@/lib/mock/lms";
 import {
@@ -11,11 +12,12 @@ import {
   Users,
   CheckCircle2,
   Clock,
-} from "lucide-react";
+} from "@/components/ui/solar-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { KpiCard } from "@/components/pro360/KpiCard";
 
 const CATEGORY_STYLES: Record<LMSCategory, string> = {
   "Onboarding Trial": "bg-primary/10 text-primary",
@@ -23,13 +25,6 @@ const CATEGORY_STYLES: Record<LMSCategory, string> = {
   "Continuing Education": "bg-violet-500/15 text-violet-700 dark:text-violet-400",
 };
 
-const METRIC_ICON_WRAP = "flex h-10 w-10 shrink-0 items-center justify-center rounded-full";
-const METRIC_ICONS = {
-  modules: `${METRIC_ICON_WRAP} bg-primary/10 text-primary`,
-  enrollments: `${METRIC_ICON_WRAP} bg-emerald-500/15 text-emerald-600 dark:text-emerald-400`,
-  passRate: `${METRIC_ICON_WRAP} bg-violet-500/15 text-violet-600 dark:text-violet-400`,
-  timeSpent: `${METRIC_ICON_WRAP} bg-amber-500/15 text-amber-600 dark:text-amber-400`,
-};
 
 const AVATAR_STACK_MAX = 6;
 
@@ -55,7 +50,7 @@ function StackedAvatars({ userIds }: { userIds: string[] }) {
               )}
               title={user.name}
             >
-              <img
+              <Image
                 src={user.avatar}
                 alt=""
                 className="h-full w-full object-cover"
@@ -123,80 +118,42 @@ function ModuleCard({ module: m }: { module: LMSModule }) {
 
 export default function LMSPage() {
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
 
   const filteredModules = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = deferredSearch.trim().toLowerCase();
     if (!q) return lmsModules;
     return lmsModules.filter(
       (m) =>
         m.name.toLowerCase().includes(q) ||
         m.category.toLowerCase().includes(q)
     );
-  }, [search]);
+  }, [deferredSearch]);
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={METRIC_ICONS.modules}>
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Total Modules
-              </p>
-              <p className="text-2xl font-semibold text-foreground">
-                {lmsStats.totalModules}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={METRIC_ICONS.enrollments}>
-              <Users className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Total Enrollments
-              </p>
-              <p className="text-2xl font-semibold text-foreground">
-                {lmsStats.totalEnrollments}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={METRIC_ICONS.passRate}>
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Average Pass Rate
-              </p>
-              <p className="text-2xl font-semibold text-foreground">
-                {lmsStats.averagePassRate}%
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={METRIC_ICONS.timeSpent}>
-              <Clock className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Avg Time Spent
-              </p>
-              <p className="text-2xl font-semibold text-foreground">
-                {lmsStats.avgTimeSpent}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-base font-semibold text-foreground">Learning modules</h2>
+          <p className="text-sm text-muted-foreground">Browse training inventory, enrollment progress, and completion performance.</p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <Button variant="outline">
+            <BarChart3 className="h-4 w-4" />
+            View Analytics
+          </Button>
+          <Button>
+            <Plus className="h-4 w-4" />
+            Add Module
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard title="Total Modules" value={lmsStats.totalModules} icon={<BookOpen className="h-5 w-5" />} />
+        <KpiCard title="Total Enrollments" value={lmsStats.totalEnrollments} icon={<Users className="h-5 w-5" />} />
+        <KpiCard title="Average Pass Rate" value={`${lmsStats.averagePassRate}%`} icon={<CheckCircle2 className="h-5 w-5" />} />
+        <KpiCard title="Avg Time Spent" value={lmsStats.avgTimeSpent} icon={<Clock className="h-5 w-5" />} />
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -209,16 +166,6 @@ export default function LMSPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
-        </div>
-        <div className="flex gap-2 shrink-0">
-          <Button variant="outline">
-            <BarChart3 className="h-4 w-4" />
-            View Analytics
-          </Button>
-          <Button>
-            <Plus className="h-4 w-4" />
-            Add Module
-          </Button>
         </div>
       </div>
 

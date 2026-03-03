@@ -135,6 +135,42 @@ export const lmsModules: LMSModule[] = [
   },
 ];
 
+export const lmsModulesNeedingAttention = [
+  {
+    id: "m8",
+    name: "Workplace Wellbeing Foundations",
+    category: "Onboarding Trial" as LMSCategory,
+    timeSpentAvg: "—",
+    passRate: 0,
+    enrolledUserIds: [] as string[],
+    passedCount: 0,
+    createdAt: "2026-01-15",
+    issue: "no_enrollment" as const,
+  },
+  {
+    id: "m9",
+    name: "Substance Abuse Screening",
+    category: "Core Training" as LMSCategory,
+    timeSpentAvg: "4.0 hrs avg",
+    passRate: 52,
+    enrolledUserIds: ["u1", "u2", "u3", "u4", "u5", "u6", "u7", "u8", "u9", "u10"],
+    passedCount: 3,
+    createdAt: "2025-11-01",
+    issue: "low_pass_rate" as const,
+  },
+  {
+    id: "m6",
+    name: "Trauma-Informed Care",
+    category: "Continuing Education" as LMSCategory,
+    timeSpentAvg: "5.5 hrs avg",
+    passRate: 58,
+    enrolledUserIds: ["u2", "u5", "u8", "u11", "u14", "u17", "u20", "u23", "u26", "u29", "u32", "u35", "u38", "u41", "u44", "u47", "u50"],
+    passedCount: 5,
+    createdAt: "2025-09-01",
+    issue: "not_completed" as const,
+  },
+];
+
 /** Aggregate stats for dashboard metrics */
 export const lmsStats = {
   totalModules: lmsModules.length,

@@ -14,11 +14,12 @@ import {
   type TFPProfessionalRow,
   type HotlineRow,
 } from "@/lib/mock/payoutRun";
-import { ChevronRight, Play, Search, X, Check, Download, Save, MessageSquare } from "lucide-react";
+import { ChevronRight, Play, Search, X, Check, Download, Save, MessageSquare } from "@/components/ui/solar-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -37,6 +38,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { TablePagination } from "@/components/TablePagination";
+import { PeriodFilter, defaultPeriodValue, type PeriodValue } from "@/components/filters/PeriodFilter";
 
 const DRAFT_STORAGE_KEY = "payout-run-draft";
 type TFPOverrides = Record<string, { status?: string; reviewer?: string | null; note?: string }>;
@@ -124,6 +126,7 @@ export default function PayoutRunPage() {
   const [selectedTFP, setSelectedTFP] = useState<TFPProfessionalRow | null>(null);
   const [selectedHotline, setSelectedHotline] = useState<HotlineRow | null>(null);
   const [search, setSearch] = useState("");
+  const [period, setPeriod] = useState<PeriodValue>(defaultPeriodValue());
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [exceptionsOnly, setExceptionsOnly] = useState(false);
   const [tfpPage, setTfpPage] = useState(1);
@@ -389,24 +392,26 @@ export default function PayoutRunPage() {
             </Card>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            <PeriodFilter value={period} onChange={setPeriod} />
             <div className="relative flex-1 min-w-[200px] max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
             </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="all">All statuses</option>
-              <option value="Ready">Ready</option>
-              <option value="Flagged">Flagged</option>
-              <option value="Hold">Hold</option>
-              <option value="Too small">Too small</option>
-              <option value="Unclaimed">Unclaimed</option>
-            </select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="All statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="Ready">Ready</SelectItem>
+                <SelectItem value="Flagged">Flagged</SelectItem>
+                <SelectItem value="Hold">Hold</SelectItem>
+                <SelectItem value="Too small">Too small</SelectItem>
+                <SelectItem value="Unclaimed">Unclaimed</SelectItem>
+              </SelectContent>
+            </Select>
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={exceptionsOnly} onChange={(e) => setExceptionsOnly(e.target.checked)} className="rounded" />
+              <Checkbox checked={exceptionsOnly} onCheckedChange={(checked) => setExceptionsOnly(Boolean(checked))} />
               Exceptions only
             </label>
           </div>
@@ -447,11 +452,17 @@ export default function PayoutRunPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-10">
-                      <input
-                        type="checkbox"
-                        className="rounded"
+                      <Checkbox
                         checked={paginatedTFPRows.length > 0 && paginatedTFPRows.every((r) => selectedTfpIds.has(r.id))}
-                        onChange={() => paginatedTFPRows.every((r) => selectedTfpIds.has(r.id)) ? setSelectedTfpIds((p) => { const n = new Set(p); paginatedTFPRows.forEach((r) => n.delete(r.id)); return n; }) : selectAllTfpOnPage()}
+                        onCheckedChange={() =>
+                          paginatedTFPRows.every((r) => selectedTfpIds.has(r.id))
+                            ? setSelectedTfpIds((p) => {
+                                const n = new Set(p);
+                                paginatedTFPRows.forEach((r) => n.delete(r.id));
+                                return n;
+                              })
+                            : selectAllTfpOnPage()
+                        }
                         aria-label="Select all on page"
                       />
                     </TableHead>
@@ -475,11 +486,9 @@ export default function PayoutRunPage() {
                       onClick={() => openDrawerTFP(r)}
                     >
                       <TableCell onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          className="rounded"
+                        <Checkbox
                           checked={selectedTfpIds.has(r.id)}
-                          onChange={() => toggleTfpSelection(r.id)}
+                          onCheckedChange={() => toggleTfpSelection(r.id)}
                           aria-label={`Select ${r.name}`}
                         />
                       </TableCell>
@@ -519,7 +528,7 @@ export default function PayoutRunPage() {
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">{r.reviewer ?? "—"}</TableCell>
                       <TableCell>
-                        <button type="button" className="rounded p-1 hover:bg-muted" aria-label="Actions">⋯</button>
+                        <Button type="button" variant="ghost" size="icon" className="h-6 w-6" aria-label="Actions">⋯</Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -566,11 +575,17 @@ export default function PayoutRunPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-10">
-                      <input
-                        type="checkbox"
-                        className="rounded"
+                      <Checkbox
                         checked={paginatedHotlineRows.length > 0 && paginatedHotlineRows.every((r) => selectedHotlineIds.has(r.id))}
-                        onChange={() => paginatedHotlineRows.every((r) => selectedHotlineIds.has(r.id)) ? setSelectedHotlineIds((p) => { const n = new Set(p); paginatedHotlineRows.forEach((r) => n.delete(r.id)); return n; }) : selectAllHotlineOnPage()}
+                        onCheckedChange={() =>
+                          paginatedHotlineRows.every((r) => selectedHotlineIds.has(r.id))
+                            ? setSelectedHotlineIds((p) => {
+                                const n = new Set(p);
+                                paginatedHotlineRows.forEach((r) => n.delete(r.id));
+                                return n;
+                              })
+                            : selectAllHotlineOnPage()
+                        }
                         aria-label="Select all on page"
                       />
                     </TableHead>
@@ -587,11 +602,9 @@ export default function PayoutRunPage() {
                   {paginatedHotlineRows.map((r) => (
                     <TableRow key={r.id} className={cn("cursor-pointer hover:bg-muted/50", selectedHotlineIds.has(r.id) && "bg-muted/50")} onClick={() => openDrawerHotline(r)}>
                       <TableCell onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          className="rounded"
+                        <Checkbox
                           checked={selectedHotlineIds.has(r.id)}
-                          onChange={() => toggleHotlineSelection(r.id)}
+                          onCheckedChange={() => toggleHotlineSelection(r.id)}
                           aria-label={`Select ${r.name}`}
                         />
                       </TableCell>
@@ -611,7 +624,7 @@ export default function PayoutRunPage() {
                       <TableCell className="text-right font-medium">${r.hotlineTotalPay}</TableCell>
                       <TableCell className="text-muted-foreground text-sm">{r.validationFlags.join(", ") || "—"}</TableCell>
                       <TableCell><Badge variant={r.status === "Ready" ? "default" : "destructive"}>{r.status}</Badge></TableCell>
-                      <TableCell><button type="button" className="rounded p-1 hover:bg-muted" aria-label="Actions">⋯</button></TableCell>
+                      <TableCell><Button type="button" variant="ghost" size="icon" className="h-6 w-6" aria-label="Actions">⋯</Button></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
