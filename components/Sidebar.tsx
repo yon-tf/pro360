@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
@@ -76,6 +77,24 @@ function isItemActive(item: NavItem, pathname: string, searchParams: URLSearchPa
 
 const PLATFORM_VERSION = "Pro360 V1.29";
 
+function SidebarLogo() {
+  const [imgError, setImgError] = useState(false);
+  if (imgError) {
+    return <span className="text-lg font-semibold tracking-tight text-white">ThoughtFull Pro360</span>;
+  }
+  return (
+    <Image
+      src="/brand/tf-logo-pro360.png"
+      alt="ThoughtFull Pro360"
+      width={140}
+      height={36}
+      className="h-9 w-auto"
+      priority
+      onError={() => setImgError(true)}
+    />
+  );
+}
+
 interface SidebarProps {
   onNavigate?: () => void;
   collapsed?: boolean;
@@ -140,7 +159,9 @@ export function Sidebar({ onNavigate, collapsed = false, onToggleCollapse }: Sid
           )
         ) : (
           <>
-            <Link href="/pro360" className="text-lg font-semibold tracking-tight text-white" onClick={onNavigate}>Pro360</Link>
+            <Link href="/pro360" className="inline-flex items-center min-h-9" onClick={onNavigate} aria-label="ThoughtFull Pro360 home">
+              <SidebarLogo />
+            </Link>
             {onToggleCollapse && (
               <button type="button" onClick={onToggleCollapse} className="rounded p-1.5 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Collapse sidebar">
                 <ChevronLeft className="h-4 w-4" />

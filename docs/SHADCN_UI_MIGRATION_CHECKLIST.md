@@ -2,6 +2,19 @@
 
 Use this checklist for any new UI work and during ongoing migration.
 
+## When to use this
+
+- Any time you add or modify interactive UI in feature code.
+- Any time you touch forms, dialogs, dropdowns, or inputs.
+- Any time you introduce new Radix usage or replace existing UI.
+
+## Migration flow (recommended)
+
+1. Check if the primitive already exists in `components/ui`.
+2. If missing, add the primitive to `components/ui` first.
+3. Replace feature code to use the shared primitive.
+4. Verify focus, keyboard, and visual states are preserved.
+
 ## Standards
 
 - Import UI primitives from `@/components/ui/*` in feature code.

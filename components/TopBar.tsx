@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTheme } from "@/components/ThemeProvider";
 import { useBreadcrumb } from "@/components/BreadcrumbContext";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { notifications as initialNotifications, formatTimeAgo, type Notification } from "@/lib/mock/notifications";
+import { notifications as initialNotifications, formatTimeAgo, type Notification } from "@/features/org/mock/notifications";
 
 const TOPBAR_USER_AVATAR = "https://i.pravatar.cc/128?img=32";
 
@@ -142,31 +142,44 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* User avatar + name */}
-          <div className="flex items-center gap-2">
-            <div className="hidden h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border bg-muted sm:flex">
-              <Image
-                src={TOPBAR_USER_AVATAR}
-                alt=""
-                className="h-full w-full object-cover"
-                width={32}
-                height={32}
-              />
-            </div>
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-foreground">Sarah Lee</p>
-              <p className="text-xs text-muted-foreground">Clinical Ops</p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="shrink-0"
-            title="Log out"
-            aria-label="Log out"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
+          {/* User avatar + dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" className="flex items-center gap-2 rounded-lg px-1 py-0.5 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <div className="hidden h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border bg-muted sm:flex">
+                  <Image
+                    src={TOPBAR_USER_AVATAR}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    width={32}
+                    height={32}
+                  />
+                </div>
+                <div className="hidden text-right sm:block">
+                  <p className="text-sm font-medium text-foreground">Sarah Lee</p>
+                  <p className="text-xs text-muted-foreground">Clinical Ops</p>
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link href="/calendar">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  View my calendar
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/pro360">
+                  <User className="mr-2 h-4 w-4" />
+                  Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
     </header>
   );

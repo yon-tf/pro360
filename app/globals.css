@@ -26,15 +26,15 @@
   .glass-dark {
     @apply bg-slate-900/70 backdrop-blur-xl border border-white/10 shadow-xl;
   }
-  /* Sleek sidebar: dark indigo, always same look */
+  /* Pro360 sidebar: dark navy, primary-based active/hover */
   .sidebar-sleek {
-    background-color: #1e1e3f;
+    background-color: var(--sidebar-bg);
   }
   .sidebar-sleek-nav:hover {
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: var(--sidebar-hover-bg);
   }
   .sidebar-sleek-nav-active {
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: var(--sidebar-active-bg);
     position: relative;
   }
   .sidebar-sleek-nav-active::before {
@@ -44,23 +44,29 @@
     top: 4px;
     bottom: 4px;
     width: 3px;
-    background-color: hsl(var(--primary));
+    background-color: var(--primary-hex);
     border-radius: 1px;
   }
 }
 
 
 
-/* Figma Clinical Ops CRM: blue primary #155DFC, 14px card radius, muted labels */
+/* Pro360: brand #00BFA2 (logo only), primary #004FB6 (CTAs, links, active nav) */
 @layer base {
   :root {
+    --brand: 168 100% 37%;
+    --brand-hex: #00BFA2;
+    --primary-hex: #004FB6;
+    --primary: 214 100% 36%;
+    --sidebar-bg: #1F2240;
+    --sidebar-active-bg: rgba(0, 79, 182, 0.10);
+    --sidebar-hover-bg: rgba(0, 79, 182, 0.06);
     --background: 0 0% 99%;
     --foreground: 0 0% 4%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 4%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 4%;
-    --primary: 221 96% 54%;
     --primary-foreground: 0 0% 100%;
     --secondary: 220 14% 96%;
     --secondary-foreground: 0 0% 4%;
@@ -74,9 +80,9 @@
     --warning: 38 92% 50%;
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 221 96% 54%;
+    --ring: 214 100% 36%;
     --sidebar: 220 14% 97%;
-    --chart-1: 221 96% 54%;
+    --chart-1: 214 100% 36%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
@@ -90,7 +96,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 221 96% 58%;
+    --primary: 214 100% 36%;
     --primary-foreground: 0 0% 100%;
     --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
@@ -104,9 +110,9 @@
     --warning: 38 92% 50%;
     --border: 217 33% 22%;
     --input: 217 33% 22%;
-    --ring: 221 96% 58%;
+    --ring: 214 100% 36%;
     --sidebar: 222 47% 12%;
-    --chart-1: 221 96% 58%;
+    --chart-1: 214 100% 36%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;

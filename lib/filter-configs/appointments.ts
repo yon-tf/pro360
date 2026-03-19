@@ -1,5 +1,5 @@
-import { getUniqueOrganisations } from "@/lib/mock/appointments";
-import { pods } from "@/lib/mock/pods";
+import { getUniqueOrganisations } from "@/features/appointments/mock/appointments";
+import { pods } from "@/features/team/mock/pods";
 import type { AdvancedFilterConfig, FilterContext } from "@/lib/filters/types";
 
 export type AttendanceFilter = "attended" | "partial" | "missed" | "no_show";

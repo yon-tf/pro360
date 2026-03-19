@@ -1,5 +1,5 @@
-import type { PeriodValue } from "@/components/filters/PeriodFilter";
-import { formatPeriodLabel } from "@/components/filters/PeriodFilter";
+import type { PeriodValue } from "@/features/filters/components/PeriodFilter";
+import { formatPeriodLabel } from "@/features/filters/components/PeriodFilter";
 
 function periodParams(period?: PeriodValue): string {
   if (!period) return "";

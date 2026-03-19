@@ -1,8 +1,9 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { clsx } from "clsx";
 
-export type TabItem = { id: string; label: string };
+export type TabItem = { id: string; label: string; suffix?: ReactNode };
 
 export function Tabs({
   tabs,
@@ -31,7 +32,7 @@ export function Tabs({
               )}
             >
               {tab.label}
-              {/* Untitled UI underline: 2px bar on active */}
+              {tab.suffix}
               <span
                 className={clsx(
                   "absolute bottom-0 left-0 right-0 h-0.5 rounded-full transition-colors",

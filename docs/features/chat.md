@@ -1,0 +1,79 @@
+# Feature: Chat
+
+## Phase 1 — Discovery
+
+### Problem & goal
+- Provide a unified inbox for Clinical Ops to review and respond to threads.
+- Support both view‑only and interactive conversations.
+
+### Personas / primary user
+- Primary user: Clinical Ops
+- Secondary user: Pod lead
+
+### User flow (high‑level)
+1. Open Chat.
+2. Select a thread from the inbox list.
+3. View thread context; send responses where enabled.
+
+### Screens & routes
+- Route: `/chat`
+  - Screen: Chat Inbox + Thread
+  - Purpose: Manage communications across threads.
+
+### Risks & open questions
+- Clarify which threads are editable vs read‑only.
+- Define attachment rules and storage integration.
+
+---
+
+## Phase 2 — Architecture & IA
+
+### IA / navigation map
+- Ops sidebar → Chat
+
+### Interaction model (states + transitions)
+- Loading: inbox and thread skeleton.
+- Empty: no threads.
+- Error: failed to load thread.
+
+### Data requirements
+- Entity: ChatThread
+  - Fields: id, subject, participants, lastMessageAt, unreadCount
+  - Source: chat API
+- Entity: Message
+  - Fields: id, threadId, author, body, createdAt, attachments
+  - Source: chat API
+
+### Component map
+- Reusable components: Table, Input, Badge, Popover, Dialog
+- New components: ThreadListItem (optional)
+
+---
+
+## Phase 3 — Interface plan
+
+### Screen layout plan
+- Screen: Chat Inbox + Thread
+  - Sections: inbox list, thread header, message list, composer
+
+### Token / design system impact
+- New tokens: none expected
+- Component variants: Badge (status)
+
+### Implementation order
+1. Inbox list + thread view
+2. Composer + attachments
+
+---
+
+## Phase 4 — Implementation log
+
+### Summary
+- 
+
+### Files changed
+- 
+
+### Follow‑ups
+- 
+

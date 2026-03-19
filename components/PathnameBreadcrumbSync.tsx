@@ -4,9 +4,10 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useBreadcrumb } from "@/components/BreadcrumbContext";
 import type { BreadcrumbItem } from "@/components/Breadcrumbs";
-import { professionalProfiles } from "@/lib/mock/professionalProfiles";
+import { professionalProfiles } from "@/features/professionals/mock/professionalProfiles";
 
 function getProfessionalLabel(profId: string): string {
+  if (profId === "new") return "Add professional";
   const profile = professionalProfiles.find((p) => p.id === profId);
   if (profile) return `${profile.firstName} ${profile.lastName} (${profId})`;
   return profId;

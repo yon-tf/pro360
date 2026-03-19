@@ -1,12 +1,14 @@
-import { professionals, chatExceptionsByTfp, chatRiskRows, clients } from "@/lib/mock/professionals";
-import { professionalProfiles } from "@/lib/mock/professionalProfiles";
-import { appointments } from "@/lib/mock/appointments";
-import { pods } from "@/lib/mock/pods";
-import { lmsModulesNeedingAttention } from "@/lib/mock/lms";
-import { gigJobs } from "@/lib/mock/gig";
-import { rulesList } from "@/lib/mock/rules";
+import { professionals, chatExceptionsByTfp, chatRiskRows, clients } from "@/features/professionals/mock/professionals";
+import { professionalProfiles } from "@/features/professionals/mock/professionalProfiles";
+import { appointments } from "@/features/appointments/mock/appointments";
+import { pods } from "@/features/team/mock/pods";
+import { lmsModulesNeedingAttention } from "@/features/lms/mock/lms";
+import { gigJobs } from "@/features/gig/mock/gig";
+import { getRuleDefinitions } from "@/features/rules/mock/rules";
 
 export type AttentionTabId = "chat" | "appointments" | "professional" | "pod" | "learn" | "gig" | "system";
+
+export type Severity = "critical" | "high" | "medium" | "low";
 
 export interface AttentionRow {
   id: string;
@@ -15,6 +17,20 @@ export interface AttentionRow {
   ageLabel: string;
   actionLabel: string;
   secondaryAction?: { label: string };
+  severity: Severity;
+  href?: string;
+  infoPopover?: string;
+}
+
+export const SEVERITY_ORDER: Record<Severity, number> = {
+  critical: 0,
+  high: 1,
+  medium: 2,
+  low: 3,
+};
+
+function sortBySeverity(rows: AttentionRow[]): AttentionRow[] {
+  return rows.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 }
 
 export const ATTENTION_TAB_LABELS: Record<AttentionTabId, string> = {
@@ -45,12 +61,18 @@ export function buildChatRows(limit?: number): AttentionRow[] {
   for (const r of chatExceptionsByTfp) {
     if (r.working_days_over < 1) continue;
     const pro = professionals.find((p) => p.id === r.tfpId);
+    const secondaryLabel = `Client · ${r.client_name} · ${r.status === "unresponded" ? "Not replying" : "Late reply"}`;
+    let severity: Severity = "low";
+    if (r.working_days_over >= 5) severity = "high";
+    else if (r.working_days_over >= 1) severity = "medium";
+
     rows.push({
       id: `chat-exc-${r.chat_group_id}`,
       primaryLabel: pro?.name ?? `TFP ${r.tfpId}`,
-      secondaryLabel: `Client · ${r.client_name} · ${r.status === "unresponded" ? "Not replying" : "Late reply"}`,
+      secondaryLabel,
       ageLabel: `${r.working_days_over} working day${r.working_days_over > 1 ? "s" : ""} overdue`,
       actionLabel: "View chat",
+      severity,
     });
   }
 
@@ -60,16 +82,25 @@ export function buildChatRows(limit?: number): AttentionRow[] {
     const secondary = cr.annotations
       ? `Client · ${cr.client_name} · ${label} — ${cr.annotations}`
       : `Client · ${cr.client_name} · ${label}`;
+    const lowerSec = secondary.toLowerCase();
+    const isRiskFlagged = lowerSec.includes("risk") || lowerSec.includes("suicidal") || lowerSec.includes("distress");
+    const isSla = lowerSec.includes("sla");
+
+    let severity: Severity = "low";
+    if (isRiskFlagged) severity = "critical";
+    else if (isSla) severity = "high";
+
     rows.push({
       id: `chat-risk-${cr.id}`,
       primaryLabel: pro?.name ?? `TFP ${cr.tfpId}`,
       secondaryLabel: secondary,
       ageLabel: cr.durationLabel,
       actionLabel: "View chat",
+      severity,
     });
   }
 
-  const sorted = rows.sort((a, b) => b.ageLabel.localeCompare(a.ageLabel));
+  const sorted = sortBySeverity(rows);
   return limit != null ? sorted.slice(0, limit) : sorted;
 }
 
@@ -85,6 +116,7 @@ export function buildAppointmentRows(limit?: number): AttentionRow[] {
           secondaryLabel: `Client · ${cn.client} · Late case note`,
           ageLabel: `Late submission (${cn.date})`,
           actionLabel: "View appointment",
+          severity: "medium",
         });
       }
     }
@@ -107,6 +139,7 @@ export function buildAppointmentRows(limit?: number): AttentionRow[] {
           : "No-show",
       ageLabel: `No-show on ${dateStr}`,
       actionLabel: "View appointment",
+      severity: "high",
     });
   }
 
@@ -125,6 +158,7 @@ export function buildAppointmentRows(limit?: number): AttentionRow[] {
       secondaryLabel: `Internal · ${a.professionalDisplay}`,
       ageLabel: ageStr,
       actionLabel: "Start",
+      severity: "low",
     });
   }
 
@@ -136,11 +170,15 @@ export function buildAppointmentRows(limit?: number): AttentionRow[] {
         secondaryLabel: `${p.excessiveSessions} excessive session${p.excessiveSessions > 1 ? "s" : ""} flagged`,
         ageLabel: "This period",
         actionLabel: "View sessions",
+        severity: "medium",
+        infoPopover: "Flagged: more than 2 sessions per week per client (any professional).",
+        href: `/appointments?tfp=${encodeURIComponent(p.name)}`,
       });
     }
   }
 
-  return limit != null ? rows.slice(0, limit) : rows;
+  const sorted = sortBySeverity(rows);
+  return limit != null ? sorted.slice(0, limit) : sorted;
 }
 
 export function buildPodRows(): AttentionRow[] {
@@ -154,6 +192,7 @@ export function buildPodRows(): AttentionRow[] {
         secondaryLabel: "No leader · No members",
         ageLabel: "Inactive",
         actionLabel: "Open pod",
+        severity: "high",
       });
       continue;
     }
@@ -165,6 +204,7 @@ export function buildPodRows(): AttentionRow[] {
         secondaryLabel: `${pod.members.length} member${pod.members.length !== 1 ? "s" : ""} · No leader assigned`,
         ageLabel: "Needs leader",
         actionLabel: "Open pod",
+        severity: "high",
       });
     }
 
@@ -175,6 +215,7 @@ export function buildPodRows(): AttentionRow[] {
         secondaryLabel: "Active pod with no members",
         ageLabel: "Needs members",
         actionLabel: "Open pod",
+        severity: "medium",
       });
     }
 
@@ -187,6 +228,7 @@ export function buildPodRows(): AttentionRow[] {
         ageLabel: "At capacity",
         actionLabel: "Open pod",
         secondaryAction: { label: "Dismiss" },
+        severity: "medium",
       });
     } else if (ratio >= 0.8) {
       rows.push({
@@ -196,11 +238,12 @@ export function buildPodRows(): AttentionRow[] {
         ageLabel: `${pod.maxCapacity - pod.members.length} slot${pod.maxCapacity - pod.members.length !== 1 ? "s" : ""} left`,
         actionLabel: "Open pod",
         secondaryAction: { label: "Dismiss" },
+        severity: "medium",
       });
     }
   }
 
-  return rows;
+  return sortBySeverity(rows);
 }
 
 export function buildLearnRows(): AttentionRow[] {
@@ -214,6 +257,7 @@ export function buildLearnRows(): AttentionRow[] {
         secondaryLabel: `${m.category} · No one enrolled`,
         ageLabel: `Created ${m.createdAt}`,
         actionLabel: "Broadcast",
+        severity: "low",
       });
     } else if (m.issue === "low_pass_rate") {
       rows.push({
@@ -222,6 +266,7 @@ export function buildLearnRows(): AttentionRow[] {
         secondaryLabel: `${m.category} · Pass rate ${m.passRate}% (${m.passedCount}/${m.enrolledUserIds.length})`,
         ageLabel: "Low quiz score",
         actionLabel: "Open module",
+        severity: "low",
       });
     } else if (m.issue === "not_completed") {
       rows.push({
@@ -230,6 +275,7 @@ export function buildLearnRows(): AttentionRow[] {
         secondaryLabel: `${m.category} · ${m.passedCount}/${m.enrolledUserIds.length} completed`,
         ageLabel: `Since ${m.createdAt}`,
         actionLabel: "Broadcast",
+        severity: "low",
       });
     }
   }
@@ -246,6 +292,7 @@ export function buildGigRows(): AttentionRow[] {
       secondaryLabel: `${j.applicantIds.length} applicant${j.applicantIds.length !== 1 ? "s" : ""} · ${j.location}`,
       ageLabel: j.date,
       actionLabel: "Review",
+      severity: "low" as Severity,
     }));
 }
 
@@ -253,6 +300,38 @@ export function buildProfessionalRows(): AttentionRow[] {
   const rows: AttentionRow[] = [];
   const now = new Date();
   const warningWindowMs = 60 * 24 * 60 * 60 * 1000; // 60 days
+
+  // Flag: > 2 sessions per week per client (same professional)
+  // Logic: Scan appointments for client + professional + week combinations > 2
+  const clientProWeekCounts: Record<string, number> = {};
+  for (const a of appointments) {
+    if (a.type === "client_session" && a.clientDisplay && a.professionalDisplay && a.scheduledAt) {
+      const date = new Date(a.scheduledAt);
+      // Simple week of year key
+      const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+      const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
+      const week = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+      // Note: We use the actual week key but store metadata for redirect
+      const groupedKey = `${a.clientDisplay}|${a.professionalDisplay}|${date.getFullYear()}|W${week}`;
+      clientProWeekCounts[groupedKey] = (clientProWeekCounts[groupedKey] || 0) + 1;
+    }
+  }
+
+  for (const key in clientProWeekCounts) {
+    if (clientProWeekCounts[key] > 2) {
+      const [client, professional, year, week] = key.split("|");
+      rows.push({
+        id: `pro-excessive-${key}`,
+        primaryLabel: "Excessive sessions flagged",
+        secondaryLabel: `${professional} · Client: ${client} · ${clientProWeekCounts[key]} sessions in ${week}, ${year}`,
+        ageLabel: "Critical",
+        actionLabel: "Investigate",
+        severity: "critical",
+        infoPopover: "Flagged: more than 2 sessions per week for the same professional and same client.",
+        href: `/appointments?client=${encodeURIComponent(client)}&tfp=${encodeURIComponent(professional)}&period=${year}-${week}`,
+      });
+    }
+  }
 
   for (const p of professionalProfiles) {
     const expiry = new Date(p.licenseExpiry);
@@ -266,14 +345,17 @@ export function buildProfessionalRows(): AttentionRow[] {
         secondaryLabel: `License ${p.licenseNumber} expired`,
         ageLabel: `Expired ${Math.abs(daysUntilExpiry)} day${Math.abs(daysUntilExpiry) !== 1 ? "s" : ""} ago`,
         actionLabel: "Open profile",
+        severity: "high",
       });
     } else if (msUntilExpiry <= warningWindowMs) {
+      const severity: Severity = daysUntilExpiry <= 7 ? "high" : "medium";
       rows.push({
         id: `pro-expiring-${p.id}`,
         primaryLabel: `${p.firstName} ${p.lastName}`,
         secondaryLabel: `License ${p.licenseNumber} expiring soon`,
         ageLabel: `Expires in ${daysUntilExpiry} day${daysUntilExpiry !== 1 ? "s" : ""}`,
         actionLabel: "Open profile",
+        severity,
       });
     }
 
@@ -286,6 +368,7 @@ export function buildProfessionalRows(): AttentionRow[] {
         ageLabel: "At max capacity",
         actionLabel: "Open profile",
         secondaryAction: { label: "Dismiss" },
+        severity: "medium",
       });
     } else if (ratio >= 0.8 && p.maximumClients > 0) {
       rows.push({
@@ -295,41 +378,68 @@ export function buildProfessionalRows(): AttentionRow[] {
         ageLabel: `${p.maximumClients - p.activeClients} slot${p.maximumClients - p.activeClients !== 1 ? "s" : ""} left`,
         actionLabel: "Open profile",
         secondaryAction: { label: "Dismiss" },
+        severity: "medium",
       });
+    }
+
+    if (p.leaveStartDate) {
+      const leaveStart = new Date(p.leaveStartDate);
+      const leaveEnd = p.leaveEndDate ? new Date(p.leaveEndDate) : null;
+      const isCurrentlyOnLeave = leaveStart <= now && (leaveEnd === null || leaveEnd >= now);
+      if (isCurrentlyOnLeave) {
+        const returnStr = leaveEnd
+          ? `Returns ${leaveEnd.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`
+          : "No return date set";
+        rows.push({
+          id: `pro-onleave-${p.id}`,
+          primaryLabel: `${p.firstName} ${p.lastName}`,
+          secondaryLabel: `On leave · ${returnStr}`,
+          ageLabel: `Since ${leaveStart.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`,
+          actionLabel: "Dismiss",
+          severity: "low",
+        });
+      }
     }
   }
 
-  return rows;
+  return sortBySeverity(rows);
 }
 
 export function buildSystemRows(): AttentionRow[] {
   const rows: AttentionRow[] = [];
+  const rules = getRuleDefinitions();
 
-  for (const rule of rulesList) {
-    if (!rule.enabled) continue;
-    if (rule.timesTriggered > 0) {
+  for (const rule of rules) {
+    if (!rule.summary.enabled) continue;
+    if (rule.metadata.executionCount > 0) {
+      const combined = `${rule.summary.name} ${rule.summary.triggerPreview} ${rule.summary.actionPreview}`.toLowerCase();
+      const hasError = combined.includes("error") || combined.includes("fail");
       rows.push({
-        id: `sys-rule-${rule.id}`,
-        primaryLabel: rule.name,
-        secondaryLabel: `${rule.trigger} → ${rule.action}`,
-        ageLabel: `Triggered ${rule.timesTriggered} time${rule.timesTriggered !== 1 ? "s" : ""}`,
+        id: `sys-rule-${rule.summary.id}`,
+        primaryLabel: rule.summary.name,
+        secondaryLabel: `${rule.summary.triggerPreview} → ${rule.summary.actionPreview}`,
+        ageLabel: `Triggered ${rule.metadata.executionCount} time${rule.metadata.executionCount !== 1 ? "s" : ""}`,
         actionLabel: "Review",
+        severity: hasError ? "high" : "medium",
       });
     }
   }
 
-  for (const rule of rulesList) {
-    if (rule.enabled) continue;
+  for (const rule of rules) {
+    if (rule.summary.enabled) continue;
+    const combined = `${rule.summary.name} ${rule.summary.triggerPreview}`.toLowerCase();
+    const hasError = combined.includes("error") || combined.includes("fail");
     rows.push({
-      id: `sys-disabled-${rule.id}`,
-      primaryLabel: rule.name,
-      secondaryLabel: `Rule is disabled · ${rule.trigger}`,
+      id: `sys-disabled-${rule.summary.id}`,
+      primaryLabel: rule.summary.name,
+      secondaryLabel: `Rule is disabled · ${rule.summary.triggerPreview}`,
       ageLabel: "Disabled",
       actionLabel: "Enable",
+      severity: hasError ? "high" : "medium",
     });
   }
 
-  return rows;
+  return sortBySeverity(rows);
 }
 
 export function getAllRows(): Record<AttentionTabId, AttentionRow[]> {

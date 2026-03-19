@@ -10,6 +10,9 @@ export const systemToast = {
   success(message: string, description?: ToastDescription) {
     toast.success(message, { description, duration: DEFAULT_DURATION_MS });
   },
+  pending(message: string, description?: ToastDescription) {
+    toast.loading(message, { description, duration: DEFAULT_DURATION_MS });
+  },
   error(message: string, description?: ToastDescription) {
     toast.error(message, { description, duration: DEFAULT_DURATION_MS });
   },
@@ -17,6 +20,6 @@ export const systemToast = {
     toast.warning(message, { description, duration: DEFAULT_DURATION_MS });
   },
   info(message: string, description?: ToastDescription) {
-    toast(message, { description, duration: DEFAULT_DURATION_MS });
+    toast.info(message, { description, duration: DEFAULT_DURATION_MS });
   },
 };

@@ -18,6 +18,21 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). The app redirects to `/professionals/PRO-001/performance` (Professional Performance / Pro360).
 
+## Project structure
+
+- `app/(shell)/...`: All app routes that share the main shell (sidebar/topbar). URLs are unchanged by the route group.
+- `features/<module>/components`: Feature‑scoped UI for each module (appointments, pro360, professionals, team, etc).
+- `features/<module>/mock`: Mock data owned by each module. Treat as placeholders until backend integration.
+- `components/ui`: Shared UI primitives (buttons, inputs, dialog, etc).
+- `components/`: App‑level layout and chrome (shell, sidebar, topbar, breadcrumbs).
+- `lib/`: Cross‑feature helpers (routing, filters, utilities).
+
+## Mock data contract (handoff note)
+
+- All mock data lives in `features/<module>/mock` and is intentionally **placeholder‑only**.
+- Treat these as the **shape contract** for backend integration; replace module‑by‑module as APIs come online.
+- Avoid cross‑feature mock imports except through `lib/` helpers.
+
 ## Pages
 
 ### Professional Performance (`/professionals/PRO-001/performance`)
@@ -74,6 +89,9 @@ Open [http://localhost:3000](http://localhost:3000). The app redirects to `/prof
 The **Pro360 Pitch Plan** (journey, stacks, UI patterns, page specs, design direction) is available in the app:
 
 - **In app**: Sidebar → **Documentation** (or go to [/docs](/docs)). Rendered from `docs/PRO360_PITCH_PLAN.md`.
+- **Handoff**: See `docs/HANDOFF.md` for structure, mock data notes, and known warnings.
+- **UI migration**: See `docs/SHADCN_UI_MIGRATION_CHECKLIST.md` before new UI work.
+- **PR checklist**: See `docs/PR_CHECKLIST.md` before opening a PR.
 
 ---
 

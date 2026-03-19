@@ -1,5 +1,5 @@
-import { pods } from "@/lib/mock/pods";
-import { professionalProfiles } from "@/lib/mock/professionalProfiles";
+import { pods } from "@/features/team/mock/pods";
+import { professionalProfiles } from "@/features/professionals/mock/professionalProfiles";
 import type { AdvancedFilterConfig } from "@/lib/filters/types";
 
 export interface ProfessionalsAdvanced {
