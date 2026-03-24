@@ -7,8 +7,7 @@ Use this checklist for any non-trivial change.
 - Scope and routes confirmed
 
 ## UI consistency
-- Consulted `docs/SHADCN_UI_MIGRATION_CHECKLIST.md`
-- Shared UI primitives used (`components/ui`)
+- Shared UI primitives used (`components/ui`) — see shadcn/ui rules in `AGENTS.md`
 
 ## Code quality
 - Changes are scoped and minimal

@@ -1,91 +1,161 @@
-# AGENTS.md — Repo Agent Operating Rules
+# AGENTS.md — Agent Operating Rules
 
 ## Goal
-Work in small, safe increments. Prefer diffs over rewrites. Do not scan the entire repo unless explicitly asked.
+Work in small, safe increments. Prefer diffs over rewrites.
+Do not scan the entire repo unless explicitly asked.
 
-## How to work
-1) Always start with a **Plan (max 8 bullets)**.
-2) Then propose **File targets** (max 5 files) before editing.
-3) Prefer **surgical edits** and **patch-style diffs**.
-4) Never reformat unrelated code.
-5) Never rename files/folders unless requested.
-6) If unsure, ask a single clarifying question OR choose a conservative default.
+---
 
-## Scope limits (default)
-- Use `ripgrep (rg)` to locate relevant code; do not open dozens of files.
+## How To Work
+
+1. Always start with a **plan (max 8 bullets)**.
+2. Propose **file targets (max 5 files)** before editing.
+3. Prefer **surgical edits** — patch-style diffs, not full rewrites.
+4. Never reformat unrelated code.
+5. Never rename files or folders unless explicitly requested.
+6. If unsure, ask one clarifying question or choose the conservative default.
+
+---
+
+## Scope Limits
+
+- Use `rg` to locate relevant code — never open dozens of files speculatively.
 - Max files to read in one pass: **15**
 - Max lines per file to read: **200** (use targeted ranges)
 - Max files to modify in one task: **6**
 
-## Commands you may run
-- `rg`, `ls`, `cat`, `sed -n`, `head`, `tail`
-- `npm test`, `pnpm test`, `bun test` (whichever exists)
-- `npm run lint`, `npm run typecheck`, `npm run build` (only when needed)
+---
 
-## Design system principles
-- Prefer **semantic tokens** (e.g. `color.text.primary`) over raw values.
-- Avoid token explosion: if a value appears < 3 times, don’t make a token yet.
-- Components should be built around **variants/states/props**.
+## Allowed Commands
 
-## Component quality bar
-- Build **composable primitives** first; avoid one-off page-only components unless necessary.
-- Keep components **pure + predictable**: inputs via props, outputs via callbacks.
-- Prefer **controlled components** for forms; expose `value`, `defaultValue`, `onChange`.
-- Define **variants** using `cva`/class-variance patterns; avoid ad-hoc class soup.
-- Ensure **accessibility**: labels, focus states, `aria-*`, keyboard navigation.
-- Keep layout flexible: avoid hard-coded widths unless the design demands it.
+```bash
+# Search and inspection
+rg, ls, cat, sed -n, head, tail
 
-## Architecture & structure
-- Feature code lives in `features/<module>/...` with `components`, `mock`, and (when needed) `api`.
-- Shared UI primitives stay in `components/ui`.
-- Cross-feature helpers live in `lib/` and must be **side-effect free**.
-- Prefer **index exports** per module to reduce import churn.
+# Git (slash commands only — never run git on your own initiative)
+git status, git diff, git add, git commit, git push, git fetch, git rebase
 
-## State & data flow
-- Keep derived values in `useMemo` and handlers in `useCallback` when non-trivial.
-- Avoid derived state when it can be computed from source props/state.
-- For async: isolate fetch logic in `features/<module>/api` (or `lib/api`) and keep UI components data-agnostic.
+# Package management
+npm install, npm run dev, npm run build
+npm run lint, npm run typecheck, npm test
+pnpm / bun equivalents if present
+```
 
-## Styling & theming
-- Use design tokens / CSS variables for colors, radius, spacing, and typography.
-- Avoid magic numbers unless they map directly to the design system.
-- Ensure visual states: default, hover, active, focus, disabled, loading, empty.
+---
+
+## Design System Rules
+
+- Semantic tokens only — `color.text.primary`, never `#hex` or raw `px` values.
+- Token explosion rule: if a value appears fewer than 3 times, don't promote it to a token yet.
+- Every component built around variants, states, and props — never ad-hoc.
+- Read `design-system/DESIGN.md` before any UI work. This is the intent layer.
+- Read `design-system/component-contracts.md` before creating any component.
+- Read `design-system/tokens.json` before using any value.
+
+---
+
+## Component Quality Bar
+
+- Composable primitives first. One-off page-only components only when genuinely necessary.
+- Pure and predictable: inputs via props, outputs via callbacks.
+- Controlled components for forms: expose `value`, `defaultValue`, `onChange`.
+- Variants via `cva` — never ad-hoc className strings.
+- Accessibility non-negotiable: `aria-*` labels, focus states, keyboard navigation.
+- Storybook story required for every component in `components/ui/`.
+- Split when file exceeds ~250 lines or responsibilities are mixed.
+
+### shadcn/ui usage rules
+
+- Always use shared primitives: `Button`, `Input`, `Select`, `Dialog`, `Popover`,
+  `Textarea`, `Checkbox`, `Switch`, `Tooltip`, `DatePicker`.
+- Never use raw `<textarea>`, `<input type="checkbox">`, or custom switch elements
+  in feature code — use the shadcn wrapper.
+- If a primitive is missing from `components/ui/`, add it there first, then consume it.
+- Never use Radix UI directly in feature pages — always go through the wrapper.
+- Date rendering in client components: always set `timeZone` to avoid SSR/CSR mismatch.
+
+**Known exceptions:**
+- File upload: native `<input type="file">` hidden input is fine.
+- Custom row wrappers: may stay as native `<button>` when `Button` changes layout semantics.
+
+---
+
+## Architecture & Structure
+
+```
+app/(shell)/          ← authenticated route pages
+features/[module]/
+  api/                ← data fetching and mutations (no UI)
+  components/         ← UI components for this module
+  mock/               ← mock data for dev and testing
+  index.ts            ← named exports only
+components/ui/        ← shared owned primitives (shadcn/ui base)
+lib/                  ← cross-feature utilities, side-effect free
+design-system/        ← DESIGN.md, tokens.json, component-contracts.md
+docs/
+  features/           ← one flat .md file per feature (all phases)
+  modules/            ← module-level user flows + dependency map
+.claude/commands/     ← Claude Code slash commands
+.agent/skills/        ← Antigravity QA skills
+```
+
+---
+
+## State & Data Flow
+
+- Derived values in `useMemo`, handlers in `useCallback` — only when non-trivial.
+- Never store derived state that can be computed from source props.
+- Async fetch logic lives in `features/[module]/api/` — UI components stay data-agnostic.
+- State hierarchy: URL state → server state (React Query) → component state → global (Zustand last resort).
+
+---
+
+## Styling & Theming
+
+- Design tokens and CSS variables for all colors, radius, spacing, typography.
+- No magic numbers unless they map directly to a token.
+- All visual states required: default, hover, active, focus, disabled, loading, empty.
+
+---
 
 ## Performance & DX
-- Avoid unnecessary re-renders; memoize only when it matters.
-- Keep components small; split when file > ~250 lines or responsibilities are mixed.
-- Prefer typed props and exported types for reuse.
+
+- Memoize only when re-render cost is measurable — not preemptively.
+- Prefer typed props and exported interfaces for reuse.
+- Dynamic imports for heavy components not needed on initial render.
+
+---
 
 ## Documentation
-- For non-obvious components, add a short usage example in the file or `docs/`.
-- Update `docs/HANDOFF.md` if you introduce new architectural patterns.
 
-## Figma operations (IMPORTANT)
-We use two different integrations:
+- Log every non-obvious implementation decision in the feature's Phase 4 log.
+ 
 
-### 1) Codex = CODEBASE ONLY (read/modify repo files)
-- Codex may read and edit code in this repository.
-- Codex must NOT attempt to write into Figma using the official Figma MCP capture flow.
-- If asked to create or edit Figma frames/components, Codex should instead output a short “Figma Build Plan” OR instruct the Talk To Figma plugin tools to do the writing.
+---
 
-### 2) Talk To Figma plugin = FIGMA WRITES
-- All Figma writing actions (create frames, text, rectangles, components) MUST be executed via the Talk To Figma MCP Plugin (websocket bridge).
-- Assume the plugin is connected on port 3055 and a micro-write test has succeeded.
-- Write actions must be chunked: max 24 nodes per run.
-- After each write run, STOP and confirm what was created.
+## Design Tool Boundary
 
-### Working pattern
-- Codex produces artifacts in /design-system:
-  - tokens.json
-  - token-mapping.md
-  - component-contracts.md
-- Then Talk To Figma writes the Figma DS file:
-  - 00 Tokens (swatches/scales)
-  - 01 Components (masters only)
-- Human converts masters → component sets in Figma.
+**Claude Code and Codex: codebase only.**
+Read design context from `design-system/` files. Write code only.
+Never write directly to any design tool.
 
-## Output expectations
-- Provide: summary, changed files list, and next steps.
+**Figma MCP (read-only reference):**
+Available for reading component specs or design context when needed.
+Never a source of truth. Never written to from Claude Code.
 
-## UI work reminder
-- For any UI change, consult `docs/SHADCN_UI_MIGRATION_CHECKLIST.md` before editing.
+**Penpot MCP (optional, when connected):**
+`claude mcp add penpot -t http http://localhost:4401/mcp`
+Read component specs or push rendered UI for visual review.
+Optional — never a required step.
+
+**Active QA tool:**
+Antigravity via `.agent/skills/qa-design/` — writes findings to Phase 5 of the feature doc.
+
+---
+
+## Output Format
+
+Every response includes:
+1. Summary of what was done
+2. List of changed files
+3. Next steps

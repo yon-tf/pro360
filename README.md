@@ -89,8 +89,6 @@ Open [http://localhost:3000](http://localhost:3000). The app redirects to `/prof
 The **Pro360 Pitch Plan** (journey, stacks, UI patterns, page specs, design direction) is available in the app:
 
 - **In app**: Sidebar → **Documentation** (or go to [/docs](/docs)). Rendered from `docs/PRO360_PITCH_PLAN.md`.
-- **Handoff**: See `docs/HANDOFF.md` for structure, mock data notes, and known warnings.
-- **UI migration**: See `docs/SHADCN_UI_MIGRATION_CHECKLIST.md` before new UI work.
 - **PR checklist**: See `docs/PR_CHECKLIST.md` before opening a PR.
 
 ---

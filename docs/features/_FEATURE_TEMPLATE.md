@@ -1,77 +1,137 @@
-# Feature: <Name>
+# Feature: [Feature Name]
+> Tier: [0 / 1 / 2] | Created: [YYYY-MM-DD] | Status: [discovery / architecture / interface / implementation / finetune / complete]
+
+---
 
 ## Phase 1 — Discovery
+> Populated by: Claude Web `think-product` | Required for: Tier 1, Tier 2
 
-### Problem & goal
-- What problem does this solve?
-- What does success look like?
+### Problem & Goal
+[What problem does this solve? Be specific.
+Not "users need X" — "Users who do Y currently have to Z, which causes W."]
 
-### Personas / primary user
-- Primary user:
-- Secondary user:
+### Users
+[Who specifically. Role, context, what they're trying to accomplish.
+Not generic personas — real use case descriptions.]
 
-### User flow (high‑level)
-1. 
-2. 
-3. 
+### User Flow
+[Steps the user takes to accomplish the goal. Happy path only here.]
 
-### Screens & routes
-- Route:
-  - Screen:
-  - Purpose:
+1. [Step]
+2. [Step]
+3. [Step]
 
-### Risks & open questions
-- 
+### Screens & Routes
+| Screen | Route | Purpose |
+|---|---|---|
+| [name] | /[route] | [what the user does here] |
+
+### Scope — What This Is Not
+[Explicit exclusions. Forces clarity. Prevents scope creep.]
+
+### Risks & Open Questions
+- [ ] [Question that must be answered before design starts]
+- [ ] [Dependency or constraint that needs resolving]
+
+### Success Criteria
+[How do we know this is done? Specific and observable.
+Not "users love it" — something you can verify.]
 
 ---
 
 ## Phase 2 — Architecture & IA
+> Populated by: Claude Web `think-system` | Required for: Tier 2
 
-### IA / navigation map
-- 
+### User's Mental Model
+[How does the user think about this?
+What do they call it? What groupings make intuitive sense?
+This is NOT the data model — it's how the user perceives the system.]
 
-### Interaction model (states + transitions)
-- Loading:
-- Empty:
-- Error:
-- Edge cases:
+### System Model
+[What the backend actually tracks. Show the gap from the mental model.]
 
-### Data requirements
-- Entity:
-  - Fields:
-  - Source:
+### Design Implication
+[How the mental model drives layout and IA decisions.]
 
-### Component map
-- Reusable components:
-- New components:
+### Navigation
+[Where does this live? Primary nav / secondary / contextual.]
 
----
+### Information Hierarchy
+[What's most important? What's secondary? What's on-demand?]
 
-## Phase 3 — Interface plan
+### Data Requirements
+| Entity | Fields needed | Source |
+|---|---|---|
+| [entity] | [fields] | [API / mock / local] |
 
-### Screen layout plan
-- Screen: 
-  - Sections:
+### Component Map
+| UI element | Component | Status |
+|---|---|---|
+| [element] | [component name] | existing / extend / new |
 
-### Token / design system impact
-- New tokens:
-- Component variants:
-
-### Implementation order
-1. 
-2. 
-3. 
+### Cross-Feature Dependencies
+[Which modules does this interact with?
+Reference docs/modules/DEPENDENCY_MAP.md]
 
 ---
 
-## Phase 4 — Implementation log
+## Phase 3 — Interface Plan
+> Populated by: Claude Web `think-design` | Required for: Tier 1, Tier 2
 
-### Summary
-- 
+### Interaction Pattern
+**Form type (if applicable):** [Wizard / Single-page / Progressive disclosure]
+**Rationale:** [One sentence — why this pattern for this feature]
 
-### Files changed
-- 
+### Screens
 
-### Follow‑ups
-- 
+#### [Screen Name]
+**Route:** `/[route]`
+**Purpose:** [What the user accomplishes here in one sentence]
 
+**States:**
+
+| State | What the user sees | Notes |
+|---|---|---|
+| Default | [description] | |
+| Empty | [description — include CTA] | |
+| Loading | [skeleton / spinner / optimistic] | |
+| Error | [human-readable message + recovery] | |
+| Success | [confirmation — how, how long, where] | |
+| Edge cases | [long text, max items, no permissions] | |
+
+**Key interactions:**
+- [User action] → [System response]
+- [User action] → [System response]
+
+**Microcopy:**
+- CTA: "[exact label]"
+- Empty state: "[exact message]"
+- Error: "[exact message]"
+- [Other copy that matters]
+
+**Component mapping:**
+- [UI element] → [component] ([variant])
+
+---
+
+## Phase 4 — Implementation Log
+> Maintained by: Claude Code | Append-only — never edit existing entries
+
+### [YYYY-MM-DD] Feature scaffolded
+**Decision:** Created feature doc
+**Phase:** Pre-discovery
+**Next:** Populate Phases 1–3 before implementing
+
+---
+
+## Phase 5 — Debug & Finetune
+> Maintained by: Antigravity QA + Claude Code | Append-only
+
+<!-- QA findings and debug entries appended here -->
+<!-- Format:
+### [YYYY-MM-DD] [Issue or polish item]
+**Found by:** [Review / Antigravity QA / user feedback]
+**Fix:** [What was done]
+**Files changed:** [list]
+**Status:** [resolved / in progress / deferred]
+-->

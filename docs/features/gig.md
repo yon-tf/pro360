@@ -1,4 +1,7 @@
 # Feature: Gig
+> Tier: 2 | Created: 2026-03-20 | Status: implementation
+
+---
 
 ## Phase 1 — Discovery
 
@@ -20,8 +23,14 @@
   - Screen: Gig List
   - Purpose: Browse gigs and applicants.
 
+### Scope — What This Is Not
+<!-- Add explicit exclusions when scope is defined -->
+
 ### Risks & open questions
 - Define edit permissions and status transitions.
+
+### Success Criteria
+<!-- Add observable, verifiable criteria when feature is scoped -->
 
 ---
 
@@ -44,6 +53,9 @@
 - Reusable components: Card, Button, Input
 - New components: StatusPill (optional)
 
+### Cross-Feature Dependencies
+<!-- Reference docs/modules/DEPENDENCY_MAP.md -->
+
 ---
 
 ## Phase 3 — Interface plan
@@ -62,14 +74,21 @@
 
 ---
 
-## Phase 4 — Implementation log
+## Phase 4 — Implementation Log
+> Maintained by: Claude Code | Append-only — never edit existing entries
 
-### Summary
-- 
+<!-- No entries yet. First entry added when implementation begins. -->
 
-### Files changed
-- 
+---
 
-### Follow‑ups
-- 
+## Phase 5 — Debug & Finetune
+> Maintained by: Antigravity QA + Claude Code | Append-only
 
+<!-- QA findings and debug entries appended here -->
+<!-- Format:
+### [YYYY-MM-DD] [Issue or polish item]
+**Found by:** [Review / Antigravity QA / user feedback]
+**Fix:** [What was done]
+**Files changed:** [list]
+**Status:** [resolved / in progress / deferred]
+-->

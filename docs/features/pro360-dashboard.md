@@ -1,4 +1,7 @@
 # Feature: Pro360 Dashboard
+> Tier: 2 | Created: 2026-03-20 | Status: implementation
+
+---
 
 ## Phase 1 — Discovery
 
@@ -21,9 +24,15 @@
   - Screen: Pro360 Overview
   - Purpose: High‑level operational health and attention signals.
 
+### Scope — What This Is Not
+<!-- Add explicit exclusions when scope is defined -->
+
 ### Risks & open questions
 - Confirm KPI definitions (SLA, chat hours, response time).
 - Confirm which filters are global vs. per‑section.
+
+### Success Criteria
+<!-- Add observable, verifiable criteria when feature is scoped -->
 
 ---
 
@@ -55,6 +64,12 @@
 - Reusable components: KpiCard, DonutKpiCard, GaugeKpiCard, ChatResponseHealthCard
 - New components: TrendBadge, AttentionRow, SeverityBadge (optional)
 
+### Cross-Feature Dependencies
+- Rule Engine: quality flags and rule hit signals surface on the dashboard
+- Appointments: appointment data feeds KPI row and attention rows
+- Chat: chat metrics feed the response health card
+- Reference: docs/modules/DEPENDENCY_MAP.md
+
 ---
 
 ## Phase 3 — Interface plan
@@ -75,16 +90,24 @@
 
 ---
 
-## Phase 4 — Implementation log
+## Phase 4 — Implementation Log
+> Maintained by: Claude Code | Append-only — never edit existing entries
 
-### Summary
-- Enabled Tailwind scanning for `features/` so Pro360 dashboard card styles render, and refined KPI chart sizing.
+### 2026-03-20 KPI chart refinements
+**Decision:** Enabled Tailwind scanning for `features/` so Pro360 dashboard card styles render, and refined KPI chart sizing.
+**Files changed:** `features/pro360/components/ChatResponseHealthCard.tsx`, `features/pro360/components/GaugeKpiCard.tsx`, `features/pro360/components/DonutKpiCard.tsx`, `tailwind.config.ts`
+**Next:** Wire rule-engine aligned quality signals and filters.
 
-### Files changed
-- `features/pro360/components/ChatResponseHealthCard.tsx`
-- `features/pro360/components/GaugeKpiCard.tsx`
-- `features/pro360/components/DonutKpiCard.tsx`
-- `tailwind.config.ts`
+---
 
-### Follow‑ups
-- 
+## Phase 5 — Debug & Finetune
+> Maintained by: Antigravity QA + Claude Code | Append-only
+
+<!-- QA findings and debug entries appended here -->
+<!-- Format:
+### [YYYY-MM-DD] [Issue or polish item]
+**Found by:** [Review / Antigravity QA / user feedback]
+**Fix:** [What was done]
+**Files changed:** [list]
+**Status:** [resolved / in progress / deferred]
+-->
