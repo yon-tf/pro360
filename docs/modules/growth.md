@@ -41,4 +41,4 @@ flowchart TD
 
 ## Dependencies
 
-- Professional development context: [Professionals](/docs/professionals)
+- Professional development context: [Professionals](professionals.md)

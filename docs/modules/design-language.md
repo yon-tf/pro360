@@ -164,6 +164,5 @@ flowchart LR
 
 ## Dependencies
 
-- Product context: [Overview](/docs/overview)
-- UI usage examples: [Professionals](/docs/professionals), [Payout](/docs/payout), [Growth](/docs/growth), [Gig](/docs/gig)
-
+- Product context: `docs/PRO360_PRD.md`
+- UI usage examples: [Professionals](professionals.md), [Payout](payout.md), [Growth](growth.md), [Gig](gig.md)

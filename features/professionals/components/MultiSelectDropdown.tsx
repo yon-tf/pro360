@@ -34,8 +34,7 @@ export function MultiSelectDropdown({
     () =>
       options.filter(
         (opt) =>
-          !selected.includes(opt) &&
-          opt.toLowerCase().includes(search.toLowerCase())
+          !selected.includes(opt) && opt.toLowerCase().includes(search.toLowerCase())
       ),
     [options, search, selected]
   );

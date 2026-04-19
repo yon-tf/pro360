@@ -49,7 +49,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { parsePhoneNumber } from "react-phone-number-input";
-import { MultiSelectDropdown } from "@/components/MultiSelectDropdown";
+import { MultiSelectDropdown } from "@/features/professionals/components/MultiSelectDropdown";
 import { CredentialsTab } from "./[id]/CredentialsTab";
 import { systemToast } from "@/lib/systemToast";
 import { relinkStoredCredentialProfessionalId } from "@/features/professionals/mock/credentialRecordStore";

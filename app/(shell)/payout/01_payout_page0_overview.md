@@ -43,6 +43,6 @@ Instead, the system transitions to a required intermediate loading state.
 
 Flow:
 
-Page 0 → Generate loading state → Review payout table
+Page 0 → Generate loading state → Review TFP table
 
 The Generate payout button should enter a loading / disabled state immediately after click to prevent duplicate actions.

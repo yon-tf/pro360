@@ -71,7 +71,7 @@ This is NOT the data model — it's how the user perceives the system.]
 
 ### Cross-Feature Dependencies
 [Which modules does this interact with?
-Reference docs/modules/DEPENDENCY_MAP.md]
+Reference `docs/modules/DEPENDENCY_MAP.md`]
 
 ---
 
@@ -120,7 +120,7 @@ Reference docs/modules/DEPENDENCY_MAP.md]
 ### [YYYY-MM-DD] Feature scaffolded
 **Decision:** Created feature doc
 **Phase:** Pre-discovery
-**Next:** Populate Phases 1–3 before implementing
+**Next:** Populate Phases 1–3 before any Phase 4 work
 
 ---
 

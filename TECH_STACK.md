@@ -156,7 +156,7 @@ design-system/
 ## What We Deliberately Did Not Choose
 
 **Prisma / Drizzle ORM:** Backend developer's choice. The frontend does not
-own the data layer for work projects. API contracts are TBD (no API contracts doc in this repo).
+own the data layer for work projects. API contracts are tracked outside this repo.
 
 **Redux / MobX:** Overengineered for this scale. Zustand if we need global
 state, React Query for server state.

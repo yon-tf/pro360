@@ -1,4 +1,4 @@
-# Step 2 — Exceptions & Reconciliation
+# Step 3 — Exceptions & Reconciliation
 
 This screen helps Clinical Ops investigate and resolve payout anomalies before approval.
 

@@ -79,7 +79,7 @@ import { useBreadcrumb } from "@/components/BreadcrumbContext";
 import { measureInDev } from "@/lib/devPerf";
 
 const SpiderChart = dynamic(
-  () => import("@/components/SpiderChart").then((m) => m.SpiderChart),
+  () => import("@/features/pro360/components/SpiderChart").then((m) => m.SpiderChart),
   { ssr: false }
 );
 

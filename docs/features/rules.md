@@ -123,7 +123,7 @@
 ### 2026-03-20 Dashboard + canvas workflow
 **Decision:** Replaced the legacy form-and-table page with a dashboard + separate-route canvas workflow. Added structured mock rule definitions and canvas-ready state handling. Added dedicated create and edit routes for the rule builder.
 **Files changed:** `features/rules/mock/rules.ts`, `features/rules/api/index.ts`, `features/rules/components/RuleBuilder.tsx`, `app/(shell)/rules/page.tsx`, `app/(shell)/rules/new/page.tsx`, `app/(shell)/rules/[ruleId]/page.tsx`, `docs/modules/rule-engine.md`, `docs/features/rules.md`
-**Next:** Add persistent save/update behavior when backend contracts are ready. Add real team ownership filtering and persisted action ordering. Add future AND/OR group authoring when logic nesting is scoped.
+**Next:** Document the persisted save/update contract, team ownership filtering rules, and future AND/OR grouping expectations for later alignment.
 
 ---
 

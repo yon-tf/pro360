@@ -17,9 +17,7 @@ export function PageHeader({
         <Breadcrumbs items={items} />
         {cta != null && <div className="shrink-0">{cta}</div>}
       </div>
-      {subtitle && (
-        <p className="text-sm text-muted-foreground">{subtitle}</p>
-      )}
+      {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
     </div>
   );
 }

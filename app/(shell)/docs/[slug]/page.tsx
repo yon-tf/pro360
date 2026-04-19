@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { MarkdownContent } from "@/components/MarkdownContent";
+import { MarkdownContent } from "@/features/docs/components/MarkdownContent";
 import {
   ColorPalettePreview,
   IconographyPreview,

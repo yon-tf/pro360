@@ -6,7 +6,7 @@ The Payout module enables Clinical Ops to review, fix, and approve professional 
 
 It is designed around a finance-safe workflow:
 
-**Page 0 → Generate → Review → Fix → Approve**
+**Page 0 → Generate → Review TFP → Review Hotline → Fix → Approve**
 
 The module must make payout calculations:
 
@@ -94,9 +94,16 @@ Purpose:
 Spec file:
 - `02_generate_loading.md`
 
-### Step 1 — Review Payout Table
+### Step 1 — Review TFP Sheet
 Purpose:
 - let Clinical Ops validate payout summary by professional
+
+Spec file:
+- `03_review_table.md`
+
+### Step 2 — Review Hotline Ops Sheet
+Purpose:
+- validate hotline shifts and operational records
 
 Spec file:
 - `03_review_table.md`
@@ -116,14 +123,14 @@ Purpose:
 Spec file:
 - `05_activity_drawer.md`
 
-### Step 2 — Fix Issues
+### Step 3 — Fix Issues
 Purpose:
 - help Clinical Ops identify and resolve payout problems
 
 Spec file:
 - `06_fix_issues.md`
 
-### Step 3 — Approve Payout
+### Step 4 — Approve Payout
 Purpose:
 - confirm final payout state
 - approve, export, or trigger payment
@@ -136,7 +143,7 @@ Spec file:
 ## Interaction Hierarchy
 
 ### Primary flow
-Page 0 → Generate payout → Loading state → Review table → Exceptions → Approve
+Page 0 → Generate payout → Loading state → Review TFP table → Review Hotline Ops sheet → Exceptions → Approve
 The loading state is a required transition between Page 0 and Review.
 The Review screen must not appear immediately after clicking Generate payout.
 
@@ -234,11 +241,12 @@ Build the module in this order:
 
 1. Page 0 — Payout Overview
 2. Generate — Loading State
-3. Review Table
-4. Drawer — Receipt
-5. Activity Audit Modal
-6. Fix Issues State
-7. Approve Payout Section
+3. Review TFP Table
+4. Review Hotline Ops Sheet
+5. Drawer — Receipt
+6. Activity Audit Modal
+7. Fix Issues State
+8. Approve Payout Section
 
 This order follows dependency and visual importance.
 
@@ -250,7 +258,7 @@ This order follows dependency and visual importance.
 - planning implementation
 - checking consistency
 - understanding module flow
-- sequencing build work
+- sequencing phases
 
 ### Use individual spec files when:
 - implementing a specific screen
@@ -273,9 +281,9 @@ Always tell Cursor:
 
 Use ONLY:
 
-- `@docs/payout/payout-module-master-spec.md`
-- `@docs/design-system/design-language.md`
-- `@docs/design-system/ui-components.md`
+- `app/(shell)/payout/payout-module-master-spec.md`
+- `design-system/DESIGN.md`
+- `design-system/component-contracts.md`
 
 Task:
 Plan the payout module implementation in buildable phases.
@@ -287,8 +295,8 @@ Do not search the rest of the repo.
 Use ONLY:
 
 - the relevant payout step file
-- `@docs/design-system/design-language.md`
-- `@docs/design-system/ui-components.md`
+- `design-system/DESIGN.md`
+- `design-system/component-contracts.md`
 
 Task:
 Implement this screen using the existing design system and component patterns.

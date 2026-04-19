@@ -118,4 +118,4 @@ flowchart TD
 
 ## Dependencies
 
-- Rule-driven exception behavior: [Rule Engine](/docs/rule-engine)
+- Rule-driven exception behavior: [Rule Engine](rule-engine.md)

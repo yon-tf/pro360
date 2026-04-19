@@ -1,4 +1,4 @@
-# Step 3 --- Approve Payout
+# Step 4 --- Approve Payout
 
 Payout Period: Mar 1 -- Mar 31
 

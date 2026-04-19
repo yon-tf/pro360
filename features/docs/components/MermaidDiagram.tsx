@@ -18,10 +18,7 @@ function ensureMermaidInitialized() {
 export function MermaidDiagram({ chart }: { chart: string }) {
   const [svg, setSvg] = useState("");
   const [hasError, setHasError] = useState(false);
-  const id = useMemo(
-    () => `mermaid-${Math.random().toString(36).slice(2, 10)}`,
-    []
-  );
+  const id = useMemo(() => `mermaid-${Math.random().toString(36).slice(2, 10)}`, []);
 
   useEffect(() => {
     let mounted = true;
@@ -61,4 +58,3 @@ export function MermaidDiagram({ chart }: { chart: string }) {
     />
   );
 }
-

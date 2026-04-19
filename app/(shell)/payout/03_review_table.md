@@ -1,26 +1,33 @@
-# Review Step — Layout
+# Review Steps 1 and 2 — TFP and Hotline Review Layout
 
-The Review screen contains three primary sections:
+This doc covers the first two working steps of the payout review experience:
 
-1. Workflow Stepper
-2. Run Summary Card
-3. Review Table
+1. Review TFP
+2. Review Hotline
+
+The full workflow still has four primary steps:
+
+1. Review TFP
+2. Review Hotline
+3. Exceptions
+4. Approve
 
 ---
 
 ## Workflow Stepper
 
-The payout workflow uses a three-step progress indicator.
+The payout workflow uses a four-step progress indicator.
 
 Steps:
 
-1. Review
-2. Exceptions
-3. Approve
+1. Review TFP
+2. Review Hotline
+3. Exceptions
+4. Approve
 
 Example:
 
-● Review      ○ Exceptions      ○ Approve
+● Review TFP      ○ Review Hotline      ○ Exceptions      ○ Approve
 
 Step states:
 
@@ -35,17 +42,21 @@ Upcoming
 
 Examples:
 
-Review step:
+Review TFP step:
 
-● Review      ○ Exceptions      ○ Approve
+● Review TFP      ○ Review Hotline      ○ Exceptions      ○ Approve
+
+Review Hotline step:
+
+✔ Review TFP      ● Review Hotline      ○ Exceptions      ○ Approve
 
 Exceptions step:
 
-✔ Review      ● Exceptions      ○ Approve
+✔ Review TFP      ✔ Review Hotline      ● Exceptions      ○ Approve
 
 Approve step:
 
-✔ Review      ✔ Exceptions      ● Approve
+✔ Review TFP      ✔ Review Hotline      ✔ Exceptions      ● Approve
 
 ---
 
@@ -55,11 +66,14 @@ The primary step action appears aligned to the right of the stepper.
 
 Examples:
 
-Review step
+Review TFP step
+Continue to Hotline →
+
+Review Hotline step
 Continue to Exceptions →
 
 Exceptions step
-Continue to Approval →
+Continue to Approve →
 
 Approve step
 Approve payout →

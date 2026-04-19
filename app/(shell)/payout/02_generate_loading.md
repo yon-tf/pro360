@@ -17,7 +17,7 @@ Users should never jump directly from Page 0 to Review without seeing this inter
 
 ## Flow
 
-Page 0 → Generate loading state → Review payout table
+Page 0 → Generate loading state → Review TFP table
 
 ---
 
@@ -53,7 +53,7 @@ The processing UI should reassure the user that payout generation is in progress
 When processing completes successfully:
 
 - the loading state exits automatically
-- the user is taken to the Review screen
+- the user is taken to the Review TFP screen
 - the payout run is now in Draft state
 
 ---

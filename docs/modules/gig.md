@@ -51,4 +51,4 @@ flowchart TD
 
 ## Dependencies
 
-- Professional assignment context: [Professionals](/docs/professionals)
+- Professional assignment context: [Professionals](professionals.md)

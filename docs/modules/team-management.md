@@ -112,4 +112,4 @@ flowchart TD
 
 ## Dependencies
 
-- Professional records and context links: [Professionals](/docs/professionals)
+- Professional records and context links: [Professionals](professionals.md)

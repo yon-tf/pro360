@@ -101,5 +101,5 @@ flowchart TD
 
 ## Dependencies
 
-- Source context from performance views: [Professionals](/docs/professionals)
-- Rule-linked operational handling: [Rule Engine](/docs/rule-engine)
+- Source context from performance views: [Professionals](professionals.md)
+- Rule-linked operational handling: [Rule Engine](rule-engine.md)

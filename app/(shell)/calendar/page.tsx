@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@/features/calendar/components/PageHeader";
 
 const HOURS = Array.from({ length: 11 }, (_, i) => i + 8);
 

@@ -86,9 +86,8 @@ Open [http://localhost:3000](http://localhost:3000). The app redirects to `/prof
 
 ## Documentation
 
-The **Pro360 Pitch Plan** (journey, stacks, UI patterns, page specs, design direction) is available in the app:
-
-- **In app**: Sidebar → **Documentation** (or go to [/docs](/docs)). Rendered from `docs/PRO360_PITCH_PLAN.md`.
+- **In app**: Sidebar → **Documentation** (or go to [/docs](/docs)).
+- **Repo docs**: Start with `docs/PRO360_PRD.md` for product context, then use `docs/features/README.md` for the phased feature-doc flow.
 - **PR checklist**: See `docs/PR_CHECKLIST.md` before opening a PR.
 
 ---

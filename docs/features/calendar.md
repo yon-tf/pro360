@@ -54,7 +54,7 @@
 - New components: TimelineHourSlot (optional)
 
 ### Cross-Feature Dependencies
-<!-- Reference docs/modules/DEPENDENCY_MAP.md -->
+See `docs/modules/DEPENDENCY_MAP.md`.
 
 ---
 
@@ -77,7 +77,7 @@
 ## Phase 4 — Implementation Log
 > Maintained by: Claude Code | Append-only — never edit existing entries
 
-<!-- No entries yet. First entry added when implementation begins. -->
+<!-- No entries yet. First entry added when Phase 4 starts. -->
 
 ---
 

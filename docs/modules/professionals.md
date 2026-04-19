@@ -178,7 +178,7 @@ flowchart TD
 
 ## Dependencies
 
-- Team assignment context: [Team Management](/docs/team-management)
-- Thread-level interactions: [Chat](/docs/chat)
-- Opportunity context: [Gig](/docs/gig)
-- Schedule context: [Appointments](/docs/appointments)
+- Team assignment context: [Team Management](team-management.md)
+- Thread-level interactions: [Chat](chat.md)
+- Opportunity context: [Gig](gig.md)
+- Schedule context: [Appointments](appointments.md)

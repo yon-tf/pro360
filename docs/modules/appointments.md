@@ -57,5 +57,5 @@ flowchart TD
 
 ## Dependencies
 
-- Professional context: [Professionals](/docs/professionals)
-- Pod/session context: [Team Management](/docs/team-management)
+- Professional context: [Professionals](professionals.md)
+- Pod/session context: [Team Management](team-management.md)

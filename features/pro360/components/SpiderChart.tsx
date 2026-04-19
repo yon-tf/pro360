@@ -93,12 +93,7 @@ export function SpiderChart({
     .join(" ");
 
   return (
-    <svg
-      viewBox={`0 0 ${totalSize} ${totalSize}`}
-      className={className}
-      aria-hidden
-    >
-      {/* Grid rings (webs): white, transparent */}
+    <svg viewBox={`0 0 ${totalSize} ${totalSize}`} className={className} aria-hidden>
       {rings.map((r) => {
         const radius = maxRadius * r;
         const ringPoints = angles
@@ -116,7 +111,6 @@ export function SpiderChart({
           />
         );
       })}
-      {/* Axes (webs) */}
       {angles.map((a, i) => {
         const [x, y] = polarToCartesian(cx, cy, maxRadius, a);
         return (
@@ -132,7 +126,6 @@ export function SpiderChart({
           />
         );
       })}
-      {/* Data polygon */}
       <polygon
         points={points}
         fill={FILL_COLOR}
@@ -140,7 +133,6 @@ export function SpiderChart({
         strokeWidth="1.5"
         strokeLinejoin="round"
       />
-      {/* Axis labels with tooltip and optional improvement alert */}
       {data.map((d, i) => {
         const [x, y] = polarToCartesian(cx, cy, maxRadius * 1.05, angles[i]);
         const anchor = x < cx - 2 ? "end" : x > cx + 2 ? "start" : "middle";
@@ -149,7 +141,8 @@ export function SpiderChart({
           ? `${d.label} (${d.value}/${d.max ?? maxVal}): ${d.description}`
           : `${d.label}: ${d.value} / ${d.max ?? maxVal}`;
         const iconOffset = 10;
-        const iconX = anchor === "end" ? x + iconOffset : anchor === "start" ? x - iconOffset : x + iconOffset;
+        const iconX =
+          anchor === "end" ? x + iconOffset : anchor === "start" ? x - iconOffset : x + iconOffset;
         return (
           <g key={i}>
             <title>{tooltipText}</title>
@@ -162,9 +155,7 @@ export function SpiderChart({
             >
               {d.label}
             </text>
-            {needsImprovement && (
-              <WarningIconSvg x={iconX} y={y} />
-            )}
+            {needsImprovement && <WarningIconSvg x={iconX} y={y} />}
           </g>
         );
       })}

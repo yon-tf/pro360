@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { MermaidDiagram } from "@/components/MermaidDiagram";
+import { MermaidDiagram } from "./MermaidDiagram";
 
 const docStyles = `
   .doc-content h1 { font-size: clamp(2rem, 3vw, 2.5rem); line-height: 1.15; font-weight: 650; margin-top: 0; margin-bottom: 1rem; letter-spacing: -0.02em; }
@@ -65,8 +65,7 @@ function wrapFlowAccordions(md: string): string {
   if (afterH2 === -1) return md;
 
   const nextH2 = md.indexOf("\n## ", afterH2 + 1);
-  const flowBlock =
-    nextH2 === -1 ? md.slice(afterH2 + 1) : md.slice(afterH2 + 1, nextH2);
+  const flowBlock = nextH2 === -1 ? md.slice(afterH2 + 1) : md.slice(afterH2 + 1, nextH2);
   const rest = nextH2 === -1 ? "" : md.slice(nextH2);
 
   const lines = flowBlock.split("\n");
@@ -97,14 +96,14 @@ function wrapFlowAccordions(md: string): string {
       closeJourney();
       const title = journeyMatch[1];
       out.push(
-        `<details class="doc-journey"><summary>${title}</summary><div class="doc-journey-body">`,
+        `<details class="doc-journey"><summary>${title}</summary><div class="doc-journey-body">`
       );
       inJourney = true;
     } else if (scenarioMatch && inJourney) {
       closeScenario();
       const title = scenarioMatch[1];
       out.push(
-        `<details class="doc-scenario"><summary>${title}</summary><div class="doc-scenario-body">`,
+        `<details class="doc-scenario"><summary>${title}</summary><div class="doc-scenario-body">`
       );
       inScenario = true;
     } else {
@@ -155,11 +154,7 @@ export function MarkdownContent({ content }: { content: string }) {
     <>
       <style dangerouslySetInnerHTML={{ __html: docStyles }} />
       <div className="doc-content text-foreground">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw]}
-          components={components}
-        >
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>
           {processed}
         </ReactMarkdown>
       </div>

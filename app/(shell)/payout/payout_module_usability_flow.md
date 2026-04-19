@@ -58,6 +58,10 @@ Payout Draft\
 ↓\
 Clinical Ops Review\
 ↓\
+Review TFP\
+↓\
+Review Hotline\
+↓\
 Exception Resolution\
 ↓\
 Approval\
@@ -123,8 +127,8 @@ Wizard opens.
 
 Steps:
 
-1.  Detect activity
-2.  Draft payout
+1.  Review TFP
+2.  Review Hotline
 3.  Review exceptions
 4.  Approve
 
@@ -140,9 +144,9 @@ Questions:
 
 ------------------------------------------------------------------------
 
-# Step 4 --- Activity Detection
+# Step 3 --- Review TFP Table
 
-System scans modules.
+System prepares the TFP review table.
 
 Sources:
 
@@ -153,7 +157,7 @@ Hotline shifts\
 Claims\
 Incentives
 
-Example detection output:
+Example review output:
 
 Sessions: 1200\
 Chat hours: 620\
@@ -164,7 +168,7 @@ Professionals affected: 112
 
 CTA:
 
-Generate payout draft
+Continue to Hotline
 
 ------------------------------------------------------------------------
 
@@ -182,17 +186,17 @@ Activity source breakdown.
 
 ------------------------------------------------------------------------
 
-# Step 5 --- Draft Payout Table
+# Step 4 --- Review Hotline Ops Sheet
 
-System generates payout table.
+System shows hotline operational records.
 
 Example:
 
-Professional \| Sessions \| Chat \| Gigs \| Claims \| Bonus \| Total Dr
-Ben \| 30 \| 20 \| 2 \| \$40 \| \$100 \| \$3240 Dr Mei \| 22 \| 15 \| 1
-\| 0 \| 0 \| \$2200
+Hotline shift \| Calls \| Duration \| Fee \| Status
+Dr Ben \| 30 \| 20 \| \$40 \| Review required
+Dr Mei \| 22 \| 15 \| \$0 \| Ready
 
-Row expansion shows calculation logic.
+Row expansion shows shift-level validation and fee logic.
 
 ------------------------------------------------------------------------
 
@@ -210,7 +214,7 @@ Clinical Ops may still export to spreadsheets to verify.
 
 ------------------------------------------------------------------------
 
-# Step 6 --- Manual Adjustments
+# Step 5 --- Manual Adjustments
 
 Editable:
 
@@ -243,7 +247,7 @@ Adjustment history panel.
 
 ------------------------------------------------------------------------
 
-# Step 7 --- Exception Review
+# Step 6 --- Exception Review
 
 System flags anomalies.
 
@@ -277,7 +281,7 @@ Potential issues:
 
 ------------------------------------------------------------------------
 
-# Step 8 --- Approval
+# Step 7 --- Approval
 
 Final summary:
 
@@ -306,7 +310,7 @@ Missing information:
 
 ------------------------------------------------------------------------
 
-# Step 9 --- Payment Execution
+# Step 8 --- Payment Execution
 
 System sends payout data to payment processor.
 
