@@ -61,10 +61,27 @@ Sources inspected:
 ## color.status.*
 - `color.status.danger` -> `hsl(var(--destructive))` -> `bg-destructive`, `text-destructive-foreground`
   - Files: `tailwind.config.ts`, `app/globals.css`, `components/ui/button.tsx`, `components/ui/badge.tsx`
-- `color.status.success` -> `hsl(var(--success))` (raw CSS var) and `bg-emerald-500/15`, `text-emerald-700`
+- `color.status.success` -> `hsl(var(--success))` -> `bg-[hsl(var(--success)/0.15)]`, `text-[hsl(var(--success))]`
   - Files: `tailwind.config.ts`, `app/globals.css`, `components/ui/badge.tsx`
-- `color.status.warning` -> `hsl(var(--warning))` (raw CSS var) and `bg-amber-500/15`, `text-amber-700`
+- `color.status.warning` -> `hsl(var(--warning))` -> `bg-[hsl(var(--warning)/0.15)]`, `text-[hsl(var(--warning))]`
   - Files: `tailwind.config.ts`, `app/globals.css`, `components/ui/badge.tsx`
+
+## PRO360 dashboard semantic palette
+
+- Local helper: `PRO360_DASHBOARD_COLORS`
+  - File: `app/(shell)/pro360/page.tsx`
+  - Intent: centralize repeated dashboard chart/status meaning without widening shared chart API
+- Mapping
+  - `chatTotal` -> `var(--brand-hex)`
+  - `chatTfp` -> `hsl(var(--chart-2))`
+  - `chatClient` -> `hsl(var(--chart-1))`
+  - `therapyTotal` / `therapyVideo` -> `hsl(var(--chart-3))`
+  - `therapyFaceToFace` -> `hsl(var(--primary))`
+  - `attended` -> `var(--brand-hex)`
+  - `cancelled` -> `hsl(var(--warning))`
+  - `noShow` -> `hsl(var(--muted-foreground))`
+  - `caseNoteSubmitted` -> `hsl(var(--primary))`
+  - `caseNoteMissing` -> `hsl(var(--destructive))`
 
 ## space.* (4px grid)
 - `space.0` -> `0px` -> `pt-0`

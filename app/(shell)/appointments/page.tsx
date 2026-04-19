@@ -146,7 +146,7 @@ function AttendanceCell({ appointment: a }: { appointment: Appointment }) {
       <Badge variant={variant} className={cn(variant === "secondary" && "bg-muted text-muted-foreground hover:bg-muted")}>
         {att.label}
       </Badge>
-      {att.full && <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-emerald-600 border-emerald-200">Full</Badge>}
+      {att.full && <Badge variant="success" className="text-[10px] px-1.5 py-0">Full</Badge>}
     </div>
   );
 
@@ -213,10 +213,12 @@ function PillarsCell({ pillars }: { pillars?: WellbeingPillar[] }) {
 
 function StatusBadge({ status }: { status?: ActivationStatus }) {
   if (!status) return <span className="text-muted-foreground">—</span>;
-  const color = status === "attended" ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-    : status === "in_progress" ? "bg-amber-50 text-amber-700 border-amber-200"
-    : "bg-blue-50 text-blue-700 border-blue-200";
-  return <Badge variant="outline" className={cn("text-xs font-normal", color)}>{ACTIVATION_STATUS_LABELS[status]}</Badge>;
+  const variant = status === "attended"
+    ? "success"
+    : status === "in_progress"
+      ? "warning"
+      : "outline";
+  return <Badge variant={variant} className="text-xs font-normal">{ACTIVATION_STATUS_LABELS[status]}</Badge>;
 }
 
 // ---------------------------------------------------------------------------

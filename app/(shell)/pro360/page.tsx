@@ -254,24 +254,42 @@ const slaResponseChartConfig: ChartConfig = {
   avgResponseTimeHrs: { label: "Avg Response hrs (left axis)", color: "hsl(var(--chart-2))" },
 };
 
+// Page-local semantic palette for repeated dashboard chart/status meaning.
+const PRO360_DASHBOARD_COLORS = {
+  chatTotal: "var(--brand-hex)",
+  chatTfp: "hsl(var(--chart-2))",
+  chatClient: "hsl(var(--chart-1))",
+  therapyTotal: "hsl(var(--chart-3))",
+  therapyVideo: "hsl(var(--chart-3))",
+  therapyFaceToFace: "hsl(var(--primary))",
+  attended: "var(--brand-hex)",
+  cancelled: "hsl(var(--warning))",
+  noShow: "hsl(var(--muted-foreground))",
+  caseNoteSubmitted: "hsl(var(--primary))",
+  caseNoteMissing: "hsl(var(--destructive))",
+  corePayout: "var(--brand-hex)",
+  activationPayout: "hsl(var(--chart-2))",
+  incentivePayout: "hsl(var(--chart-3))",
+} as const;
+
 const chatHoursChartConfig: ChartConfig = {
-  totalChatHours: { label: "Total Chat Hours", color: "var(--brand-hex)" },
-  tfpChatHours: { label: "TFP Chat Hours", color: "#2B6963" },
-  clientChatHours: { label: "Client Chat Hours", color: "#03BFA2" },
+  totalChatHours: { label: "Total Chat Hours", color: PRO360_DASHBOARD_COLORS.chatTotal },
+  tfpChatHours: { label: "TFP Chat Hours", color: PRO360_DASHBOARD_COLORS.chatTfp },
+  clientChatHours: { label: "Client Chat Hours", color: PRO360_DASHBOARD_COLORS.chatClient },
 };
 
 const therapyHoursChartConfig: ChartConfig = {
-  totalTherapyHours: { label: "Total Therapy Hours", color: "#172A66" },
-  therapyVideoHours: { label: "Video Call", color: "#172A66" },
-  therapyF2FHours: { label: "Face to Face", color: "#004FB6" },
+  totalTherapyHours: { label: "Total Therapy Hours", color: PRO360_DASHBOARD_COLORS.therapyTotal },
+  therapyVideoHours: { label: "Video Call", color: PRO360_DASHBOARD_COLORS.therapyVideo },
+  therapyF2FHours: { label: "Face to Face", color: PRO360_DASHBOARD_COLORS.therapyFaceToFace },
 };
 
 const combinedApptConfig: ChartConfig = {
-  attended: { label: "Attended", color: "var(--brand-hex)" },
-  cancelled: { label: "Cancelled", color: "hsl(38, 92%, 50%)" },
-  noShow: { label: "No-show", color: "hsl(220, 9%, 46%)" },
-  caseNoteSubmitted: { label: "Case Notes Submitted", color: "hsl(var(--primary))" },
-  caseNoteNotSubmitted: { label: "Case Notes Missing", color: "hsl(var(--destructive))" },
+  attended: { label: "Attended", color: PRO360_DASHBOARD_COLORS.attended },
+  cancelled: { label: "Cancelled", color: PRO360_DASHBOARD_COLORS.cancelled },
+  noShow: { label: "No-show", color: PRO360_DASHBOARD_COLORS.noShow },
+  caseNoteSubmitted: { label: "Case Notes Submitted", color: PRO360_DASHBOARD_COLORS.caseNoteSubmitted },
+  caseNoteNotSubmitted: { label: "Case Notes Missing", color: PRO360_DASHBOARD_COLORS.caseNoteMissing },
 };
 
 // Fraud-detection threshold — aggregate attended volume that warrants clinical review
@@ -289,9 +307,9 @@ const activationChartConfig: ChartConfig = {
 };
 
 const payoutChartConfig: ChartConfig = {
-  corePayout: { label: "Core Payout", color: "var(--brand-hex)" },
-  activationPayout: { label: "Activation Payout", color: "hsl(var(--chart-2))" },
-  incentivePayout: { label: "Incentive Payout", color: "hsl(var(--chart-3))" },
+  corePayout: { label: "Core Payout", color: PRO360_DASHBOARD_COLORS.corePayout },
+  activationPayout: { label: "Activation Payout", color: PRO360_DASHBOARD_COLORS.activationPayout },
+  incentivePayout: { label: "Incentive Payout", color: PRO360_DASHBOARD_COLORS.incentivePayout },
 };
 
 // ---------------------------------------------------------------------------
@@ -358,14 +376,14 @@ function AppointmentChartLegend() {
     <div className="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground px-2">
       <div className="flex items-center gap-3">
         <span className="text-[9px] font-semibold uppercase tracking-wide text-foreground/50">Appointments</span>
-        <LegendDot color="var(--brand-hex)" label="Attended" />
-        <LegendDot color="hsl(38,92%,50%)" label="Cancelled" />
-        <LegendDot color="hsl(220,9%,46%)" label="No-show" />
+        <LegendDot color={PRO360_DASHBOARD_COLORS.attended} label="Attended" />
+        <LegendDot color={PRO360_DASHBOARD_COLORS.cancelled} label="Cancelled" />
+        <LegendDot color={PRO360_DASHBOARD_COLORS.noShow} label="No-show" />
       </div>
       <div className="flex items-center gap-3">
         <span className="text-[9px] font-semibold uppercase tracking-wide text-foreground/50">Case Notes</span>
-        <LegendDot color="hsl(var(--primary))" label="Submitted" />
-        <LegendDot color="hsl(var(--destructive))" label="Missing" />
+        <LegendDot color={PRO360_DASHBOARD_COLORS.caseNoteSubmitted} label="Submitted" />
+        <LegendDot color={PRO360_DASHBOARD_COLORS.caseNoteMissing} label="Missing" />
       </div>
     </div>
   );
@@ -967,16 +985,16 @@ export default function Pro360AggregatePage() {
               {
                 title: "CHAT",
                 segments: [
-                  { label: "TFP", value: kpiChat.tfpChatHours, color: "#2B6963" },
-                  { label: "Client", value: kpiChat.clientChatHours, color: "#03BFA2" },
+                  { label: "TFP", value: kpiChat.tfpChatHours, color: PRO360_DASHBOARD_COLORS.chatTfp },
+                  { label: "Client", value: kpiChat.clientChatHours, color: PRO360_DASHBOARD_COLORS.chatClient },
                 ],
                 centerLabel: "hours",
               },
               {
                 title: "THERAPY",
                 segments: [
-                  { label: "Video Call", value: kpiAppt.therapyVideoHours, color: "#172A66" },
-                  { label: "Face to Face", value: kpiAppt.therapyF2FHours, color: "#004FB6" },
+                  { label: "Video Call", value: kpiAppt.therapyVideoHours, color: PRO360_DASHBOARD_COLORS.therapyVideo },
+                  { label: "Face to Face", value: kpiAppt.therapyF2FHours, color: PRO360_DASHBOARD_COLORS.therapyFaceToFace },
                 ],
                 centerLabel: "hours",
               },

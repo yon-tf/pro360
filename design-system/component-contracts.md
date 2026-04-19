@@ -1,11 +1,17 @@
-# Component Contracts (shadcn-backed)
+# Component Contracts (hybrid model, shadcn-backed)
 
 Confirmed shadcn/ui is present via:
 - `components.json` (`$schema: https://ui.shadcn.com/schema.json`)
 - `components/ui/*` primitive set
 - `lib/utils.ts` `cn()` utility (`clsx` + `tailwind-merge`)
 
-## Contracts
+## Layer Model
+
+- `Primitive`: shared, generic, token-driven building block from `components/ui/*`
+- `Pattern`: reusable composition with domain-light semantics, often feature-owned at first
+- `Feature composition`: page/workflow-specific assembly that should not widen primitive APIs by itself
+
+## Primitive Contracts
 
 ### Button
 - Underlying shadcn component: `Button` (`cva` variants)
@@ -40,6 +46,19 @@ Confirmed shadcn/ui is present via:
 - File: `components/ui/badge.tsx`
 - Contract:
   - variants: `default | secondary | destructive | success | warning | outline`
+  - purpose:
+    - `default`: primary positive/default state that should inherit app primary styling
+    - `secondary`: neutral metadata, categorization, low-emphasis count/state
+    - `destructive`: critical/error/blocking state
+    - `success`: confirmed healthy/completed state
+    - `warning`: at-risk/urgent-but-not-fatal state
+    - `outline`: neutral structured metadata with border emphasis
+  - states: visual-only status pill, not interactive by default
+  - accessibility: badge text must carry meaning without color alone; do not rely on hue without label text
+  - anti-patterns:
+    - no raw emerald/amber overrides for repeated status meaning
+    - no domain-specific props such as `severity`, `payoutStatus`, or `credentialState`
+    - no widening primitive API for one screen
 
 ### Tabs
 - Underlying shadcn component: `Tabs`
@@ -79,3 +98,10 @@ Confirmed shadcn/ui is present via:
 - `Table` -> `components/ui/table.tsx`
 - `Modal/Dialog` -> `components/ui/dialog.tsx`, `components/ui/sheet.tsx`
 - `Alert/Toast` -> `components/ui/system-toaster.tsx`
+
+## Pattern Notes
+
+- `features/attention/components/SeverityBadge.tsx`
+  - layer: pattern
+  - role: maps attention-row severity semantics onto shared `Badge` variants
+  - rule: keep severity interpretation local if it would otherwise pollute primitive API

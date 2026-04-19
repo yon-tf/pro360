@@ -28,10 +28,10 @@ const HISTORY_TABS = [
 ];
 
 function statusBadge(status: string) {
-  if (status === "Paid") return <Badge variant="default" className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/15 border-0">Paid</Badge>;
+  if (status === "Paid") return <Badge variant="success">Paid</Badge>;
   if (status === "Draft") return <Badge variant="secondary">Draft</Badge>;
   if (status === "Blocked") return <Badge variant="destructive">Blocked</Badge>;
-  return <Badge variant="outline" className="border-amber-300 text-amber-800">Not started</Badge>;
+  return <Badge variant="outline">Not started</Badge>;
 }
 
 export default function PayoutPage() {
@@ -285,10 +285,9 @@ export default function PayoutPage() {
                       <TableCell>
                         <Badge
                           variant={
-                            t.status === "Completed" ? "default" :
-                            t.status === "In progress" ? "secondary" : "outline"
+                            t.status === "Completed" ? "success" :
+                            t.status === "In progress" ? "warning" : "outline"
                           }
-                          className={t.status === "In progress" ? "bg-amber-100 text-amber-800 hover:bg-amber-100" : ""}
                         >
                           {t.status}
                         </Badge>

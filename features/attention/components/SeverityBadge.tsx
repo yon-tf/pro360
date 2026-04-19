@@ -26,7 +26,7 @@ export function SeverityBadge({ row }: { row: AttentionRow }) {
   }
   if (row.severity === "high") {
     return (
-      <Badge className="bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800 text-[10px] uppercase tracking-wider shrink-0">
+      <Badge variant="warning" className="text-[10px] uppercase tracking-wider shrink-0">
         {label}
       </Badge>
     );

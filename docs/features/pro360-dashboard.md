@@ -96,7 +96,23 @@
 ### 2026-03-20 KPI chart refinements
 **Decision:** Enabled Tailwind scanning for `features/` so Pro360 dashboard card styles render, and refined KPI chart sizing.
 **Files changed:** `features/pro360/components/ChatResponseHealthCard.tsx`, `features/pro360/components/GaugeKpiCard.tsx`, `features/pro360/components/DonutKpiCard.tsx`, `tailwind.config.ts`
-**Next:** Wire rule-engine aligned quality signals and filters.
+**Next:** Document the rule-signal data contract and dependency expectations for later alignment.
+
+### 2026-04-19 Design-system pass 1: badge semantics and dashboard palette
+**Issue:** Shared `Badge` primitive and PRO360 dashboard had repeated status/color meaning expressed through scattered raw emerald/amber/navy literals and local overrides.
+**Decision:** Kept shared change narrow. Moved `Badge` success/warning variants onto semantic token-backed styles, moved `SeverityBadge` onto shared warning/destructive/secondary variants, and centralized repeated dashboard chart/status colors behind page-local `PRO360_DASHBOARD_COLORS`.
+**Alternatives rejected:** Creating new shared chart API; normalizing PRO360 detail hero card in same pass; widening `Badge` with domain-specific props.
+**Reason:** Shared semantics were stable for badge status meaning, but dashboard chart palette still belongs to feature layer until reuse proves otherwise.
+**Owner:** design-system + PRO360
+**Status:** accepted
+
+### 2026-04-19 Deferred items from design-system pass 1
+**Issue:** Some literal values remain in payout, appointments, detail-page hero styling, and dense dashboard typography.
+**Decision:** Deferred those cases instead of forcing token purity in same pass.
+**Alternatives rejected:** Repo-wide hardcoded cleanup; primitive API growth for single-screen needs.
+**Reason:** These cases are either local exceptions, not yet stable enough for promotion, or would increase regression risk.
+**Owner:** respective feature surfaces
+**Status:** deferred
 
 ---
 
