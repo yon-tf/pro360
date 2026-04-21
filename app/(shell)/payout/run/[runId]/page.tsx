@@ -1615,10 +1615,9 @@ export default function PayoutRunPage() {
                 setHotlineOverrides({});
                 setExceptionOverrides({});
                 setLastSavedAt(null);
-                setRunStatus("Draft");
                 setCurrentStep(1);
-                setShowLoading(true);
-                window.setTimeout(() => setShowLoading(false), 700);
+                detectionStartedRef.current = false;
+                setRunStatus("Not started");
                 setConfirmOpen(false);
               }}
             >
