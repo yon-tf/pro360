@@ -19,7 +19,10 @@ export function SeverityBadge({ row }: { row: AttentionRow }) {
 
   if (row.severity === "critical") {
     return (
-      <Badge variant="destructive" className="text-[10px] uppercase tracking-wider shrink-0">
+      <Badge
+        variant="destructive"
+        className="shrink-0 text-xxxs text-destructive-foreground"
+      >
         {label}
       </Badge>
     );
@@ -32,7 +35,7 @@ export function SeverityBadge({ row }: { row: AttentionRow }) {
     );
   }
   return (
-    <Badge variant="secondary" className="text-[10px] uppercase tracking-wider shrink-0">
+    <Badge variant="secondary" className="shrink-0 text-xxxs">
       {label}
     </Badge>
   );

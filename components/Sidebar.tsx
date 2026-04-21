@@ -59,7 +59,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/chat", label: "Chat", icon: MessageSquare },
       { href: "/rules", label: "Rule Engine", icon: Zap },
       { href: "/lms", label: "Learn", icon: BookOpen },
-      { href: "/professionals", label: "Profile management", icon: Contact },
+      { href: "/professionals", label: "Professionals", icon: Contact },
     ],
   },
 ];
@@ -106,11 +106,11 @@ function SidebarNav({ onNavigate, collapsed = false }: Pick<SidebarProps, "onNav
   const searchParams = useSearchParams();
 
   return (
-    <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto p-2" aria-label="Main">
+    <nav className="no-scrollbar min-h-0 flex-1 space-y-4 overflow-y-auto p-2" aria-label="Main">
       {NAV_GROUPS.map((group) => (
-        <div key={group.heading} className="space-y-0.5">
+        <div key={group.heading} className="space-y-1">
           {!collapsed && (
-            <p className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-white/40">
+            <p className="px-3 pb-1 pt-2 text-xxs font-semibold uppercase tracking-wider text-white/40">
               {group.heading}
             </p>
           )}
@@ -125,7 +125,7 @@ function SidebarNav({ onNavigate, collapsed = false }: Pick<SidebarProps, "onNav
                 onClick={onNavigate}
                 title={collapsed ? item.label : undefined}
                 className={clsx(
-                  "sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/90 transition-colors",
+                  "sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-white/90 transition-colors",
                   collapsed && "justify-center px-2",
                   active && "sidebar-sleek-nav-active text-white",
                   !active && "hover:text-white",
@@ -153,7 +153,7 @@ export function Sidebar({ onNavigate, collapsed = false, onToggleCollapse }: Sid
       <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 px-3">
         {collapsed ? (
           onToggleCollapse && (
-            <button type="button" onClick={onToggleCollapse} className="flex w-full justify-center rounded p-1.5 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Expand sidebar">
+            <button type="button" onClick={onToggleCollapse} className="flex w-full justify-center rounded p-2 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Expand sidebar">
               <ChevronRight className="h-4 w-4" />
             </button>
           )
@@ -163,7 +163,7 @@ export function Sidebar({ onNavigate, collapsed = false, onToggleCollapse }: Sid
               <SidebarLogo />
             </Link>
             {onToggleCollapse && (
-              <button type="button" onClick={onToggleCollapse} className="rounded p-1.5 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Collapse sidebar">
+              <button type="button" onClick={onToggleCollapse} className="rounded p-2 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Collapse sidebar">
                 <ChevronLeft className="h-4 w-4" />
               </button>
             )}
@@ -174,17 +174,17 @@ export function Sidebar({ onNavigate, collapsed = false, onToggleCollapse }: Sid
       <Suspense><SidebarNav onNavigate={onNavigate} collapsed={collapsed} /></Suspense>
 
       <div className="shrink-0 border-t border-white/10 p-2">
-        <Link href="/docs" onClick={onNavigate} title={collapsed ? "Documentation" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
+        <Link href="/docs" onClick={onNavigate} title={collapsed ? "Documentation" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
           <FileText className="h-4 w-4 shrink-0" />{!collapsed && <span className="truncate">Documentation</span>}
         </Link>
-        <Link href="#" onClick={onNavigate} title={collapsed ? "Help and Support" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
+        <Link href="#" onClick={onNavigate} title={collapsed ? "Help and Support" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
           <HelpCircle className="h-4 w-4 shrink-0" />{!collapsed && <span className="truncate">Help and Support</span>}
         </Link>
-        <Link href="#" onClick={onNavigate} title={collapsed ? "Settings" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
+        <Link href="#" onClick={onNavigate} title={collapsed ? "Settings" : undefined} className={clsx("sidebar-sleek-nav flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-white/80 transition-colors hover:text-white", collapsed && "justify-center px-2")}>
           <Settings className="h-4 w-4 shrink-0" />{!collapsed && <span className="truncate">Settings</span>}
         </Link>
         {!collapsed && <p className="mt-2 px-3 py-1 text-xs text-white/50">Platform version: {PLATFORM_VERSION}</p>}
-        {collapsed && <p className="mt-2 text-center text-[10px] text-white/50" title={`Platform version: ${PLATFORM_VERSION}`}>V1.29</p>}
+        {collapsed && <p className="mt-2 text-center text-xxxs text-white/50" title={`Platform version: ${PLATFORM_VERSION}`}>V1.29</p>}
       </div>
     </aside>
   );

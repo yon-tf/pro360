@@ -37,6 +37,9 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { TablePagination } from "@/components/TablePagination";
+import { FormActions } from "@/components/FormActions";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const DRAFT_STORAGE_KEY = "payout-run-draft";
 type TFPOverrides = Record<string, { status?: string; reviewer?: string | null; note?: string }>;
@@ -127,7 +130,23 @@ export default function PayoutRunPage() {
   const [receiptOverridesSaved, setReceiptOverridesSaved] = useState<Record<string, Partial<Record<ReceiptFeeKey, number>>>>({});
   const [receiptReasonsSaved, setReceiptReasonsSaved] = useState<Record<string, Partial<Record<ReceiptFeeKey, string>>>>({});
   const [receiptManualBonusEnabled, setReceiptManualBonusEnabled] = useState<Record<string, boolean>>({});
-  const [auditEvents, setAuditEvents] = useState<AuditEvent[]>([]);
+  const currentActor = "You";
+  const [auditEvents, setAuditEvents] = useState<AuditEvent[]>(() => [
+    {
+      id: "seed-1",
+      ts: Date.now() - 12 * 60 * 1000,
+      actor: currentActor,
+      title: "Draft generated",
+      detail: "Initial payout draft created from activity records (mock).",
+    },
+    {
+      id: "seed-2",
+      ts: Date.now() - 7 * 60 * 1000,
+      actor: currentActor,
+      title: "Reviewed exceptions",
+      detail: "2 warnings acknowledged (mock).",
+    },
+  ]);
 
   // ── Restore from report status (skip when coming from Generate button) ─────────
   useEffect(() => {
@@ -196,7 +215,10 @@ export default function PayoutRunPage() {
 
   // ── Derived state ────────────────────────────────────────────────────────────
   const isDraft = runStatus === "Draft" || runStatus === "In review";
-  const currentActor = "You";
+  const [auditOpen, setAuditOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<"approve" | "regenerate">("approve");
+  const [confirmReason, setConfirmReason] = useState("");
   const formatCurrency = useCallback(
     (value: number) =>
       new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value),
@@ -205,6 +227,12 @@ export default function PayoutRunPage() {
   const logAuditEvent = useCallback((event: Omit<AuditEvent, "id">) => {
     setAuditEvents((prev) => [{ ...event, id: `${event.ts}-${prev.length}` }, ...prev]);
   }, []);
+
+  const openConfirm = (action: "approve" | "regenerate") => {
+    setConfirmAction(action);
+    setConfirmReason("");
+    setConfirmOpen(true);
+  };
 
   const updateReceiptOverride = useCallback((pid: string, key: ReceiptFeeKey, value: number) => {
     setReceiptOverrides((prev) => {
@@ -374,7 +402,7 @@ export default function PayoutRunPage() {
   const periodLabel = monthLabel;
 
   return (
-    <div className="space-y-8 py-6">
+    <div className="space-y-8 py-6 pb-8">
       {/* ── HEADER ──────────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -388,12 +416,6 @@ export default function PayoutRunPage() {
             )}
           </p>
         </div>
-        {!showLoading && currentStep >= 1 && isDraft && (
-          <Button variant="outline" onClick={saveDraft}>
-            <Save className="h-4 w-4" />
-            Save draft
-          </Button>
-        )}
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
@@ -401,28 +423,28 @@ export default function PayoutRunPage() {
       ══════════════════════════════════════════════════════════════════════ */}
       {showLoading && (
         <div className="flex min-h-[60vh] items-center justify-center">
-          <Card className="w-full max-w-xl overflow-hidden border-zinc-200 bg-white shadow-xl">
+          <Card className="w-full max-w-xl overflow-hidden border border-border bg-card shadow-panel">
             {/* Terminal title bar */}
-            <div className="flex items-center gap-2 border-b border-zinc-200 bg-zinc-100 px-4 py-2.5">
-              <div className="flex gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
+            <div className="flex items-center gap-2 border-b border-border bg-muted px-4 py-3">
+              <div className="flex gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-destructive/80" />
+                <span className="h-2.5 w-2.5 rounded-full bg-warning/80" />
+                <span className="h-2.5 w-2.5 rounded-full bg-success/80" />
               </div>
-              <span className="ml-2 font-mono text-xs text-zinc-500">payout generate</span>
+              <span className="ml-2 font-mono text-xs text-muted-foreground">payout generate</span>
             </div>
             <CardContent className="p-4 font-mono text-sm">
-              <div className="space-y-1.5">
-                <div className="text-zinc-600">
-                  <span className="text-emerald-600">$</span> Generating payout draft…
+              <div className="space-y-2">
+                <div className="text-muted-foreground">
+                  <span className="text-success">$</span> Generating payout draft…
                 </div>
                 {ACTIVITY_SOURCES.map(({ key, label }) => {
                   const done = detectedSources.has(key);
                   return (
                     <div key={key} className="flex items-center gap-2">
-                      <span className="text-zinc-500">{done ? "✓" : "○"}</span>
-                      <span className={done ? "text-emerald-600" : "text-zinc-500"}>{label}</span>
-                      {!done && <span className="animate-pulse text-zinc-400">_</span>}
+                      <span className="text-muted-foreground">{done ? "✓" : "○"}</span>
+                      <span className={done ? "text-success" : "text-muted-foreground"}>{label}</span>
+                      {!done && <span className="animate-pulse text-muted-foreground/60">_</span>}
                     </div>
                   );
                 })}
@@ -444,17 +466,17 @@ export default function PayoutRunPage() {
                     onClick={() => canNavigateTo(step.id) ? setCurrentStep(step.id) : undefined}
                     title={step.id === 3 && !canNavigateTo(step.id) ? "Resolve blocking issues before approval" : undefined}
                     className={cn(
-                      "flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-[15px] font-medium transition",
+                      "flex items-center gap-3 rounded-lg px-2 py-2 text-smplus font-medium transition",
                       currentStep === step.id
                         ? "text-primary"
                         : step.id < currentStep
-                          ? "text-emerald-600 dark:text-emerald-400 hover:bg-muted"
+                          ? "text-success hover:bg-muted"
                           : "text-muted-foreground cursor-default",
                       step.id === 3 && !canNavigateTo(step.id) && "cursor-not-allowed opacity-70",
                     )}
                   >
                     {step.id < currentStep ? (
-                      <CheckCircleBold className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden />
+                      <CheckCircleBold className="h-5 w-5 shrink-0 text-success" aria-hidden />
                     ) : currentStep === step.id ? (
                       <CheckCircle className="h-5 w-5 shrink-0 text-primary" aria-hidden />
                     ) : (
@@ -468,26 +490,21 @@ export default function PayoutRunPage() {
                 </span>
               ))}
             </nav>
-            <div className="shrink-0 self-center">
-              {currentStep === 1 && (
-                <Button onClick={() => setCurrentStep(2)}>
-                  Continue to Exceptions
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 self-start sm:self-auto relative"
+              aria-label="Audit log"
+              onClick={() => setAuditOpen(true)}
+              title="Audit log"
+            >
+              <FileText className="h-4 w-4" />
+              {auditEvents.length > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-muted px-1 text-xxxs font-semibold text-muted-foreground">
+                  {Math.min(auditEvents.length, 9)}
+                </span>
               )}
-              {currentStep === 2 && (
-                <Button onClick={() => setCurrentStep(3)} disabled={!canContinueToApproval} title={!canContinueToApproval ? "Resolve blocking issues first" : undefined}>
-                  Continue to Approval
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              )}
-              {currentStep === 3 && (
-                <Button onClick={() => setRunStatus("Approved")} disabled={!canApprove} title={!canApprove ? "Resolve all blocking issues first" : undefined}>
-                  <Check className="h-4 w-4" />
-                  Approve payout
-                </Button>
-              )}
-            </div>
+            </Button>
           </div>
 
           {/* Run Summary — compact horizontal metrics */}
@@ -500,7 +517,17 @@ export default function PayoutRunPage() {
                 <span className="text-muted-foreground/60">|</span>
                 <span><span className="text-muted-foreground">Total payout</span> <span className="font-semibold text-foreground">${kpis.totalPayoutUsd.toLocaleString()}</span></span>
                 <span className="text-muted-foreground/60">|</span>
-                <span><span className="text-muted-foreground">Issues detected</span> <span className={cn("font-semibold", kpis.flagged > 0 ? "text-amber-600" : "text-foreground")}>{kpis.flagged}</span></span>
+                <span>
+                  <span className="text-muted-foreground">Issues detected</span>{" "}
+                  <span
+                    className={cn(
+                      "font-semibold",
+                      kpis.flagged > 0 ? "text-warning" : "text-foreground",
+                    )}
+                  >
+                    {kpis.flagged}
+                  </span>
+                </span>
                 <span className="text-muted-foreground/60">|</span>
                 <span><span className="text-muted-foreground">Confidence</span> <Badge variant={kpis.flagged === 0 ? "default" : kpis.flagged <= 2 ? "secondary" : "destructive"} className="ml-1 text-xs">{kpis.flagged === 0 ? "High" : kpis.flagged <= 2 ? "Medium" : "Low"}</Badge></span>
               </div>
@@ -613,7 +640,8 @@ export default function PayoutRunPage() {
                           className={cn(
                             "cursor-pointer hover:bg-muted/50",
                             selectedTfpIds.has(r.id) && "bg-muted/50",
-                            hasIssue && "bg-amber-50/50 dark:bg-amber-950/20"
+                            hasIssue &&
+                              "bg-warning/8 dark:bg-warning/12"
                           )}
                           onClick={() => openDrawerTFP(r)}
                         >
@@ -770,8 +798,8 @@ export default function PayoutRunPage() {
             <CardContent className="space-y-4">
               <Tabs
                 tabs={[
-                  { id: "blocking", label: "Blocking", suffix: blockingExceptionCount > 0 ? <Badge variant="destructive" className="ml-1.5 text-xs">{blockingExceptionCount}</Badge> : undefined },
-                  { id: "warnings", label: "Warnings", suffix: warningExceptions.length > 0 ? <Badge variant="secondary" className="ml-1.5 text-xs">{warningExceptions.length}</Badge> : undefined },
+                  { id: "blocking", label: "Blocking", suffix: blockingExceptionCount > 0 ? <Badge variant="destructive" className="ml-2 text-xs">{blockingExceptionCount}</Badge> : undefined },
+                  { id: "warnings", label: "Warnings", suffix: warningExceptions.length > 0 ? <Badge variant="secondary" className="ml-2 text-xs">{warningExceptions.length}</Badge> : undefined },
                   { id: "resolved", label: "Resolved" },
                   { id: "all", label: "All" },
                 ]}
@@ -896,7 +924,7 @@ export default function PayoutRunPage() {
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-1">Professionals</p>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-muted-foreground" />
                     <p className="text-xl font-semibold text-foreground">{kpis.professionalCount}</p>
                   </div>
@@ -907,11 +935,11 @@ export default function PayoutRunPage() {
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-1">Exceptions resolved</p>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {exceptionsResolved === exceptionsTotal ? (
-                      <CheckCircle className="h-4 w-4 text-emerald-600" />
+                      <CheckCircle className="h-4 w-4 text-success" />
                     ) : (
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
+                      <AlertTriangle className="h-4 w-4 text-warning" />
                     )}
                     <p className="text-xl font-semibold text-foreground">{exceptionsResolved} / {exceptionsTotal}</p>
                   </div>
@@ -926,21 +954,21 @@ export default function PayoutRunPage() {
               <CardTitle className="text-base">Review readiness</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+              <p className="flex items-center gap-2 text-success">
                 <CheckCircle className="h-4 w-4" /> All flagged entries reviewed
               </p>
-              <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+              <p className="flex items-center gap-2 text-success">
                 <CheckCircle className="h-4 w-4" /> Exceptions resolved or held
               </p>
-              <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+              <p className="flex items-center gap-2 text-success">
                 <CheckCircle className="h-4 w-4" /> Hotline review completed
               </p>
             </CardContent>
           </Card>
 
-          {/* Secondary actions — primary Approve is in the stepper row */}
+          {/* Secondary actions — primary Approve is in the bottom action bar */}
           {!canApprove && (
-            <p className="text-sm text-amber-600 dark:text-amber-400">
+            <p className="text-sm text-warning">
               Resolve all blocking issues (Hold, Too small, Unclaimed) before approving.
             </p>
           )}
@@ -959,32 +987,6 @@ export default function PayoutRunPage() {
             </Button>
           </div>
 
-          {/* Audit log */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Audit log</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {auditEvents.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Key actions during this review will appear here.</p>
-              ) : (
-                <div className="space-y-3">
-                  {auditEvents.map((event) => (
-                    <div key={event.id} className="rounded-md border border-border/60 p-3 text-sm">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="font-medium text-foreground">{event.title}</p>
-                        <p className="text-xs text-muted-foreground">{new Date(event.ts).toLocaleString()}</p>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                        <span>By {event.actor}</span>
-                        {event.detail && <span>· {event.detail}</span>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </div>
       )}
 
@@ -1124,11 +1126,16 @@ export default function PayoutRunPage() {
                   reason: string; onReasonChange: (v: string) => void; adjusted: boolean; showReason: boolean; showRequired: boolean;
                   editable: boolean; children?: React.ReactNode;
                 }) => (
-                  <Card className={cn(adjusted && "ring-1 ring-amber-200 dark:ring-amber-800")}>
+                  <Card
+                    className={cn(
+                      adjusted &&
+                        "ring-1 ring-warning/35 dark:ring-warning/50",
+                    )}
+                  >
                     <CardHeader className="py-2 flex flex-row items-center justify-between gap-2">
                       <CardTitle className="text-sm font-medium">{label}</CardTitle>
                       {adjusted && (
-                        <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
+                        <Badge variant="secondary" className="text-xxxs uppercase tracking-wide">
                           Adjusted
                         </Badge>
                       )}
@@ -1169,7 +1176,7 @@ export default function PayoutRunPage() {
                 return (
                   <>
                     {selectedTFP.status === "Flagged" && (
-                      <Card className="border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/20">
+                      <Card className="border-warning/35 bg-warning/8 dark:bg-warning/12">
                         <CardHeader className="pb-2">
                           <CardTitle className="text-sm font-medium">AI recommendation — review</CardTitle>
                         </CardHeader>
@@ -1285,7 +1292,11 @@ export default function PayoutRunPage() {
                       {adjustmentDelta !== 0 && (
                         <div className="flex justify-between">
                           <span>Adjustments</span>
-                          <span className={adjustmentDelta >= 0 ? "text-emerald-600" : "text-destructive"}>{adjustmentDelta >= 0 ? "+" : ""}${adjustmentDelta}</span>
+                          <span
+                            className={adjustmentDelta >= 0 ? "text-success" : "text-destructive"}
+                          >
+                            {adjustmentDelta >= 0 ? "+" : ""}${adjustmentDelta}
+                          </span>
                         </div>
                       )}
                       <div className="flex justify-between font-semibold text-foreground pt-2">
@@ -1299,7 +1310,7 @@ export default function PayoutRunPage() {
               {selectedHotline && (
                 <>
                   {selectedHotline.status === "Flagged" && (
-                    <Card className="border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/20">
+                    <Card className="border-warning/35 bg-warning/8 dark:bg-warning/12">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium">AI recommendation — review</CardTitle>
                       </CardHeader>
@@ -1329,7 +1340,7 @@ export default function PayoutRunPage() {
                         {selectedHotline.validationFlags.includes("Missing check-in") ? (
                           <span className="text-destructive">✗</span>
                         ) : (
-                          <Check className="h-4 w-4 text-emerald-600" />
+                          <Check className="h-4 w-4 text-success" />
                         )}
                         Check-in present
                       </li>
@@ -1337,16 +1348,16 @@ export default function PayoutRunPage() {
                         {selectedHotline.validationFlags.some((f) => f.toLowerCase().includes("check-out")) ? (
                           <span className="text-destructive">✗</span>
                         ) : (
-                          <Check className="h-4 w-4 text-emerald-600" />
+                          <Check className="h-4 w-4 text-success" />
                         )}
                         Check-out present
                       </li>
-                      <li className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                      <li className="flex items-center gap-2 text-success">
                         <Check className="h-4 w-4" />
                         Duration reasonable (1–12h per shift)
                       </li>
                       {selectedHotline.validationFlags.map((f) => (
-                        <li key={f} className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                        <li key={f} className="flex items-center gap-2 text-warning">
                           <span className="text-destructive">!</span> {f}
                         </li>
                       ))}
@@ -1405,7 +1416,7 @@ export default function PayoutRunPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="gap-1.5 text-sm shrink-0"
+                  className="gap-2 text-sm shrink-0"
                   onClick={() => setActivityDrawerOpen(false)}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -1469,6 +1480,153 @@ export default function PayoutRunPage() {
           )}
         </>
       )}
+
+      {!showLoading && (
+        <FormActions className="flex-wrap pt-2 pb-8">
+          {currentStep >= 1 && isDraft && (
+            <Button variant="outline" onClick={saveDraft}>
+              <Save className="h-4 w-4" />
+              Save draft
+            </Button>
+          )}
+          {currentStep === 1 && (
+            <Button onClick={() => setCurrentStep(2)}>
+              Continue to Exceptions
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+          {currentStep === 2 && (
+            <Button
+              onClick={() => setCurrentStep(3)}
+              disabled={!canContinueToApproval}
+              title={!canContinueToApproval ? "Resolve blocking issues first" : undefined}
+            >
+              Continue to Approval
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+          {currentStep === 3 && (
+            <>
+              {isDraft && (
+                <Button variant="outline" onClick={() => openConfirm("regenerate")}>
+                  Regenerate payout
+                </Button>
+              )}
+              <Button
+                onClick={() => openConfirm("approve")}
+                disabled={!canApprove}
+                title={!canApprove ? "Resolve all blocking issues first" : undefined}
+              >
+                <Check className="h-4 w-4" />
+                Approve payout
+              </Button>
+            </>
+          )}
+        </FormActions>
+      )}
+
+      <Dialog open={auditOpen} onOpenChange={setAuditOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Audit log</DialogTitle>
+            <DialogDescription>Key actions during this review (mock).</DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[60vh] overflow-y-auto space-y-3">
+            {auditEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No audit events yet.</p>
+            ) : (
+              auditEvents.map((event) => (
+                <div key={event.id} className="rounded-md border border-border/60 p-3 text-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="font-medium text-foreground">{event.title}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(event.ts).toLocaleString()}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span>By {event.actor}</span>
+                    {event.detail && <span>· {event.detail}</span>}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAuditOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {confirmAction === "approve" ? "Approve payout?" : "Regenerate payout draft?"}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmAction === "approve"
+                ? "Confirm approval. Add a reason for the audit log."
+                : "This will overwrite the current draft, including overrides and reviewer notes. Add a reason for the audit log."}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="text-xs font-medium text-muted-foreground">Reason</label>
+            <Textarea
+              value={confirmReason}
+              onChange={(e) => setConfirmReason(e.target.value)}
+              placeholder={confirmAction === "approve" ? "e.g. All holds resolved and totals verified." : "e.g. Source data changed; regenerate from latest activity."}
+              className="min-h-[96px]"
+            />
+            <p className="text-xs text-muted-foreground">
+              Required. This is stored in the audit log (mock).
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button
+              variant={confirmAction === "regenerate" ? "destructive" : "default"}
+              disabled={!confirmReason.trim() || (confirmAction === "approve" && !canApprove)}
+              onClick={() => {
+                const reason = confirmReason.trim();
+                if (!reason) return;
+                if (confirmAction === "approve") {
+                  setRunStatus("Approved");
+                  logAuditEvent({
+                    ts: Date.now(),
+                    actor: currentActor,
+                    title: "Approve payout",
+                    detail: reason,
+                  });
+                  setConfirmOpen(false);
+                  return;
+                }
+
+                // Regenerate: reset the draft state (mock).
+                logAuditEvent({
+                  ts: Date.now(),
+                  actor: currentActor,
+                  title: "Regenerate payout",
+                  detail: reason,
+                });
+                try {
+                  localStorage.removeItem(DRAFT_STORAGE_KEY);
+                } catch {
+                  // ignore
+                }
+                setTfpOverrides({});
+                setHotlineOverrides({});
+                setExceptionOverrides({});
+                setLastSavedAt(null);
+                setRunStatus("Draft");
+                setCurrentStep(1);
+                setShowLoading(true);
+                window.setTimeout(() => setShowLoading(false), 700);
+                setConfirmOpen(false);
+              }}
+            >
+              {confirmAction === "approve" ? "Approve payout" : "Regenerate draft"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

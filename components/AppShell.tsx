@@ -11,6 +11,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const sidebarWidth = sidebarCollapsed ? 64 : 256;
 
   // Scroll lock when drawer is open
   useEffect(() => {
@@ -54,7 +55,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeProvider>
-      <div className="flex h-screen overflow-hidden">
+      <div
+        className="flex h-screen overflow-hidden"
+        style={{ ["--sidebar-width" as never]: `${sidebarWidth}px` }}
+      >
         {/* Desktop sidebar: fixed, full height, collapse/expand */}
         <div
           className={`
@@ -79,7 +83,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div
           ref={drawerRef}
           className={`
-            sidebar-sleek fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-y-auto shadow-xl transition-transform duration-200 ease-out md:hidden
+            sidebar-sleek fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-hidden shadow-panel transition-transform duration-200 ease-out md:hidden
             ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
           `}
           role="dialog"
@@ -93,7 +97,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex min-w-0 flex-1 flex-col overflow-hidden md:min-h-screen">
             <TopBar onMenuClick={() => setMobileOpen(true)} />
             <main className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 py-6 sm:px-6 lg:px-8">
-              <div className="mx-auto max-w-7xl">
+              <div className="mx-auto w-full max-w-screen-2xl">
                 <PathnameBreadcrumbSync>{children}</PathnameBreadcrumbSync>
               </div>
             </main>

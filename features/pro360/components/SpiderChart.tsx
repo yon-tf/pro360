@@ -11,11 +11,11 @@ import { Icon } from "@iconify/react";
  */
 const DEFAULT_SIZE = 200;
 /** White with transparency for grid rings and axes (webs) on electric blue */
-const WEB_STROKE = "rgba(255, 255, 255, 0.5)";
+const WEB_STROKE = "hsl(var(--primary-foreground))";
 const WEB_STROKE_OPACITY = 0.7;
 /** Data polygon on electric blue: light fill, white stroke */
-const FILL_COLOR = "rgba(255, 255, 255, 0.35)";
-const STROKE_COLOR = "rgba(255, 255, 255, 0.9)";
+const FILL_COLOR = "hsl(var(--primary-foreground) / 0.35)";
+const STROKE_COLOR = "hsl(var(--primary-foreground) / 0.9)";
 const IMPROVEMENT_THRESHOLD_DEFAULT = 4;
 const WARNING_ICON_SIZE = 14;
 
@@ -150,7 +150,7 @@ export function SpiderChart({
               x={x}
               y={y}
               textAnchor={anchor}
-              className="fill-white/90"
+              className="fill-primary-foreground/90"
               style={{ fontSize: 10, fontFamily: "inherit" }}
             >
               {d.label}

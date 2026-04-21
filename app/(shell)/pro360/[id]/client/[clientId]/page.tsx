@@ -80,13 +80,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             </div>
             <p className="text-sm text-muted-foreground">ID: {client.clientId}</p>
             <div className="flex flex-wrap gap-x-6 gap-y-1 pt-1 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5"><User className="h-3.5 w-3.5" />{client.age} years · {client.gender}</span>
-              <span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5" />{client.organisation ?? "Personal"}</span>
+              <span className="flex items-center gap-2"><User className="h-3.5 w-3.5" />{client.age} years · {client.gender}</span>
+              <span className="flex items-center gap-2"><Building2 className="h-3.5 w-3.5" />{client.organisation ?? "Personal"}</span>
             </div>
             <p className="text-xs text-muted-foreground">{packageLabel} ending on {formatDateGB(client.packageEndDate)}</p>
           </div>
           <Button asChild size="sm" variant="outline" className="shrink-0">
-            <Link href={`/chat?view=tfp-client&professionalId=${professionalId}&clientId=${clientId}`}><MessageSquare className="mr-1.5 h-4 w-4" />View Chat</Link>
+            <Link href={`/chat?view=tfp-client&professionalId=${professionalId}&clientId=${clientId}`}><MessageSquare className="mr-2 h-4 w-4" />View Chat</Link>
           </Button>
         </CardContent>
       </Card>
@@ -104,8 +104,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 return (
                   <>
                     <span>{submitted + late}/{total} submitted</span>
-                    {missing > 0 && <Badge variant="destructive" className="text-[10px] px-1.5 py-0">{missing} missing</Badge>}
-                    {late > 0 && <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{late} late</Badge>}
+                    {missing > 0 && <Badge variant="destructive" className="text-xxxs px-2 py-0">{missing} missing</Badge>}
+                    {late > 0 && <Badge variant="secondary" className="text-xxxs px-2 py-0">{late} late</Badge>}
                   </>
                 );
               })()}
@@ -214,10 +214,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 const timeStr = dt.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
                 return (
                   <li key={m.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
-                    <span className="mt-0.5 text-2xl leading-none" aria-label={MOOD_LABEL[m.mood]}>{MOOD_EMOJI[m.mood]}</span>
+                    <span className="mt-1 text-2xl leading-none" aria-label={MOOD_LABEL[m.mood]}>{MOOD_EMOJI[m.mood]}</span>
                     <div className="min-w-0 flex-1">
                       <span className="text-sm font-medium text-foreground">{MOOD_LABEL[m.mood]}</span>
-                      <p className="mt-0.5 text-sm text-muted-foreground">{m.description}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{m.description}</p>
                       <p className="mt-1 text-xs text-muted-foreground">{dateStr} at {timeStr}{m.organisation && <> · {m.organisation}</>}</p>
                     </div>
                   </li>

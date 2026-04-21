@@ -11,21 +11,31 @@ This page documents Pro360 foundations in a design-system format: color roles, t
 - **Theming:** token-based light/dark with CSS variables in `app/globals.css`.
 - **Component architecture:** shadcn-first primitives under `components/ui/*`, composed on feature pages.
 
+## Navigation + Actions
+
+### Action buttons (Save/Cancel/Update/Approve)
+
+- Default: actions go **bottom** of form/page. Not top.
+- Right align. Order: `Cancel/Back` (`variant="outline"`) → primary action (default).
+- Long form: sticky footer ok.
+- Desktop builder 2-col: actions may live **bottom of right details rail** (still bottom).
+- Confirm risky actions (approve/regenerate/overwrite) via `Dialog` with reason + confirm.
+
+### Breadcrumbs
+
+- Format: `Module / Entity / Action` (max 3).
+- Breadcrumb row = wayfinding only. No primary action buttons there.
+
 ## Color
 
 ### Semantic color roles
 
 Use semantic tokens for system meaning (success, warning, destructive). Use accents for categorization only.
 
-| Role | Light token | Dark token | Usage |
-| --- | --- | --- | --- |
-| Brand primary | `--primary: 221 96% 54%` | `--primary: 221 96% 58%` | CTA, active states, links |
-| Secondary surface | `--secondary: 220 14% 96%` | `--secondary: 217 33% 17%` | Secondary controls and soft backgrounds |
-| Muted surface/content | `--muted: 220 14% 96%` | `--muted: 217 33% 17%` | Tertiary content and low-emphasis surfaces |
-| Destructive | `--destructive: 351 84% 47%` | `--destructive: 351 84% 47%` | Errors, dangerous actions |
-| Success | `--success: 142 71% 45%` | `--success: 142 71% 45%` | Completed/healthy states |
-| Warning | `--warning: 38 92% 50%` | `--warning: 38 92% 50%` | Cautionary states |
-| Border | `--border: 0 0% 90%` | `--border: 217 33% 22%` | Structural separators |
+Live token values below are generated from:
+
+- `design-system/tokens.json` (semantic names)
+- `app/globals.css` (light/dark CSS variable values)
 
 ### Palette examples
 
@@ -38,20 +48,10 @@ Live rendered color swatches are shown inline below the Color section.
 - Prefer orange over yellow for warning-like accents when readability is tight.
 - On subtle accent backgrounds, add border contrast when needed.
 
-### Code excerpt: token source
+### Token source of truth
 
-```css
-:root {
-  --primary: 221 96% 54%;
-  --secondary: 220 14% 96%;
-  --muted: 220 14% 96%;
-  --destructive: 351 84% 47%;
-  --success: 142 71% 45%;
-  --warning: 38 92% 50%;
-  --border: 0 0% 90%;
-  --radius: 0.875rem;
-}
-```
+- **Semantic tokens:** `design-system/tokens.json`
+- **CSS variables:** `app/globals.css` (`:root` and `.dark`)
 
 ## Typography
 

@@ -37,7 +37,7 @@ export function BulkImportDialog({
           <button
             type="button"
             onClick={onDownloadTemplateCsv}
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
           >
             <Download className="h-4 w-4" />
             Download CSV template

@@ -12,8 +12,8 @@ export default function NewRulePage() {
   useEffect(() => {
     void rulesApi.createDraftRule().then(setDraftRule);
     setItems([
-      { label: "Automation Rules", href: "/rules" },
-      { label: "Create new rule" },
+      { label: "Rule Engine", href: "/rules" },
+      { label: "Create" },
     ]);
   }, [setItems]);
 

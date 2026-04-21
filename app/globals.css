@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  [hidden] {
+    display: none !important;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -21,10 +27,16 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 12px 28px -4px rgba(0, 0, 0, 0.4);
   }
   .glass {
-    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-lg;
+    @apply backdrop-blur-xl;
+    background-color: hsl(var(--card) / 0.8);
+    border: 1px solid hsl(var(--border) / 0.35);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 12px 28px -4px rgba(0, 0, 0, 0.12);
   }
   .glass-dark {
-    @apply bg-slate-900/70 backdrop-blur-xl border border-white/10 shadow-xl;
+    @apply backdrop-blur-xl;
+    background-color: hsl(var(--background) / 0.7);
+    border: 1px solid hsl(var(--primary-foreground) / 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 12px 28px -4px rgba(0, 0, 0, 0.4);
   }
   /* Pro360 sidebar: dark navy, primary-based active/hover */
   .sidebar-sleek {
@@ -46,6 +58,66 @@
     width: 3px;
     background-color: var(--primary-hex);
     border-radius: 1px;
+  }
+
+  /* Hide scrollbars but keep scroll functionality (use sparingly, e.g. sidebar) */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE/Edge Legacy */
+    scrollbar-width: none; /* Firefox */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  /* Pro360 dashboard: special "hero" card, token-pure (no raw palette classes in JSX) */
+  .pro360-hero-card {
+    border: 1px solid hsl(var(--primary) / 0.25);
+    background-size: 100% 100%;
+    background-image:
+      radial-gradient(
+        ellipse 100% 80% at 50% 0%,
+        hsl(var(--primary-foreground) / 0.25) 0%,
+        transparent 45%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 50% 40%,
+        hsl(var(--chart-1) / 0.35) 0%,
+        transparent 50%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(var(--chart-1)) 0%,
+        hsl(var(--primary)) 35%,
+        hsl(var(--ring)) 100%
+      );
+    box-shadow:
+      0 24px 48px -12px hsl(var(--primary) / 0.35),
+      0 12px 24px -8px hsl(var(--primary) / 0.2),
+      0 0 0 1px hsl(var(--primary-foreground) / 0.15) inset;
+  }
+
+  .dark .pro360-hero-card {
+    border-color: hsl(var(--primary-foreground) / 0.08);
+    background-image:
+      radial-gradient(
+        ellipse 120% 100% at 50% 0%,
+        hsl(var(--primary) / 0.22) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 80% 80% at 50% 30%,
+        hsl(var(--primary) / 0.15) 0%,
+        transparent 55%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(var(--card)) 0%,
+        hsl(var(--background)) 45%,
+        hsl(var(--background)) 100%
+      );
+    box-shadow:
+      0 25px 50px -12px hsl(var(--background) / 0.75),
+      0 0 0 1px hsl(var(--primary-foreground) / 0.05) inset;
   }
 }
 

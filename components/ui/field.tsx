@@ -27,14 +27,14 @@ FieldLabel.displayName = "FieldLabel"
 
 const FieldDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn("text-[0.8rem] text-muted-foreground", className)} {...props} />
+    <p ref={ref} className={cn("text-xsplus text-muted-foreground", className)} {...props} />
   )
 )
 FieldDescription.displayName = "FieldDescription"
 
 const FieldError = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn("text-[0.8rem] font-medium text-destructive", className)} {...props} />
+    <p ref={ref} className={cn("text-xsplus font-medium text-destructive", className)} {...props} />
   )
 )
 FieldError.displayName = "FieldError"

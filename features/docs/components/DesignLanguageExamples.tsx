@@ -50,7 +50,7 @@ const ICON_EXAMPLES = [
 export function ColorPalettePreview() {
   return (
     <section className="my-4 space-y-3 rounded-lg border border-border/70 bg-card/50 p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+      <p className="text-xs font-semibold uppercase tracking-label text-muted-foreground">
         Live preview
       </p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -75,7 +75,7 @@ export function ColorPalettePreview() {
 export function TypographyPreview() {
   return (
     <section className="my-4 space-y-3 rounded-lg border border-border/70 bg-card/50 p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+      <p className="text-xs font-semibold uppercase tracking-label text-muted-foreground">
         Live preview
       </p>
       <Card>
@@ -110,7 +110,7 @@ export function TypographyPreview() {
 export function IconographyPreview() {
   return (
     <section className="my-4 space-y-3 rounded-lg border border-border/70 bg-card/50 p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+      <p className="text-xs font-semibold uppercase tracking-label text-muted-foreground">
         Live preview
       </p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -137,7 +137,7 @@ export function ComponentsPreview() {
   return (
     <TooltipProvider>
       <section className="my-4 space-y-3 rounded-lg border border-border/70 bg-card/50 p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-label text-muted-foreground">
           Live preview
         </p>
         <div className="grid gap-4 md:grid-cols-2">
@@ -199,4 +199,3 @@ export function ComponentsPreview() {
     </TooltipProvider>
   );
 }
-

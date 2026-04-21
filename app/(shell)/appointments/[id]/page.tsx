@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, FileText } from "@/components/ui/solar-icons";
+import { useBreadcrumb } from "@/components/BreadcrumbContext";
 
 function EmptyState({ message }: { message: string }) {
   return (
@@ -35,8 +36,18 @@ function formatDt(iso?: string) {
   return new Date(iso).toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
+function formatCrumbDate(iso?: string) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div><p className="text-xs font-medium text-muted-foreground">{label}</p><div className="mt-0.5">{children}</div></div>;
+  return <div><p className="text-xs font-medium text-muted-foreground">{label}</p><div className="mt-1">{children}</div></div>;
 }
 
 function targetValue(a: Appointment): string {
@@ -99,10 +110,10 @@ function AttendanceSection({ a }: { a: Appointment }) {
               const joined = a.joinedRoster.some((j) => j.id === p.id);
               return (
                 <li key={p.id} className="flex items-center gap-2">
-                  <span className={joined ? "text-emerald-600" : "text-destructive"}>{joined ? "●" : "○"}</span>
+                  <span className={joined ? "text-success" : "text-destructive"}>{joined ? "●" : "○"}</span>
                   <span className="font-medium">{p.name}</span>
                   <span className="text-xs text-muted-foreground capitalize">({p.role})</span>
-                  {!joined && <Badge variant="destructive" className="text-[10px] px-1.5 py-0">absent</Badge>}
+                  {!joined && <Badge variant="destructive" className="text-xxxs px-2 py-0">absent</Badge>}
                 </li>
               );
             })}
@@ -128,7 +139,7 @@ function AiSummarySection({ a }: { a: Appointment }) {
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 gap-1.5 text-xs text-muted-foreground"
+            className="h-7 gap-2 text-xs text-muted-foreground"
             onClick={() => setTranscriptOpen(true)}
             disabled={!a.transcript}
           >
@@ -146,7 +157,7 @@ function AiSummarySection({ a }: { a: Appointment }) {
                   <ul className="space-y-1.5">
                     {a.aiTakeaways.map((t, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                         <span>{t}</span>
                       </li>
                     ))}
@@ -195,7 +206,7 @@ function AiRatingSection({ a }: { a: Appointment }) {
               </div>
             )}
             {a.aiQualitySignals && a.aiQualitySignals.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {a.aiQualitySignals.map((s) => (
                   <Badge key={s} variant="secondary" className="capitalize text-xs">{s.replace(/_/g, " ")}</Badge>
                 ))}
@@ -258,13 +269,13 @@ function PodDocumentationSection({ a }: { a: Appointment }) {
         {a.podDocumentation ? (
           <div className="space-y-4 text-sm">
             <div>
-              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Topics</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Topics</p>
               <ul className="list-inside list-disc space-y-0.5">
                 {a.podDocumentation.topics.map((t, i) => <li key={i}>{t}</li>)}
               </ul>
             </div>
             <div>
-              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notes</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notes</p>
               <p className="leading-relaxed">{a.podDocumentation.notes}</p>
             </div>
           </div>
@@ -297,7 +308,7 @@ function ActivationMetadataSection({ a }: { a: Appointment }) {
           )}
           {a.wellbeingPillars && a.wellbeingPillars.length > 0 && (
             <Field label="Wellbeing Pillars">
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {a.wellbeingPillars.map((p) => (
                   <Badge key={p} variant="secondary" className="text-xs">{WELLBEING_PILLAR_LABELS[p]}</Badge>
                 ))}
@@ -343,7 +354,7 @@ function CommercialSection({ a }: { a: Appointment }) {
           )}
           {a.commercial.pricingBasis && <Field label="Pricing basis"><p className="capitalize">{a.commercial.pricingBasis.replace(/_/g, " ")}</p></Field>}
           {a.commercial.commercialFlags && a.commercial.commercialFlags.length > 0 && (
-            <Field label="Flags"><div className="flex flex-wrap gap-1.5">{a.commercial.commercialFlags.map((f) => <Badge key={f} variant="outline" className="capitalize text-xs">{f.replace(/_/g, " ")}</Badge>)}</div></Field>
+            <Field label="Flags"><div className="flex flex-wrap gap-2">{a.commercial.commercialFlags.map((f) => <Badge key={f} variant="outline" className="capitalize text-xs">{f.replace(/_/g, " ")}</Badge>)}</div></Field>
           )}
         </div>
       </CardContent>
@@ -361,9 +372,9 @@ function QualitySection({ a }: { a: Appointment }) {
     <Card>
       <CardHeader><CardTitle className="text-sm">Quality Flags</CardTitle></CardHeader>
       <CardContent className="space-y-3 text-sm">
-        <div className="flex flex-wrap gap-1.5">{a.quality.flags.map((f) => <Badge key={f} variant="destructive" className="capitalize">{f.replace(/_/g, " ")}</Badge>)}</div>
+        <div className="flex flex-wrap gap-2">{a.quality.flags.map((f) => <Badge key={f} variant="destructive" className="capitalize">{f.replace(/_/g, " ")}</Badge>)}</div>
         {a.quality.ruleHits && a.quality.ruleHits.length > 0 && (
-          <div><p className="text-xs text-muted-foreground">Rule engine hits</p><div className="flex flex-wrap gap-1.5 mt-1">{a.quality.ruleHits.map((r) => <Badge key={r} variant="outline" className="text-xs capitalize">{r.replace(/_/g, " ")}</Badge>)}</div></div>
+          <div><p className="text-xs text-muted-foreground">Rule engine hits</p><div className="flex flex-wrap gap-2 mt-1">{a.quality.ruleHits.map((r) => <Badge key={r} variant="outline" className="text-xs capitalize">{r.replace(/_/g, " ")}</Badge>)}</div></div>
         )}
       </CardContent>
     </Card>
@@ -378,16 +389,26 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
   const { id } = use(params);
   const appointment = appointments.find((a) => a.id === id);
   if (!appointment) notFound();
+  const { setItems } = useBreadcrumb();
 
   const typeLabel = appointment.serviceType
     ? SERVICE_TYPE_LABELS[appointment.serviceType]
     : KIND_LABELS[appointment.type];
 
+  const listLabel = appointment.context === "internal" ? "Internal appointments" : "External appointments";
+  const listHref = `/appointments?context=${appointment.context}`;
+  const crumbDate = formatCrumbDate(appointment.scheduledAt);
+  const detailLabel = crumbDate ? `${typeLabel} · ${crumbDate}` : typeLabel;
+
+  useEffect(() => {
+    setItems([{ label: listLabel, href: listHref }, { label: detailLabel }]);
+  }, [detailLabel, listHref, listLabel, setItems]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/appointments"><ChevronLeft className="mr-1 h-4 w-4" />Back to list</Link>
+          <Link href={listHref}><ChevronLeft className="mr-1 h-4 w-4" />Back to list</Link>
         </Button>
         <Badge variant="secondary">{typeLabel}</Badge>
         <Badge variant="outline">{CONTEXT_LABELS[appointment.context]}</Badge>

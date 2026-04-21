@@ -5,6 +5,7 @@ import {
   IconographyPreview,
   TypographyPreview,
 } from "@/features/docs/components/DesignLanguageExamples";
+import { DesignLanguageTokenTable } from "@/features/docs/components/DesignLanguageTokenTable";
 import { DOCS_SECTIONS, type DocsSlug } from "../constants";
 import { getDocContent } from "../lib";
 
@@ -60,6 +61,7 @@ export default async function DocsSlugPage({
         ) : (
           <>
             <MarkdownContent content={designSections?.colorSection ?? markdown} />
+            <DesignLanguageTokenTable />
             <ColorPalettePreview />
 
             <MarkdownContent content={designSections?.typographySection ?? ""} />

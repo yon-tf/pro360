@@ -85,7 +85,7 @@ function formatDate(dateValue: string | null) {
 function Info({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
+      <p className="text-xxs font-medium text-muted-foreground">{label}</p>
       <p className="text-sm text-foreground">{value ?? "—"}</p>
     </div>
   );
@@ -579,7 +579,7 @@ export function CredentialsTab({ professionalId }: { professionalId: string }) {
                         <div>
                           <p className="font-medium capitalize">{h.action}</p>
                           <p className="text-xs text-muted-foreground">{formatDate(h.date)}</p>
-                          {h.note && <p className="text-muted-foreground mt-0.5">{h.note}</p>}
+                          {h.note && <p className="text-muted-foreground mt-1">{h.note}</p>}
                         </div>
                       </div>
                     ))}

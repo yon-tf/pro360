@@ -153,7 +153,7 @@ export default function CreateInternalAppointmentPage() {
             {selectedPod && podMembers.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground">Pod members (auto-selected)</p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {podMembers.map((p) => p && (
                     <Badge key={p.id} variant="secondary" className="text-xs">Dr. {p.name}</Badge>
                   ))}
@@ -173,12 +173,12 @@ export default function CreateInternalAppointmentPage() {
               <span className="text-sm font-medium">All TFPs</span>
             </label>
             {!allTfps && (
-              <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {professionals.map((p) => (
-                  <label key={p.id} className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-muted/50 cursor-pointer transition-colors">
+                  <label key={p.id} className="flex items-center gap-2 rounded-md px-2 py-2 hover:bg-muted/50 cursor-pointer transition-colors">
                     <Checkbox checked={selectedProfessionals.has(p.id)} onCheckedChange={() => toggleProfessional(p.id)} />
                     <span className="text-sm">{p.name}</span>
-                    <Badge variant="outline" className="ml-auto text-[10px]">{p.role}</Badge>
+                    <Badge variant="outline" className="ml-auto text-xxxs">{p.role}</Badge>
                   </label>
                 ))}
               </div>

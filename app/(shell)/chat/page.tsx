@@ -8,7 +8,6 @@ import {
   interactiveThreads,
   threadMessages,
   threadMetadataByThreadId,
-  chatProfessionals,
   type Message,
   type ChatThread,
 } from "@/features/chat/mock/chat";
@@ -20,7 +19,6 @@ import {
   ChevronDown,
   ChevronUp,
   Search,
-  ChevronRight,
   ChevronLeft,
   AlertTriangle,
   Lock,
@@ -32,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -40,6 +39,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   Select,
   SelectContent,
@@ -56,9 +56,10 @@ const VIEW_ONLY_VISIBLE_DEFAULT = 5;
 const IDENTITY_REVEAL_MS = 2 * 60 * 1000;
 const CURRENT_USER_ID = "clinical-ops-user";
 
-type ChatCategory = "all" | "view-only" | "interactive";
 type PrivacyModalMode = "blocked" | "warning";
 type ComposerAttachment = { id: string; name: string; type: "image" | "file" };
+type LeftPaneTab = "clients" | "internal";
+type InternalFilter = "all" | "broadcast" | "pods" | "professionals";
 
 export type Annotation = {
   id: string;
@@ -71,7 +72,7 @@ export type Annotation = {
 
 function ParticipantChip({ count }: { count: number }) {
   return (
-    <Badge variant="secondary" className="px-2 py-0.5 text-xs font-medium text-muted-foreground">
+    <Badge variant="secondary" className="px-2 py-1 text-xs font-medium text-muted-foreground">
       {count} {count === 1 ? "member" : "members"}
     </Badge>
   );
@@ -92,7 +93,7 @@ function ParticipantNames({
   const visible = expanded ? participants : participants.slice(0, MAX_NAMES_VISIBLE);
   const extra = total - MAX_NAMES_VISIBLE;
   return (
-    <div className={clsx("flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs text-muted-foreground", className)}>
+    <div className={clsx("flex flex-wrap items-center gap-x-1 gap-y-1 text-xs text-muted-foreground", className)}>
       {visible.map((p, i) => (
         <span key={i}>
           {p.name}
@@ -112,7 +113,7 @@ function ParticipantNames({
           className="h-auto px-0 text-xs font-medium"
         >
           +{extra}
-          <ChevronDown className="ml-0.5 h-3 w-3" />
+          <ChevronDown className="ml-1 h-3 w-3" />
         </Button>
       )}
       {expanded && total > MAX_NAMES_VISIBLE && (
@@ -127,7 +128,7 @@ function ParticipantNames({
           className="h-auto px-0 text-xs font-medium"
         >
           Show less
-          <ChevronUp className="ml-0.5 h-3 w-3" />
+          <ChevronUp className="ml-1 h-3 w-3" />
         </Button>
       )}
     </div>
@@ -202,7 +203,7 @@ function RevealIdentityModal({
         </DialogHeader>
 
         <div className="space-y-3">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <p className="text-sm font-medium text-foreground">Reason</p>
             <Select value={reason} onValueChange={onReasonChange}>
               <SelectTrigger>
@@ -336,12 +337,11 @@ function ChatContent() {
   const view = searchParams.get("view");
   const deepLinkThreadId = view === "tfp-client" && professionalId && clientId ? "vo-1" : null;
 
-  const [chatCategory, setChatCategory] = useState<ChatCategory>("all");
-  const [professionalSearch, setProfessionalSearch] = useState("");
+  const [leftPaneTab, setLeftPaneTab] = useState<LeftPaneTab>(deepLinkThreadId ? "clients" : "internal");
+  const [internalFilter, setInternalFilter] = useState<InternalFilter>("all");
   const [conversationSearch, setConversationSearch] = useState("");
-  const deferredProfessionalSearch = useDeferredValue(professionalSearch);
   const deferredConversationSearch = useDeferredValue(conversationSearch);
-  const [selectedId, setSelectedId] = useState<string | null>(deepLinkThreadId ?? "int-1");
+  const [selectedId, setSelectedId] = useState<string | null>(deepLinkThreadId ?? null);
   const [composerText, setComposerText] = useState("");
   const [composerAttachments, setComposerAttachments] = useState<ComposerAttachment[]>([]);
   const [pendingSendText, setPendingSendText] = useState("");
@@ -349,7 +349,7 @@ function ChatContent() {
   const [messagesByThread, setMessagesByThread] = useState<Record<string, Message[]>>(() => ({ ...threadMessages }));
   const [expandedParticipantsId, setExpandedParticipantsId] = useState<string | null>(null);
   const [showAllViewOnly, setShowAllViewOnly] = useState(false);
-  const [rightPanelOpen, setRightPanelOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [annotationsByThread, setAnnotationsByThread] = useState<Record<string, Annotation[]>>({});
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; messageId: string; text: string } | null>(null);
   const [revealModalOpen, setRevealModalOpen] = useState(false);
@@ -408,6 +408,13 @@ function ChatContent() {
   const interactivePod = useMemo(() => filteredInteractiveThreads.filter((t) => t.subtype === "pod"), [filteredInteractiveThreads]);
   const interactiveProfessional = useMemo(() => filteredInteractiveThreads.filter((t) => t.subtype === "professional"), [filteredInteractiveThreads]);
 
+  const internalFilteredThreads = useMemo(() => {
+    if (internalFilter === "broadcast") return interactiveBroadcast;
+    if (internalFilter === "pods") return interactivePod;
+    if (internalFilter === "professionals") return interactiveProfessional;
+    return [...interactiveBroadcast, ...interactivePod, ...interactiveProfessional];
+  }, [internalFilter, interactiveBroadcast, interactivePod, interactiveProfessional]);
+
   const viewOnlyVisibleFiltered =
     deferredConversationSearch.trim() === ""
       ? filteredViewOnlyThreads.slice(0, showAllViewOnly ? filteredViewOnlyThreads.length : VIEW_ONLY_VISIBLE_DEFAULT)
@@ -416,18 +423,6 @@ function ChatContent() {
     deferredConversationSearch.trim() === ""
       ? Math.max(0, filteredViewOnlyThreads.length - VIEW_ONLY_VISIBLE_DEFAULT)
       : 0;
-
-  const filteredProfessionals = useMemo(
-    () =>
-      measureInDev("chat:filteredProfessionals", () =>
-        chatProfessionals.filter((p) =>
-          deferredProfessionalSearch.trim() === ""
-            ? true
-            : p.name.toLowerCase().includes(deferredProfessionalSearch.toLowerCase())
-        )
-      ),
-    [deferredProfessionalSearch]
-  );
 
   const allThreads = useMemo(() => [...viewOnlyThreads, ...podThreads, ...interactiveThreads], []);
 
@@ -442,6 +437,24 @@ function ChatContent() {
   const metadata = selectedThread ? threadMetadataByThreadId[selectedThread.id] ?? null : null;
   const annotations = selectedThread ? (annotationsByThread[selectedThread.id] ?? []) : [];
   const riskLevel = getRiskLevel(annotations.length);
+
+  useEffect(() => {
+    if (deepLinkThreadId) return;
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    if (mediaQuery.matches) setSelectedId((prev) => prev ?? "int-1");
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setSelectedId((prev) => prev ?? "int-1");
+    };
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+
+    mediaQuery.addListener(handleChange);
+    return () => mediaQuery.removeListener(handleChange);
+  }, [deepLinkThreadId]);
 
   useEffect(() => {
     if (!identityRevealExpiresAt) return;
@@ -461,6 +474,7 @@ function ChatContent() {
   useEffect(() => {
     setIdentityRevealExpiresAt(null);
     setRevealModalOpen(false);
+    setDetailsOpen(false);
     setComposerText("");
     setComposerAttachments([]);
     setPendingSendText("");
@@ -631,16 +645,19 @@ function ChatContent() {
     <button
       key={t.id}
       type="button"
-      onClick={() => setSelectedId(t.id)}
+      onClick={() => {
+        setLeftPaneTab(t.viewOnly ? "clients" : "internal");
+        setSelectedId(t.id);
+      }}
       className={clsx(
-        "w-full rounded-lg px-4 py-2 text-left transition",
-        selectedId === t.id ? "bg-primary/10 text-primary" : "hover:bg-muted/50"
+        "w-full border-b border-border/50 px-4 py-2 text-left transition last:border-b-0",
+        selectedId === t.id ? "bg-primary/10 text-primary" : "hover:bg-muted/40"
       )}
     >
       <p className="truncate text-sm font-medium text-foreground">{getThreadPrimaryLabel(t)}</p>
       {t.participants ? (
         <>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
+          <p className="mt-1 truncate text-xs text-muted-foreground">
             {t.participants.find((p) => p.role === "Pod leader")?.name ?? t.participants[0]?.name}
           </p>
           <div className="mt-1">
@@ -650,213 +667,167 @@ function ChatContent() {
       ) : getThreadSecondaryLabel(t) ? (
         <p className="truncate text-xs text-muted-foreground">{getThreadSecondaryLabel(t)}</p>
       ) : null}
-      <p className="mt-0.5 truncate text-xs text-muted-foreground">{redactPII(t.lastPreview).redactedText}</p>
+      <p className="mt-1 truncate text-xs text-muted-foreground">{redactPII(t.lastPreview).redactedText}</p>
     </button>
   );
 
   return (
     <div className="space-y-4">
       <div className="flex h-[calc(100vh-10rem)] overflow-hidden rounded-xl bg-card shadow-card">
-        {/* Left panel: All / View Only / Interactive + Professionals */}
-        <div className="flex w-52 shrink-0 flex-col border-r border-border/50">
+        {/* Left panel (responsive): Conversations / Professionals */}
+        <div
+          className={clsx(
+            "w-full shrink-0 flex-col md:flex md:w-96 md:border-r md:border-border/50",
+            selectedThread ? "hidden md:flex" : "flex"
+          )}
+        >
           <div className="border-b border-border p-3">
             <h2 className="text-sm font-semibold text-foreground">Chat</h2>
           </div>
-          <div className="flex flex-col gap-1 border-b border-border p-2">
-            <Button
-              type="button"
-              onClick={() => setChatCategory("all")}
-              variant="ghost"
-              className={clsx(
-                "h-auto justify-start rounded-md px-3 py-2 text-left text-sm font-medium transition",
-                chatCategory === "all" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              )}
+          <div className="flex min-h-0 flex-1 flex-col p-3">
+            <Tabs
+              value={leftPaneTab}
+              onValueChange={(next) => setLeftPaneTab(next as LeftPaneTab)}
+              className="flex min-h-0 flex-1 flex-col"
             >
-              All
-            </Button>
-            <Button
-              type="button"
-              onClick={() => setChatCategory("view-only")}
-              variant="ghost"
-              className={clsx(
-                "h-auto justify-start rounded-md px-3 py-2 text-left text-sm font-medium transition",
-                chatCategory === "view-only" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              )}
-            >
-              View Only
-            </Button>
-            <Button
-              type="button"
-              onClick={() => setChatCategory("interactive")}
-              variant="ghost"
-              className={clsx(
-                "h-auto justify-start rounded-md px-3 py-2 text-left text-sm font-medium transition",
-                chatCategory === "interactive" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              )}
-            >
-              Interactive
-            </Button>
-          </div>
-          <div className="flex-1 overflow-hidden flex-col p-2">
-            <p className="mb-2 px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Professionals
-            </p>
-            <div className="relative mb-2">
-              <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                value={professionalSearch}
-                onChange={(e) => setProfessionalSearch(e.target.value)}
-                className="h-9 pl-8 text-sm"
-              />
-            </div>
-            <div className="space-y-0.5 overflow-y-auto">
-              {filteredProfessionals.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm"
-                >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
-                    {p.initials}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-foreground">{p.name}</p>
-                    <p className={clsx("text-xs", p.online ? "text-emerald-600" : "text-muted-foreground")}>
-                      {p.online ? "Online" : "Offline"}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+              <TabsList className="w-full">
+                <TabsTrigger value="clients" className="flex-1">
+                  Clients
+                </TabsTrigger>
+                <TabsTrigger value="internal" className="flex-1">
+                  Internal
+                </TabsTrigger>
+              </TabsList>
 
-        {/* Center-left: Chat list filtered by category */}
-        <div className="flex w-80 shrink-0 flex-col border-r border-border/50">
-          <div className="border-b border-border p-3">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {chatCategory === "all" ? "All conversations" : chatCategory === "view-only" ? "View-only" : "Interactive"}
-            </p>
-            <div className="relative mt-2">
-              <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search TFP, client ID, pod..."
-                value={conversationSearch}
-                onChange={(e) => setConversationSearch(e.target.value)}
-                className="h-9 pl-8 text-sm"
-              />
-            </div>
-          </div>
-          <div className="flex-1 overflow-y-auto p-2">
-            {chatCategory === "all" && (
-              <>
-                <section className="mb-2">
-                  <p className="px-2 py-1 text-xs font-medium text-muted-foreground">View-only</p>
-                  {viewOnlyVisibleFiltered.map(renderThreadListItem)}
+              <div className="relative mt-3">
+                <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search..."
+                  value={conversationSearch}
+                  onChange={(e) => setConversationSearch(e.target.value)}
+                  className="h-9 pl-8 text-sm"
+                />
+              </div>
+
+              <TabsContent value="clients" className="mt-2 flex min-h-0 flex-1 flex-col">
+                <div className="flex-1 overflow-y-auto">
+                  {viewOnlyVisibleFiltered.length > 0 ? (
+                    <div className="overflow-hidden rounded-lg border border-border/60 bg-background">
+                      {viewOnlyVisibleFiltered.map(renderThreadListItem)}
+                    </div>
+                  ) : (
+                    <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">No results.</div>
+                  )}
                   {viewOnlyHiddenCountFiltered > 0 && (
                     <Button
                       type="button"
                       onClick={() => setShowAllViewOnly((v) => !v)}
                       variant="ghost"
-                      className="mt-1 h-auto w-full justify-start rounded-lg px-4 py-2 text-left text-xs font-medium text-primary hover:bg-muted/50"
+                      className="mt-2 h-auto w-full justify-start rounded-lg px-4 py-2 text-left text-xs font-medium text-primary hover:bg-muted/50"
                     >
                       {showAllViewOnly ? "Show less" : `View more (${viewOnlyHiddenCountFiltered})`}
                     </Button>
                   )}
-                </section>
-                {interactiveBroadcast.length > 0 && (
-                  <section className="border-t border-border pt-2">
-                    <p className="px-2 py-1 text-xs font-medium text-muted-foreground">Broadcast</p>
-                    {interactiveBroadcast.map(renderThreadListItem)}
-                  </section>
-                )}
-                {interactivePod.length > 0 && (
-                  <section className="border-t border-border pt-2">
-                    <p className="px-2 py-1 text-xs font-medium text-muted-foreground">Pod Chats</p>
-                    {interactivePod.map(renderThreadListItem)}
-                  </section>
-                )}
-                {interactiveProfessional.length > 0 && (
-                  <section className="border-t border-border pt-2">
-                    <p className="px-2 py-1 text-xs font-medium text-muted-foreground">Professionals</p>
-                    {interactiveProfessional.map(renderThreadListItem)}
-                  </section>
-                )}
-              </>
-            )}
-            {chatCategory === "view-only" && (
-              <>
-                {viewOnlyVisibleFiltered.map(renderThreadListItem)}
-                {viewOnlyHiddenCountFiltered > 0 && (
+                </div>
+              </TabsContent>
+
+              <TabsContent value="internal" className="mt-2 flex min-h-0 flex-1 flex-col">
+                <div className="mt-2 flex flex-wrap gap-2">
                   <Button
                     type="button"
-                    onClick={() => setShowAllViewOnly((v) => !v)}
-                    variant="ghost"
-                    className="mt-1 h-auto w-full justify-start rounded-lg px-4 py-2 text-left text-xs font-medium text-primary hover:bg-muted/50"
+                    size="sm"
+                    variant={internalFilter === "all" ? "secondary" : "outline"}
+                    className="h-8 rounded-full px-3"
+                    onClick={() => setInternalFilter("all")}
                   >
-                    {showAllViewOnly ? "Show less" : `View more (${viewOnlyHiddenCountFiltered})`}
+                    All
                   </Button>
-                )}
-              </>
-            )}
-            {chatCategory === "interactive" && (
-              <>
-                {interactiveBroadcast.length > 0 && (
-                  <section className="mb-2">
-                    <p className="px-2 py-1 text-xs font-medium text-muted-foreground">Broadcast</p>
-                    {interactiveBroadcast.map(renderThreadListItem)}
-                  </section>
-                )}
-                {interactivePod.length > 0 && (
-                  <section className="border-t border-border pt-2 mb-2">
-                    <p className="px-2 py-1 text-xs font-medium text-muted-foreground">Pod Chats</p>
-                    {interactivePod.map(renderThreadListItem)}
-                  </section>
-                )}
-                {interactiveProfessional.length > 0 && (
-                  <section className="border-t border-border pt-2">
-                    <p className="px-2 py-1 text-xs font-medium text-muted-foreground">Professionals</p>
-                    {interactiveProfessional.map(renderThreadListItem)}
-                  </section>
-                )}
-              </>
-            )}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={internalFilter === "broadcast" ? "secondary" : "outline"}
+                    className="h-8 rounded-full px-3"
+                    onClick={() => setInternalFilter("broadcast")}
+                  >
+                    Broadcast
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={internalFilter === "pods" ? "secondary" : "outline"}
+                    className="h-8 rounded-full px-3"
+                    onClick={() => setInternalFilter("pods")}
+                  >
+                    Pods
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={internalFilter === "professionals" ? "secondary" : "outline"}
+                    className="h-8 rounded-full px-3"
+                    onClick={() => setInternalFilter("professionals")}
+                  >
+                    Professionals
+                  </Button>
+                </div>
+                <div className="mt-3 flex-1 overflow-y-auto">
+                  {internalFilteredThreads.length > 0 ? (
+                    <div className="overflow-hidden rounded-lg border border-border/60 bg-background">
+                      {internalFilteredThreads.map(renderThreadListItem)}
+                    </div>
+                  ) : (
+                    <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">No results.</div>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
 
-        {/* Center-right: Thread messages */}
-        <div className="flex min-w-0 flex-1 flex-col">
+        {/* Thread panel (responsive): hidden on mobile until selected */}
+        <div className={clsx("flex min-w-0 flex-1 flex-col", selectedThread ? "flex" : "hidden md:flex")}>
           {selectedThread ? (
             <>
               <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-semibold text-foreground">{getThreadPrimaryLabel(selectedThread)}</h3>
-                  {selectedThread.participants ? (
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <ParticipantChip count={selectedThread.participants.length} />
-                      <ParticipantNames
-                        participants={selectedThread.participants}
-                        expanded={expandedParticipantsId === selectedThread.id}
-                        onToggle={() =>
-                          setExpandedParticipantsId((id) => (id === selectedThread.id ? null : selectedThread.id))
-                        }
-                      />
-                    </div>
-                  ) : getThreadSecondaryLabel(selectedThread) ? (
-                    <p className="text-xs text-muted-foreground">{getThreadSecondaryLabel(selectedThread)}</p>
-                  ) : null}
-                  {selectedThread.viewOnly && (
-                    <Badge variant="warning" className="mt-1.5 inline-flex">
-                      View-only (privacy-safe)
-                    </Badge>
-                  )}
-                  {!selectedThread.viewOnly && selectedThread.oversight && (
-                    <Badge variant="secondary" className="mt-1.5 inline-flex">
-                      Pod chat · Monitored
-                    </Badge>
-                  )}
+                <div className="flex min-w-0 flex-1 items-start gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setSelectedId(null)}
+                    className="mt-1 md:hidden"
+                    aria-label="Back to conversations"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-sm font-semibold text-foreground">{getThreadPrimaryLabel(selectedThread)}</h3>
+                    {selectedThread.participants ? (
+                      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <ParticipantChip count={selectedThread.participants.length} />
+                        <ParticipantNames
+                          participants={selectedThread.participants}
+                          expanded={expandedParticipantsId === selectedThread.id}
+                          onToggle={() =>
+                            setExpandedParticipantsId((id) => (id === selectedThread.id ? null : selectedThread.id))
+                          }
+                        />
+                      </div>
+                    ) : getThreadSecondaryLabel(selectedThread) ? (
+                      <p className="text-xs text-muted-foreground">{getThreadSecondaryLabel(selectedThread)}</p>
+                    ) : null}
+                    {selectedThread.viewOnly && (
+                      <Badge variant="warning" className="mt-2 inline-flex">
+                        View-only (privacy-safe)
+                      </Badge>
+                    )}
+                    {!selectedThread.viewOnly && selectedThread.oversight && (
+                      <Badge variant="secondary" className="mt-2 inline-flex">
+                        Pod chat · Monitored
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-1">
                   {selectedThread.clientDisplayId && (
@@ -871,15 +842,80 @@ function ChatContent() {
                     </Button>
                   )}
                   {showRightPanel && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setRightPanelOpen((v) => !v)}
-                      className="shrink-0"
-                      aria-label={rightPanelOpen ? "Hide right panel" : "Expand right panel"}
-                    >
-                      {rightPanelOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-                    </Button>
+                    <Sheet open={detailsOpen} onOpenChange={setDetailsOpen}>
+                      <SheetTrigger asChild>
+                        <Button type="button" variant="ghost" size="icon" aria-label="Open chat details">
+                          <Info className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent side="right" className="sm:max-w-md">
+                        <SheetHeader>
+                          <SheetTitle>Chat details</SheetTitle>
+                          <SheetDescription>Oversight metadata, risk level, and annotations.</SheetDescription>
+                        </SheetHeader>
+                        <div className="mt-4 space-y-4 overflow-y-auto">
+                          {metadata && (
+                            <div className="space-y-2">
+                              <p className="text-xs font-medium uppercase text-muted-foreground">Metadata</p>
+                              <ul className="space-y-2 text-sm text-foreground">
+                                <li className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">Channel:</span>
+                                  {metadata.channel}
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">Participant:</span>
+                                  {selectedThread.clientDisplayId
+                                    ? `Client • ${selectedThread.clientDisplayId}`
+                                    : metadata.participantName}
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">ID:</span>
+                                  {metadata.threadId}
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                          <div className="space-y-2">
+                            <p className="text-xs font-medium uppercase text-muted-foreground">Risk level</p>
+                            <div
+                              className={clsx(
+                                "inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
+                                riskLevel === "High" &&
+                                  "bg-destructive/12 text-destructive dark:bg-destructive/18 dark:text-destructive",
+                                riskLevel === "Medium" &&
+                                  "bg-warning/12 text-warning dark:bg-warning/18 dark:text-warning",
+                                riskLevel === "Low" &&
+                                  "bg-success/12 text-success dark:bg-success/18 dark:text-success"
+                              )}
+                            >
+                              <AlertTriangle className="h-4 w-4" />
+                              {riskLevel}
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-xs font-medium uppercase text-muted-foreground">Annotations</p>
+                            <p className="text-xs text-muted-foreground">
+                              Highlight text in the chat, right-click and choose &quot;Annotate as dangerous&quot;.
+                            </p>
+                            {annotations.length === 0 ? (
+                              <p className="text-sm text-muted-foreground">No annotations yet.</p>
+                            ) : (
+                              <ul className="space-y-2">
+                                {annotations.map((a) => (
+                                  <li key={a.id} className="rounded-md bg-background p-2 text-sm shadow-card">
+                                    <span className="font-medium text-warning">&quot;{a.text}&quot;</span>
+                                    <span className="ml-1 text-muted-foreground">– {a.label}</span>
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                      {a.author} · {a.date}
+                                    </p>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        </div>
+                      </SheetContent>
+                    </Sheet>
                   )}
                 </div>
               </div>
@@ -896,19 +932,19 @@ function ChatContent() {
                       key={m.id}
                       onContextMenu={(e) => handleMessageContextMenu(e, m.id)}
                       className={clsx(
-                        "max-w-[85%] rounded-xl px-4 py-2 selection:bg-amber-200 dark:selection:bg-amber-800",
+                        "max-w-[85%] rounded-xl px-4 py-2 selection:bg-primary/20 dark:selection:bg-primary/35",
                         isRight ? "ml-auto mr-0" : "ml-0",
                         isPrimary ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
                       )}
                     >
                       <p className="text-xs font-medium opacity-90">{senderLabel}</p>
-                      <p className="mt-0.5 text-sm">{redactedText}</p>
+                      <p className="mt-1 text-sm">{redactedText}</p>
                       {m.attachments && m.attachments.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1.5">
+                        <div className="mt-2 flex flex-wrap gap-2">
                           {m.attachments.map((attachment) => (
                             <span
                               key={attachment.id}
-                              className="inline-flex items-center rounded-md border border-border/70 bg-background/70 px-2 py-0.5 text-xs text-foreground"
+                              className="inline-flex items-center rounded-md border border-border/70 bg-background/70 px-2 py-1 text-xs text-foreground"
                             >
                               {attachment.type === "image" ? <ImagePlus className="mr-1 h-3 w-3" /> : <Paperclip className="mr-1 h-3 w-3" />}
                               {attachment.name}
@@ -1031,80 +1067,6 @@ function ChatContent() {
             </div>
           )}
         </div>
-
-        {/* Right panel: Metadata + Annotations + Risk (view-only, collapsible) */}
-        {selectedThread && showRightPanel && (
-          <div
-            className={clsx(
-              "flex shrink-0 flex-col border-l border-border/50 bg-muted/30 transition-[width]",
-              rightPanelOpen ? "w-80" : "w-0 overflow-hidden border-0"
-            )}
-          >
-            {rightPanelOpen && (
-              <>
-                <div className="border-b border-border p-3">
-                  <h3 className="text-sm font-semibold text-foreground">Chat details</h3>
-                </div>
-                <div className="flex-1 overflow-y-auto p-3 space-y-4">
-                  {metadata && (
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium uppercase text-muted-foreground">Metadata</p>
-                      <ul className="space-y-1.5 text-sm text-foreground">
-                        <li className="flex items-center gap-2">
-                          <span className="text-muted-foreground">Channel:</span>
-                          {metadata.channel}
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <span className="text-muted-foreground">Participant:</span>
-                          {selectedThread.clientDisplayId ? `Client • ${selectedThread.clientDisplayId}` : metadata.participantName}
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <span className="text-muted-foreground">ID:</span>
-                          {metadata.threadId}
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium uppercase text-muted-foreground">Risk level</p>
-                    <div
-                      className={clsx(
-                        "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium",
-                        riskLevel === "High" && "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
-                        riskLevel === "Medium" && "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
-                        riskLevel === "Low" && "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200"
-                      )}
-                    >
-                      <AlertTriangle className="h-4 w-4" />
-                      {riskLevel}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium uppercase text-muted-foreground">Annotations</p>
-                    <p className="text-xs text-muted-foreground">
-                      Highlight text in the chat, right-click and choose &quot;Annotate as dangerous&quot;.
-                    </p>
-                    {annotations.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">No annotations yet.</p>
-                    ) : (
-                      <ul className="space-y-2">
-                        {annotations.map((a) => (
-                          <li key={a.id} className="rounded-md bg-background p-2 text-sm shadow-card">
-                            <span className="font-medium text-amber-700 dark:text-amber-400">&quot;{a.text}&quot;</span>
-                            <span className="ml-1 text-muted-foreground">– {a.label}</span>
-                            <p className="mt-1 text-xs text-muted-foreground">
-                              {a.author} · {a.date}
-                            </p>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Context menu for "Annotate as dangerous" */}
@@ -1125,7 +1087,7 @@ function ChatContent() {
               onClick={handleAnnotateDangerous}
               className="h-auto w-full justify-start gap-2 rounded-none px-3 py-2 text-left text-sm text-foreground"
             >
-              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertTriangle className="h-4 w-4 text-warning" />
               Annotate as dangerous
             </Button>
           </div>
@@ -1160,7 +1122,9 @@ function ChatContent() {
 
 export default function ChatPage() {
   return (
-    <Suspense fallback={<div className="flex h-96 items-center justify-center text-slate-500">Loading chat…</div>}>
+    <Suspense
+      fallback={<div className="flex h-96 items-center justify-center text-muted-foreground">Loading chat…</div>}
+    >
       <ChatContent />
     </Suspense>
   );

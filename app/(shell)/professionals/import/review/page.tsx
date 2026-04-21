@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { FormActions } from "@/components/FormActions";
 import {
   Select,
   SelectContent,
@@ -128,12 +129,6 @@ function ProfessionalImportReviewContent() {
             Back to professionals
           </Link>
         </Button>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={handleCancel}>Cancel</Button>
-          <Button onClick={handleImport} disabled={rows.length === 0 || hasErrors}>
-            Import to directory
-          </Button>
-        </div>
       </div>
 
       <Card>
@@ -215,6 +210,13 @@ function ProfessionalImportReviewContent() {
           </div>
         </CardContent>
       </Card>
+
+      <FormActions className="pb-8">
+        <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+        <Button onClick={handleImport} disabled={rows.length === 0 || hasErrors}>
+          Import to directory
+        </Button>
+      </FormActions>
     </div>
   );
 }

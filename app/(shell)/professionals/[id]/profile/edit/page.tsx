@@ -27,7 +27,7 @@ export default function EditProfessionalPage() {
       setItems([
         { label: "Professionals", href: "/professionals" },
         { label: "Add professional", href: "/professionals/new/profile" },
-        { label: "Edit Profile" },
+        { label: "Edit" },
       ]);
       return;
     }
@@ -35,7 +35,7 @@ export default function EditProfessionalPage() {
     setItems([
       { label: "Professionals", href: "/professionals" },
       { label: `${profile.firstName} ${profile.lastName} (${profile.id})`, href: `/professionals/${profile.id}/profile` },
-      { label: "Edit Profile" },
+      { label: "Edit" },
     ]);
   }, [id, profile, setItems]);
 

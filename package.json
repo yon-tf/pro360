@@ -8,6 +8,9 @@
     "build:clean": "npm run clean && next build --webpack",
     "start": "next start",
     "lint": "eslint .",
+    "guard:design": "node scripts/guard-design.mjs",
+    "guard:design:warn": "node scripts/guard-design.mjs --warn-only",
+    "check": "npm run guard:design && npm run lint",
     "clean": "rm -rf .next",
     "verify:ui": "node scripts/ui-verify.mjs"
   },

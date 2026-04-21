@@ -3,9 +3,9 @@ import { DocsSidebar } from "@/features/docs/components/DocsSidebar";
 
 export default function DocsLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 lg:py-10">
+    <div className="mx-auto w-full max-w-screen-2xl px-4 py-8 lg:py-10">
       <div className="mb-6 border-b border-border/70 pb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-label text-muted-foreground">
           Documentation
         </p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">

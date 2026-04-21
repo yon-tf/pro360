@@ -62,7 +62,7 @@ interface PeriodFilterProps {
 
 export function PeriodFilter({ value, onChange, className }: PeriodFilterProps) {
   return (
-    <div className={cn("flex items-center gap-1.5", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       <Select
         value={value.type}
         onValueChange={(t: string) => {

@@ -130,7 +130,11 @@ const MiniCapacity = memo(function MiniCapacity({
   const clampedUsage = Math.min(usage, 100);
 
   const ringColorClass =
-    usage >= 100 ? "text-destructive" : usage >= 80 ? "text-amber-500" : "text-emerald-500";
+    usage >= 100
+      ? "text-destructive"
+      : usage >= 80
+        ? "text-warning"
+        : "text-success";
 
   const radius = 8;
   const circumference = 2 * Math.PI * radius;
@@ -198,7 +202,7 @@ const CredentialsSummaryCell = memo(function CredentialsSummaryCell({
     return (
       <Badge
         variant="secondary"
-        className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-300"
+        className="bg-success/12 text-success hover:bg-success/12"
       >
         All good
       </Badge>

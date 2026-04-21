@@ -30,14 +30,14 @@ export interface GaugeKpiCardProps {
 }
 
 export const DEFAULT_GAUGE_SEGMENTS: GaugeSegment[] = [
-  { color: "#ef4444", end: 40, label: "< 40%" },
-  { color: "#eab308", end: 75, label: "40–75%" },
-  { color: "#00BFA2", end: 100, label: "> 75%" },
+  { color: "hsl(var(--destructive))", end: 40, label: "< 40%" },
+  { color: "hsl(var(--warning))", end: 75, label: "40–75%" },
+  { color: "hsl(var(--success))", end: 100, label: "> 75%" },
 ];
 
 const TREND_STYLE: Record<TrendDirection, string> = {
-  up: "text-emerald-600",
-  down: "text-red-500",
+  up: "text-success",
+  down: "text-destructive",
   stable: "text-muted-foreground",
 };
 
@@ -92,10 +92,10 @@ export function GaugeKpiCard({
   return (
     <div className="flex h-full flex-col rounded-xl bg-card p-4 shadow-card">
       {/* ── Header ── */}
-      <div className="flex items-start justify-between gap-2 mb-4">
+      <div className="flex items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-2 min-w-0">
           {icon && (
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
               {icon}
             </div>
           )}
@@ -104,18 +104,18 @@ export function GaugeKpiCard({
         {trend != null && (
           <span
             className={cn(
-              "flex shrink-0 items-center gap-0.5 text-[11px] font-bold tabular-nums",
+              "flex shrink-0 items-center gap-1 whitespace-nowrap text-xxs font-medium leading-none tabular-nums",
               TREND_STYLE[trendDirection],
             )}
           >
             {trend}
-            <span className="text-[9px]">{TREND_ARROW[trendDirection]}</span>
+            <span className="text-xxs leading-none">{TREND_ARROW[trendDirection]}</span>
           </span>
         )}
       </div>
 
       <div className="mb-3">
-        <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+        <h3 className="text-xxs font-bold text-muted-foreground uppercase tracking-wider">
           Professional Performance
         </h3>
       </div>

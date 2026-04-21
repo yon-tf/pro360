@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { FormActions } from "@/components/FormActions";
 import {
   Table,
   TableBody,
@@ -256,12 +257,12 @@ export default function CreatePodPage() {
           </CardContent>
         </Card>
 
-        <div className="flex gap-2">
-          <Button type="submit">Create pod</Button>
+        <FormActions className="pt-2">
           <Button type="button" variant="outline" asChild>
             <Link href="/team">Cancel</Link>
           </Button>
-        </div>
+          <Button type="submit">Create pod</Button>
+        </FormActions>
       </form>
     </div>
   );

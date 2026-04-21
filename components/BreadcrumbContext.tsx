@@ -20,7 +20,11 @@ const BreadcrumbContext = createContext<BreadcrumbContextValue | null>(null);
 export function BreadcrumbProvider({ children }: { children: ReactNode }) {
   const [items, setItemsState] = useState<BreadcrumbItem[]>([]);
   const setItems = useCallback((next: BreadcrumbItem[]) => {
-    setItemsState(next);
+    const normalized = next
+      .map((i) => ({ ...i, label: i.label.trim() }))
+      .filter((i) => i.label.length > 0)
+      .slice(0, 3);
+    setItemsState(normalized);
   }, []);
   const value = useMemo(() => ({ items, setItems }), [items, setItems]);
   return (

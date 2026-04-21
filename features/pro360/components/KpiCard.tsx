@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Info } from "@/components/ui/solar-icons";
+import { Badge } from "@/components/ui/badge";
 import {
   Popover,
   PopoverContent,
@@ -32,8 +33,8 @@ export interface KpiCardProps {
 }
 
 const TREND_STYLE: Record<TrendDirection, string> = {
-  up: "text-emerald-600",
-  down: "text-red-500",
+  up: "text-success",
+  down: "text-destructive",
   stable: "text-muted-foreground",
 };
 
@@ -67,23 +68,25 @@ export function KpiCard({
   return (
     <Wrapper
       className={cn(
-        "flex h-full flex-col gap-1.5 rounded-xl p-3 text-left shadow-card transition-shadow",
+        "flex h-full flex-col gap-2 rounded-xl p-3 text-left shadow-card transition-shadow",
         "min-h-[100px]",
         isPrimary
           ? "bg-primary text-primary-foreground"
           : "bg-card",
-        clickable && "cursor-pointer hover:shadow-md",
+        clickable && "cursor-pointer hover:shadow-panel",
       )}
       onClick={onClick}
     >
       {/* Top row: icon + title left, trend/badge right */}
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           {icon && (
             <div
               className={cn(
                 "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg",
-                isPrimary ? "bg-primary-foreground/20 text-primary-foreground" : "bg-slate-500/10 text-slate-500",
+                isPrimary
+                  ? "bg-primary-foreground/20 text-primary-foreground"
+                  : "bg-muted/50 text-muted-foreground",
               )}
             >
               {icon}
@@ -98,7 +101,7 @@ export function KpiCard({
                 <PopoverTrigger asChild>
                   <button
                     onClick={(e) => e.stopPropagation()}
-                    className="rounded-full p-0.5 text-muted-foreground/40 hover:bg-muted hover:text-muted-foreground"
+                    className="rounded-full p-1 text-muted-foreground/40 hover:bg-muted hover:text-muted-foreground"
                   >
                     <Info className="h-3 w-3" />
                   </button>
@@ -112,18 +115,26 @@ export function KpiCard({
         </div>
 
         {progress ? (
-          <div className="flex shrink-0 items-center gap-1.5">
-            <span className="text-[10px] font-medium tabular-nums text-muted-foreground">{pct}% Completion</span>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="text-xxxs font-medium tabular-nums text-muted-foreground">{pct}% Completion</span>
             <div className="h-1 w-10 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${pct}%` }} />
+              <div
+                className="h-full rounded-full bg-success transition-all"
+                style={{ width: `${pct}%` }}
+              />
             </div>
           </div>
         ) : trend != null ? (
-          <span className={cn("flex shrink-0 items-center gap-0.5 text-[11px] font-medium tabular-nums", isPrimary ? "text-primary-foreground/90" : TREND_STYLE[trendDirection])}>
-            {trend} <span className="text-[9px]">{TREND_ARROW[trendDirection]}</span>
+              <span
+            className={cn(
+              "flex shrink-0 items-center gap-1 whitespace-nowrap text-xxs font-medium leading-none tabular-nums",
+              isPrimary ? "text-primary-foreground/90" : TREND_STYLE[trendDirection]
+            )}
+          >
+            {trend} <span className="text-xxs leading-none">{TREND_ARROW[trendDirection]}</span>
           </span>
         ) : badge ? (
-          <span className={cn("shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-medium", isPrimary ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground")}>
+          <span className={cn("shrink-0 rounded-full px-2 py-1 text-micro font-medium", isPrimary ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground")}>
             {badge}
           </span>
         ) : null}
@@ -131,20 +142,28 @@ export function KpiCard({
 
       {/* Value row */}
       <div className="mt-auto">
-        <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <p className={cn("text-xl font-semibold leading-tight tabular-nums", isPrimary ? "text-primary-foreground" : "text-foreground")}>
             {value}
           </p>
           {target && (
-            <span className={cn("inline-flex items-center rounded-full border px-1.5 py-0.5 text-[9px] font-medium whitespace-nowrap", isPrimary ? "border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground" : "border-muted-foreground/20 bg-muted text-muted-foreground")}>
+            <Badge
+              variant="outline"
+              className={cn(
+                "h-5 whitespace-nowrap px-2 py-0 text-xxxs font-medium leading-none",
+                isPrimary
+                  ? "border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground"
+                  : "border-muted-foreground/20 bg-muted text-muted-foreground"
+              )}
+            >
               Target {target}
-            </span>
+            </Badge>
           )}
         </div>
 
         {/* Sublabel */}
         {sublabel && (
-          <p className={cn("mt-0.5 text-[9px]", isPrimary ? "text-primary-foreground/80" : "text-muted-foreground")}>{sublabel}</p>
+          <p className={cn("mt-1 text-micro", isPrimary ? "text-primary-foreground/80" : "text-muted-foreground")}>{sublabel}</p>
         )}
       </div>
     </Wrapper>

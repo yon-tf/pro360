@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useBreadcrumb } from "@/components/BreadcrumbContext";
 import type { BreadcrumbItem } from "@/components/Breadcrumbs";
 import { professionalProfiles } from "@/features/professionals/mock/professionalProfiles";
@@ -13,7 +13,13 @@ function getProfessionalLabel(profId: string): string {
   return profId;
 }
 
-function getDefaultBreadcrumb(pathname: string): BreadcrumbItem[] {
+function getDefaultBreadcrumb({
+  pathname,
+  context,
+}: {
+  pathname: string;
+  context?: string | null;
+}): BreadcrumbItem[] {
   if (pathname === "/payout") return [{ label: "Payout" }];
   if (pathname.startsWith("/payout/run/")) {
     const runId = pathname.replace("/payout/run/", "").split("/")[0];
@@ -21,25 +27,27 @@ function getDefaultBreadcrumb(pathname: string): BreadcrumbItem[] {
       const [y, m] = runId.split("-");
       const mm = m ? m.padStart(2, "0") : "00";
       const runPayoutId = `#P${mm}${y ?? ""}`;
-      return [{ label: "Payout", href: "/payout" }, { label: `Generate payout ${runPayoutId}` }];
+      return [{ label: "Payout", href: "/payout" }, { label: `Run ${runPayoutId}` }, { label: "Generate" }];
     }
   }
   if (pathname === "/team") return [{ label: "Pod Management" }];
-  if (pathname === "/team/new") return [{ label: "Pod Management", href: "/team" }, { label: "Create new pod" }];
+  if (pathname === "/team/new") return [{ label: "Pod Management", href: "/team" }, { label: "Create" }];
   if (pathname === "/team/unassigned") return [{ label: "Pod Management", href: "/team" }, { label: "Unassigned TFPs" }];
   if (pathname.startsWith("/team/") && pathname !== "/team/new" && pathname !== "/team/unassigned") {
     const rest = pathname.replace("/team/", "").split("/")[0];
-    if (rest) return [{ label: "Pod Management", href: "/team" }, { label: "Pod detail" }];
+    if (rest) return [{ label: "Pod Management", href: "/team" }, { label: "Pod" }];
   }
   if (pathname === "/professionals") return [{ label: "Professionals" }];
   if (pathname === "/professionals/new") return [{ label: "Professionals", href: "/professionals" }, { label: "Add professional" }];
+  if (pathname === "/professionals/import/review") return [{ label: "Professionals", href: "/professionals" }, { label: "Import" }, { label: "Review" }];
+  if (pathname.startsWith("/professionals/import")) return [{ label: "Professionals", href: "/professionals" }, { label: "Import" }];
   if (pathname.startsWith("/professionals/") && pathname.endsWith("/profile/edit")) {
     const profId = pathname.replace("/professionals/", "").replace("/profile/edit", "");
-    return [{ label: "Professionals", href: "/professionals" }, { label: getProfessionalLabel(profId), href: `/professionals/${profId}/profile` }, { label: "Edit Profile" }];
+    return [{ label: "Professionals", href: "/professionals" }, { label: getProfessionalLabel(profId), href: `/professionals/${profId}/profile` }, { label: "Edit" }];
   }
   if (pathname.startsWith("/professionals/") && pathname.endsWith("/profile")) {
     const profId = pathname.replace("/professionals/", "").replace("/profile", "");
-    return [{ label: "Professionals", href: "/professionals" }, { label: getProfessionalLabel(profId), href: `/professionals/${profId}/profile` }, { label: "Profile" }];
+    return [{ label: "Professionals", href: "/professionals" }, { label: getProfessionalLabel(profId) }];
   }
   if (pathname === "/pro360") return [{ label: "Professional 360" }];
   if (pathname === "/pro360/attention") return [{ label: "Professional 360", href: "/pro360" }, { label: "Needs attention" }];
@@ -56,12 +64,22 @@ function getDefaultBreadcrumb(pathname: string): BreadcrumbItem[] {
     return [{ label: "Professional 360", href: "/pro360" }, { label: getProfessionalLabel(profId) }];
   }
   if (pathname === "/rules") return [{ label: "Rule Engine" }];
+  if (pathname === "/rules/new") return [{ label: "Rule Engine", href: "/rules" }, { label: "Create" }];
+  if (pathname.startsWith("/rules/") && pathname !== "/rules/new") {
+    return [{ label: "Rule Engine", href: "/rules" }, { label: "Rule" }];
+  }
   if (pathname === "/chat") return [{ label: "Chat" }];
-  if (pathname === "/lms") return [{ label: "Growth", href: "/lms" }];
+  if (pathname === "/lms") return [{ label: "Learn" }];
   if (pathname === "/gig") return [{ label: "Gig", href: "/gig" }];
-  if (pathname === "/appointments") return [{ label: "Appointments" }];
-  if (pathname === "/appointments/create") return [{ label: "Appointments", href: "/appointments?context=internal" }, { label: "Create internal appointment" }];
+  if (pathname === "/appointments") {
+    if (context === "internal") return [{ label: "Internal appointments" }];
+    if (context === "external") return [{ label: "External appointments" }];
+    return [{ label: "Appointments" }];
+  }
+  if (pathname === "/appointments/create") return [{ label: "Internal appointments", href: "/appointments?context=internal" }, { label: "Create" }];
   if (pathname.startsWith("/appointments/") && pathname !== "/appointments") {
+    if (context === "internal") return [{ label: "Internal appointments", href: "/appointments?context=internal" }, { label: "Appointment detail" }];
+    if (context === "external") return [{ label: "External appointments", href: "/appointments?context=external" }, { label: "Appointment detail" }];
     return [{ label: "Appointments", href: "/appointments" }, { label: "Appointment detail" }];
   }
   if (pathname === "/calendar") return [{ label: "Calendar" }];
@@ -88,13 +106,23 @@ function getDefaultBreadcrumb(pathname: string): BreadcrumbItem[] {
   return [];
 }
 
-export function PathnameBreadcrumbSync({ children }: { children: React.ReactNode }) {
+function PathnameBreadcrumbSyncInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const context = searchParams.get("context");
   const { setItems } = useBreadcrumb();
 
   useEffect(() => {
-    setItems(getDefaultBreadcrumb(pathname));
-  }, [pathname, setItems]);
+    setItems(getDefaultBreadcrumb({ pathname, context }));
+  }, [pathname, context, setItems]);
 
   return <>{children}</>;
+}
+
+export function PathnameBreadcrumbSync({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={null}>
+      <PathnameBreadcrumbSyncInner>{children}</PathnameBreadcrumbSyncInner>
+    </Suspense>
+  );
 }

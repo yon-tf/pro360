@@ -44,7 +44,7 @@ export function TableToolbar({
         <Button
           variant={appliedCount > 0 ? "secondary" : "outline"}
           size="sm"
-          className="shrink-0 gap-1.5"
+          className="shrink-0 gap-2"
           onClick={onMoreFilters}
         >
           <SlidersHorizontal className="h-4 w-4" />

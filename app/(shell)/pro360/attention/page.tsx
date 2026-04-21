@@ -105,7 +105,7 @@ function NeedsAttentionContent() {
     id,
     label: `${ATTENTION_TAB_LABELS[id]} (${allRows[id].length})`,
     suffix: tabHasUrgent(id) ? (
-      <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
+      <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-destructive" />
     ) : undefined,
   }));
 
@@ -124,9 +124,9 @@ function NeedsAttentionContent() {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
             Needs attention
-            <Badge variant="secondary" className="ml-1 text-[10px]">{totalItems}</Badge>
+            <Badge variant="secondary" className="ml-1 text-xxxs">{totalItems}</Badge>
             {criticalCount > 0 && (
-              <Badge variant="destructive" className="ml-1 text-[10px]">
+              <Badge variant="destructive" className="ml-1 text-xxxs">
                 <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                 {criticalCount} critical
               </Badge>
@@ -216,7 +216,7 @@ function NeedsAttentionContent() {
 
 function AttentionItem({ row, onAction }: { row: AttentionRow; onAction: () => void }) {
   return (
-    <li className="flex items-center gap-4 py-2.5">
+    <li className="flex items-center gap-4 py-3">
       <SeverityBadge row={row} />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-foreground">{row.primaryLabel}</p>

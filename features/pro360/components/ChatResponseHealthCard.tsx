@@ -59,58 +59,92 @@ export function ChatResponseHealthCard({
 
   // Determine overall status based on health
   const status = useMemo(() => {
-    if (totalThreads === 0) return { label: "No Active Threads", color: "text-muted-foreground", bgColor: "bg-muted/50", level: 0, fillClass: "fill-muted" };
-    if (healthyPct >= 90 && inactive === 0) return { label: "Optimal", color: "text-emerald-700", bgColor: "bg-emerald-50", level: 5, fillClass: "fill-emerald-500" };
-    if (healthyPct >= 75) return { label: "Good", color: "text-emerald-600", bgColor: "bg-emerald-50", level: 4, fillClass: "fill-emerald-500" };
-    if (latePct > 15 || inactive > 0) return { label: "Attention Needed", color: "text-amber-700", bgColor: "bg-amber-50", level: 2, fillClass: "fill-amber-500" };
-    return { label: "Fair", color: "text-amber-600", bgColor: "bg-amber-50", level: 1, fillClass: "fill-amber-500" };
+    if (totalThreads === 0)
+      return {
+        label: "No Active Threads",
+        color: "text-muted-foreground",
+        bgColor: "bg-muted/50",
+        level: 0,
+        fillClass: "fill-muted",
+      };
+    if (healthyPct >= 90 && inactive === 0)
+      return {
+        label: "Optimal",
+        color: "text-success",
+        bgColor: "bg-success/12",
+        level: 5,
+        fillClass: "fill-success",
+      };
+    if (healthyPct >= 75)
+      return {
+        label: "Good",
+        color: "text-success",
+        bgColor: "bg-success/12",
+        level: 4,
+        fillClass: "fill-success",
+      };
+    if (latePct > 15 || inactive > 0)
+      return {
+        label: "Attention Needed",
+        color: "text-warning",
+        bgColor: "bg-warning/12",
+        level: 2,
+        fillClass: "fill-warning",
+      };
+    return {
+      label: "Fair",
+      color: "text-warning",
+      bgColor: "bg-warning/12",
+      level: 1,
+      fillClass: "fill-warning",
+    };
   }, [healthyPct, latePct, inactive, totalThreads]);
 
   return (
-    <div className="flex h-full flex-col rounded-xl bg-card p-4 shadow-card">
-      {/* ── Header ── */}
-      <div className="flex items-start justify-between gap-2 mb-4">
-        <div className="flex items-center gap-2 min-w-0">
-          {icon && (
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
-              {icon}
-            </div>
-          )}
-          <p className="text-sm font-medium text-foreground">Chat Response Health</p>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className={cn("text-[11px] font-bold tabular-nums", status.color)}>
+      <div className="flex h-full flex-col rounded-xl bg-card p-4 shadow-card">
+        {/* ── Header ── */}
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center gap-2 min-w-0">
+            {icon && (
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
+                {icon}
+              </div>
+            )}
+            <p className="text-sm font-medium text-foreground">Chat Response Health</p>
+          </div>
+          <div className="flex items-center gap-2">
+          <span className={cn("whitespace-nowrap text-xxs font-bold leading-none tabular-nums", status.color)}>
             {status.label}
           </span>
-          <div className="shrink-0 flex items-center justify-center">
-            {status.level > 0 && (
-              <SignalBars level={status.level} activeFill={status.fillClass} />
-            )}
+            <div className="shrink-0 flex items-center justify-center">
+              {status.level > 0 && (
+                <SignalBars level={status.level} activeFill={status.fillClass} />
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
       <div className="flex flex-1 flex-col">
         {/* ── Section Label ── */}
         <div className="mb-3">
-          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+          <h3 className="text-xxs font-bold text-muted-foreground uppercase tracking-wider">
             Chat Response Distribution
           </h3>
         </div>
 
         {/* ── Stacked Bar Visual ── */}
-        <div className="relative mb-5 flex h-9 w-full overflow-hidden rounded-full bg-slate-100">
+        <div className="relative mb-5 flex h-9 w-full overflow-hidden rounded-full bg-muted">
           {healthyPct > 0 && (
             <div
               className={cn(
-                "relative flex h-full items-center justify-center bg-[#22c55e] transition-all duration-500",
+                "relative flex h-full items-center justify-center bg-success transition-all duration-500",
                 "rounded-l-full",
                 (latePct === 0 && inactivePct === 0) && "rounded-r-full",
                 (latePct > 0 || inactivePct > 0) && "border-r-2 border-white",
               )}
               style={{ width: `${healthyPct}%` }}
             >
-              <span className="text-[11px] font-bold text-white drop-shadow-sm">
+              <span className="text-xxs font-bold text-white drop-shadow-sm">
                 {Math.round(healthyPct)}%
               </span>
             </div>
@@ -118,7 +152,7 @@ export function ChatResponseHealthCard({
           {latePct > 0 && (
             <div
               className={cn(
-                "h-full bg-[#f97316] transition-all duration-500",
+                "h-full bg-warning transition-all duration-500",
                 healthyPct === 0 && "rounded-l-full",
                 inactivePct === 0 && "rounded-r-full",
                 inactivePct > 0 && "border-r-2 border-white",
@@ -129,7 +163,7 @@ export function ChatResponseHealthCard({
           {inactivePct > 0 && (
             <div
               className={cn(
-                "h-full bg-[#ef4444] transition-all duration-500",
+                "h-full bg-destructive transition-all duration-500",
                 (healthyPct === 0 && latePct === 0) && "rounded-l-full",
                 "rounded-r-full",
               )}
@@ -139,29 +173,29 @@ export function ChatResponseHealthCard({
         </div>
 
         {/* ── Breakdown List ── */}
-        <div className="flex flex-col gap-1.5 mt-auto">
-          <div className="flex items-center justify-between rounded-xl bg-slate-50/80 px-4 py-2.5">
-            <div className="flex items-center gap-2.5">
-              <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
-              <span className="text-[13px] font-medium text-slate-700">Healthy</span>
+        <div className="flex flex-col gap-2 mt-auto">
+          <div className="flex items-center justify-between rounded-xl bg-card/50 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-success" />
+              <span className="text-xsplus font-medium text-foreground">Healthy</span>
             </div>
-            <span className="text-[15px] font-bold text-slate-900">{healthy}</span>
+            <span className="text-smplus font-bold text-foreground">{healthy}</span>
           </div>
 
-          <div className="flex items-center justify-between rounded-xl bg-slate-50/80 px-4 py-2.5">
-            <div className="flex items-center gap-2.5">
-              <span className="h-2 w-2 rounded-full bg-[#f97316]" />
-              <span className="text-[13px] font-medium text-slate-700">Late (&gt;24h)</span>
+          <div className="flex items-center justify-between rounded-xl bg-card/50 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-warning" />
+              <span className="text-xsplus font-medium text-foreground">Late (&gt;24h)</span>
             </div>
-            <span className="text-[15px] font-bold text-slate-900">{late}</span>
+            <span className="text-smplus font-bold text-foreground">{late}</span>
           </div>
 
-          <div className="flex items-center justify-between rounded-xl bg-slate-50/80 px-4 py-2.5">
-            <div className="flex items-center gap-2.5">
-              <span className="h-2 w-2 rounded-full bg-[#ef4444]" />
-              <span className="text-[13px] font-medium text-slate-700">Unreplied (&gt;5d)</span>
+          <div className="flex items-center justify-between rounded-xl bg-card/50 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-destructive" />
+              <span className="text-xsplus font-medium text-foreground">Unreplied (&gt;5d)</span>
             </div>
-            <span className="text-[15px] font-bold text-slate-900">{inactive}</span>
+            <span className="text-smplus font-bold text-foreground">{inactive}</span>
           </div>
         </div>
       </div>

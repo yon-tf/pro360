@@ -31,8 +31,8 @@ export interface DonutKpiCardProps {
 }
 
 const TREND_STYLE: Record<TrendDirection, string> = {
-  up: "text-emerald-600",
-  down: "text-red-500",
+  up: "text-success",
+  down: "text-destructive",
   stable: "text-muted-foreground",
 };
 
@@ -60,10 +60,10 @@ export function DonutKpiCard({
     <TooltipProvider>
       <div className="flex h-full flex-col rounded-xl bg-card p-4 shadow-card">
         {/* ── Header ── */}
-        <div className="flex items-start justify-between gap-2 mb-4">
+        <div className="flex items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2 min-w-0">
             {icon && (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                 {icon}
               </div>
             )}
@@ -72,12 +72,12 @@ export function DonutKpiCard({
           {trend != null && (
             <span
               className={cn(
-                "flex shrink-0 items-center gap-0.5 text-[11px] font-bold tabular-nums",
+                "flex shrink-0 items-center gap-1 whitespace-nowrap text-xxs font-medium leading-none tabular-nums",
                 TREND_STYLE[trendDirection]
               )}
             >
               {trend}
-              <span className="text-[9px]">{TREND_ARROW[trendDirection]}</span>
+              <span className="text-xxs leading-none">{TREND_ARROW[trendDirection]}</span>
             </span>
           )}
         </div>
@@ -99,7 +99,7 @@ export function DonutKpiCard({
               <div key={gIdx} className="flex flex-1 flex-col min-w-0">
                 {group.title && (
                   <div className="mb-3">
-                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-left">
+                    <span className="text-xxs font-bold text-muted-foreground uppercase tracking-wider text-left">
                       {group.title}
                     </span>
                   </div>
@@ -166,7 +166,7 @@ export function DonutKpiCard({
                             );
                           })()}
                           {group.centerLabel && (
-                            <span className="mt-1 text-[9px] text-muted-foreground">
+                            <span className="mt-1 text-micro text-muted-foreground">
                               {group.centerLabel}
                             </span>
                           )}
@@ -175,15 +175,15 @@ export function DonutKpiCard({
                     </TooltipTrigger>
                     <TooltipContent
                       side="bottom"
-                      className="min-w-[10rem] rounded-lg border border-border bg-card px-3 py-2 shadow-md"
+                      className="min-w-[10rem] rounded-lg border border-border bg-card px-3 py-2 shadow-panel"
                     >
-                      <p className="mb-1.5 text-xs font-medium text-muted-foreground">
+                      <p className="mb-2 text-xs font-medium text-muted-foreground">
                         {group.title} Hours
                       </p>
                       <div className="space-y-1">
                         {group.segments.map((seg, i) => (
                           <div key={i} className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                               <span
                                 className="h-2 w-2 shrink-0 rounded-full"
                                 style={{ backgroundColor: seg.color }}
@@ -204,15 +204,15 @@ export function DonutKpiCard({
                   {/* Legend per group - Width restricted to keep label/value closer and centered */}
                   <div className="mt-auto flex w-full max-w-[118px] flex-col gap-2">
                     {group.segments.map((seg, i) => (
-                      <div key={i} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-1.5 w-full">
+                      <div key={i} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2 w-full">
                         <div
                           className="h-1.5 w-1.5 shrink-0 rounded-full"
                           style={{ backgroundColor: seg.color }}
                         />
-                        <span className="text-[12px] font-medium text-slate-500 whitespace-nowrap">
+                        <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
                           {seg.label}
                         </span>
-                        <span className="text-[12px] font-normal text-slate-800 tabular-nums whitespace-nowrap text-right pl-2">
+                        <span className="text-xs font-normal text-foreground tabular-nums whitespace-nowrap text-right pl-2">
                           {Math.round(seg.value).toLocaleString()} h
                         </span>
                       </div>

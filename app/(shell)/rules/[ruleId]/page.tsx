@@ -17,9 +17,9 @@ export default function RuleDetailPage() {
     void rulesApi.getRule(ruleId).then((nextRule) => {
       setRule(nextRule);
       setItems([
-        { label: "Automation Rules", href: "/rules" },
-        { label: nextRule?.summary.name ?? "Rule", href: `/rules/${ruleId}` },
-        { label: "Edit rule" },
+        { label: "Rule Engine", href: "/rules" },
+        { label: nextRule?.summary.name ?? "Rule" },
+        { label: "Edit" },
       ]);
       setLoaded(true);
     });

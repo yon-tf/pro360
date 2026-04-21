@@ -71,7 +71,7 @@ export function TriStateSwitch({
               cycle();
             }
           }}
-          className="w-8 cursor-pointer select-none text-[11px] tabular-nums text-muted-foreground"
+          className="w-8 cursor-pointer select-none text-xxs tabular-nums text-muted-foreground"
         >
           {value === null ? "Any" : value ? "Yes" : "No"}
         </span>
@@ -166,7 +166,7 @@ function MultiSelectField({
     <div className={hasGroups ? "space-y-1" : "grid grid-cols-2 gap-3"}>
       {options.map((opt) =>
         opt.heading ? (
-          <p key={opt.value} className="pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground first:pt-0">
+          <p key={opt.value} className="pt-2 pb-1 text-xxs font-semibold uppercase tracking-wider text-muted-foreground first:pt-0">
             {opt.label}
           </p>
         ) : (

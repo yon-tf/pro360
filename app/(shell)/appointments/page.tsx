@@ -76,7 +76,10 @@ const StarRating = memo(function StarRating({ score, max = 5 }: { score: number 
   const empty = max - full;
   return (
     <span className="inline-flex items-center gap-1 text-sm">
-      <span className="text-amber-500">{"★".repeat(full)}<span className="text-muted-foreground/50">{"☆".repeat(empty)}</span></span>
+      <span className="text-warning">
+        {"★".repeat(full)}
+        <span className="text-muted-foreground/50">{"☆".repeat(empty)}</span>
+      </span>
       <span className="text-muted-foreground">{score}</span>
     </span>
   );
@@ -142,11 +145,11 @@ function AttendanceCell({ appointment: a }: { appointment: Appointment }) {
   const hasRoster = a.expectedRoster.length > 0;
 
   const badge = (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2">
       <Badge variant={variant} className={cn(variant === "secondary" && "bg-muted text-muted-foreground hover:bg-muted")}>
         {att.label}
       </Badge>
-      {att.full && <Badge variant="success" className="text-[10px] px-1.5 py-0">Full</Badge>}
+      {att.full && <Badge variant="success" className="text-xxxs px-2 py-0">Full</Badge>}
     </div>
   );
 
@@ -161,8 +164,8 @@ function AttendanceCell({ appointment: a }: { appointment: Appointment }) {
             {a.expectedRoster.map((p) => {
               const joined = a.joinedRoster.some((j) => j.id === p.id);
               return (
-                <li key={p.id} className="flex items-center gap-1.5">
-                  <span className={joined ? "text-emerald-500" : "text-destructive"}>
+                <li key={p.id} className="flex items-center gap-2">
+                  <span className={joined ? "text-success" : "text-destructive"}>
                     {joined ? "●" : "○"}
                   </span>
                   <span>{p.name}</span>
@@ -394,15 +397,15 @@ function AppointmentsContent() {
             <h2 className="text-base font-semibold text-foreground">{preset.label}</h2>
             <Tabs value={contextParam} onValueChange={(v) => switchContext(v)}>
               <TabsList className="h-8">
-                <TabsTrigger value="internal" className="text-xs px-2.5">Internal</TabsTrigger>
-                <TabsTrigger value="external" className="text-xs px-2.5">External</TabsTrigger>
+                <TabsTrigger value="internal" className="text-xs px-3">Internal</TabsTrigger>
+                <TabsTrigger value="external" className="text-xs px-3">External</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
           {activeContext === "internal" && (
             <Button asChild size="sm">
               <Link href="/appointments/create">
-                <svg xmlns="http://www.w3.org/2000/svg" className="mr-1.5 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14" /></svg>
                 Create appointment
               </Link>
             </Button>
@@ -445,7 +448,7 @@ function AppointmentsContent() {
         <PeriodFilter value={period} onChange={setPeriod} />
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant={selectedTypes.length > 0 ? "secondary" : "outline"} size="sm" className="shrink-0 gap-1.5">
+            <Button variant={selectedTypes.length > 0 ? "secondary" : "outline"} size="sm" className="shrink-0 gap-2">
               {typeFilterLabel}
               <ChevronDown className="h-3.5 w-3.5" />
             </Button>
@@ -453,14 +456,14 @@ function AppointmentsContent() {
           <PopoverContent align="start" className="w-64 max-h-80 overflow-y-auto p-3">
             {activeContext === "internal" ? (
               INTERNAL_TYPES.map((k) => (
-                <label key={k} className="flex items-center gap-2 py-1.5 text-sm cursor-pointer">
+                <label key={k} className="flex items-center gap-2 py-2 text-sm cursor-pointer">
                   <Checkbox checked={selectedTypes.includes(k)} onCheckedChange={() => toggleType(k)} />
                   {KIND_LABELS[k]}
                 </label>
               ))
             ) : (
               (activeCategoryFilter === "activation" ? SERVICE_TYPE_BY_CATEGORY.activation : SERVICE_TYPE_BY_CATEGORY.core_service).map((st) => (
-                <label key={st} className="flex items-center gap-2 py-1.5 text-sm cursor-pointer">
+                <label key={st} className="flex items-center gap-2 py-2 text-sm cursor-pointer">
                   <Checkbox checked={selectedTypes.includes(st)} onCheckedChange={() => toggleType(st)} />
                   {SERVICE_TYPE_LABELS[st]}
                 </label>

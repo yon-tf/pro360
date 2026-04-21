@@ -118,9 +118,9 @@ interface OpsCalEvent {
 }
 
 const EVENT_DOT: Record<OpsEventType, string> = {
-  townhall: "bg-emerald-500",
-  pod: "bg-violet-500",
-  workshop: "bg-amber-500",
+  townhall: "bg-chart-2",
+  pod: "bg-chart-4",
+  workshop: "bg-warning",
   other: "bg-primary",
 };
 
@@ -375,13 +375,13 @@ function AppointmentChartLegend() {
   return (
     <div className="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground px-2">
       <div className="flex items-center gap-3">
-        <span className="text-[9px] font-semibold uppercase tracking-wide text-foreground/50">Appointments</span>
+        <span className="text-micro font-semibold text-foreground/50">Appointments</span>
         <LegendDot color={PRO360_DASHBOARD_COLORS.attended} label="Attended" />
         <LegendDot color={PRO360_DASHBOARD_COLORS.cancelled} label="Cancelled" />
         <LegendDot color={PRO360_DASHBOARD_COLORS.noShow} label="No-show" />
       </div>
       <div className="flex items-center gap-3">
-        <span className="text-[9px] font-semibold uppercase tracking-wide text-foreground/50">Case Notes</span>
+        <span className="text-micro font-semibold text-foreground/50">Case Notes</span>
         <LegendDot color={PRO360_DASHBOARD_COLORS.caseNoteSubmitted} label="Submitted" />
         <LegendDot color={PRO360_DASHBOARD_COLORS.caseNoteMissing} label="Missing" />
       </div>
@@ -393,8 +393,8 @@ function AppointmentTooltip({ active, payload, label }: { active?: boolean; payl
   if (!active || !payload?.length) return null;
   const created = payload[0]?.payload?.created ?? 0;
   return (
-    <div className="rounded-lg border bg-card px-3 py-2 text-xs shadow-md">
-      <p className="mb-1.5 font-medium text-foreground">{label}</p>
+    <div className="rounded-lg border bg-card px-3 py-2 text-xs shadow-card">
+      <p className="mb-2 font-medium text-foreground">{label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center justify-between gap-4">
           <span className="flex items-center gap-1">
@@ -404,7 +404,7 @@ function AppointmentTooltip({ active, payload, label }: { active?: boolean; payl
           <span className="tabular-nums font-medium text-foreground">{entry.value}</span>
         </div>
       ))}
-      <div className="mt-1.5 border-t border-border pt-1.5 flex items-center justify-between gap-4">
+      <div className="mt-2 border-t border-border pt-2 flex items-center justify-between gap-4">
         <span className="text-muted-foreground">Total created</span>
         <span className="tabular-nums font-semibold text-foreground">{created}</span>
       </div>
@@ -601,11 +601,22 @@ export default function Pro360AggregatePage() {
     };
   }
 
+  function computeTrendPercent(current: number, previous: number | null | undefined): { text: string | undefined; dir: "up" | "down" | "stable" } {
+    if (previous == null || previous <= 0) return { text: undefined, dir: "stable" };
+    const diff = current - previous;
+    if (diff === 0) return { text: undefined, dir: "stable" };
+    const pct = Math.round(((diff / previous) * 100) * 10) / 10;
+    return {
+      text: `${pct > 0 ? "+" : ""}${pct % 1 === 0 ? pct.toFixed(0) : pct.toFixed(1)}% ${trendLabel}`,
+      dir: pct > 0 ? "up" : "down",
+    };
+  }
+
   const kpiTotalPayout = kpiPayout.corePayout + kpiPayout.activationPayout + kpiPayout.incentivePayout;
   const prevKpiTotalPayout = prevKpiPayout ? prevKpiPayout.corePayout + prevKpiPayout.activationPayout + prevKpiPayout.incentivePayout : null;
 
   const apptTrend = computeTrend(kpiAppt.created, prevKpiAppt?.created);
-  const payoutTrend = computeTrend(kpiTotalPayout, prevKpiTotalPayout);
+  const payoutTrend = computeTrendPercent(kpiTotalPayout, prevKpiTotalPayout);
   const slaTrend = computeTrend(kpiChat.slaPerformance, prevKpiChat?.slaPerformance, "%");
   const chatHoursTrend = computeTrend(kpiChat.totalChatHours, prevKpiChat?.totalChatHours);
   const avgRespTrend = computeTrend(kpiChat.avgResponseTimeHrs, prevKpiChat?.avgResponseTimeHrs, "h");
@@ -772,9 +783,9 @@ export default function Pro360AggregatePage() {
                 <CardTitle className="flex items-center gap-2 text-sm">
                   <AlertTriangle className="h-4 w-4 text-destructive" />
                   Needs attention
-                  <Badge variant="secondary" className="ml-1 text-[10px]">{totalAttention}</Badge>
+                  <Badge variant="secondary" className="ml-1 text-xxxs">{totalAttention}</Badge>
                   {criticalCount > 0 && (
-                    <Badge variant="destructive" className="ml-1 text-[10px]">
+                    <Badge variant="destructive" className="ml-1 text-xxxs">
                       <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                       {criticalCount} critical
                     </Badge>
@@ -791,7 +802,7 @@ export default function Pro360AggregatePage() {
                   id,
                   label: `${ATTENTION_TAB_LABELS[id as AttentionTabId]} (${count})`,
                   suffix: tabHasUrgent(id as AttentionTabId) ? (
-                    <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
+                    <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-destructive" />
                   ) : undefined,
                 }))}
                 activeId={attentionTab}
@@ -803,15 +814,15 @@ export default function Pro360AggregatePage() {
                 <>
                   <ul className="divide-y divide-border">
                     {paginatedRows.map((row) => (
-                      <li key={row.id} className="flex items-center gap-4 py-2.5">
+                      <li key={row.id} className="flex items-center gap-4 py-3">
                         <SeverityBadge row={row} />
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-2">
                             <p className="text-sm font-medium text-foreground">{row.primaryLabel}</p>
                             {row.infoPopover && (
                               <Popover>
                                 <PopoverTrigger asChild>
-                                  <button onClick={(e) => e.stopPropagation()} className="rounded-full p-0.5 text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground">
+                                  <button onClick={(e) => e.stopPropagation()} className="rounded-full p-1 text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground">
                                     <Info className="h-3 w-3" />
                                   </button>
                                 </PopoverTrigger>
@@ -911,12 +922,12 @@ export default function Pro360AggregatePage() {
             ) : (
               <>
                 {upcomingEvents.map((evt) => (
-                  <div key={evt.id} className="flex gap-2.5">
+                  <div key={evt.id} className="flex gap-3">
                     <div className={cn("w-1 shrink-0 rounded-full", EVENT_DOT[evt.eventType])} />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-foreground">{evt.title}</p>
                       <p className="text-xs text-muted-foreground">{evt.start} – {evt.end}</p>
-                      <p className="text-[10px] text-muted-foreground/70">
+                      <p className="text-xxxs text-muted-foreground/70">
                         {evt.date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
                       </p>
                     </div>
@@ -925,7 +936,7 @@ export default function Pro360AggregatePage() {
                 {upcomingEvents.length < 3 && (
                   <div className="flex flex-col items-center justify-center py-5 text-center">
                     <ThumbsUpDuotone className="h-8 w-8 text-muted-foreground/25" />
-                    <p className="mt-1.5 text-xs text-muted-foreground/60">The rest of your day is free</p>
+                    <p className="mt-2 text-xs text-muted-foreground/60">The rest of your day is free</p>
                   </div>
                 )}
               </>
@@ -952,7 +963,7 @@ export default function Pro360AggregatePage() {
             footer={
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-4">
-                  <span className="text-sm font-bold text-foreground">At-Risk Professionals</span>
+                  <span className="text-sm font-normal text-foreground">At-Risk Professionals</span>
                   <span className="text-sm font-medium text-foreground">{atRiskPros.length}</span>
                 </div>
                 {atRiskPros.length > 0 && (
@@ -962,7 +973,7 @@ export default function Pro360AggregatePage() {
                         {p.avatar ? (
                           <Image src={p.avatar} alt={p.name} fill className="rounded-full object-cover" />
                         ) : (
-                          <span className="flex h-full w-full items-center justify-center rounded-full text-[8px] font-medium text-muted-foreground">
+                          <span className="flex h-full w-full items-center justify-center rounded-full text-nano font-medium text-muted-foreground">
                             {p.name.charAt(0)}
                           </span>
                         )}
@@ -970,7 +981,7 @@ export default function Pro360AggregatePage() {
                     ))}
                     {atRiskPros.length > 3 && (
                       <div className="relative inline-flex h-5 w-5 items-center justify-center rounded-full bg-muted ring-1 ring-background">
-                        <span className="text-[8px] font-medium text-muted-foreground">+{atRiskPros.length - 3}</span>
+                        <span className="text-nano font-medium text-muted-foreground">+{atRiskPros.length - 3}</span>
                       </div>
                     )}
                   </div>
@@ -1017,7 +1028,7 @@ export default function Pro360AggregatePage() {
             value={
               <>
                 <span className="tabular-nums">{activePros}</span>
-                <span className="ml-1.5 inline-flex items-center rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                <span className="ml-2 inline-flex items-center rounded-full bg-muted px-2 py-1 text-micro font-medium text-muted-foreground">
                   {tfPlusCount} TF+
                 </span>
               </>
@@ -1050,13 +1061,13 @@ export default function Pro360AggregatePage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">No-show</span>
-                  <span className="font-medium tabular-nums text-red-500">{kpiAppt.noShow}</span>
+                  <span className="font-medium tabular-nums text-destructive">{kpiAppt.noShow}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Cancelled</span>
-                  <span className="font-medium tabular-nums text-amber-600">{kpiAppt.cancelled}</span>
+                  <span className="font-medium tabular-nums text-warning">{kpiAppt.cancelled}</span>
                 </div>
-                <div className="border-t border-border pt-1.5 flex justify-between">
+                <div className="border-t border-border pt-2 flex justify-between">
                   <span className="text-muted-foreground font-medium">Total created</span>
                   <span className="font-semibold tabular-nums">{kpiAppt.created}</span>
                 </div>
@@ -1102,7 +1113,7 @@ export default function Pro360AggregatePage() {
                 <KpiCard
                   title="Case Notes"
                   value={
-                    <span className="flex items-baseline gap-1.5">
+                    <span className="flex items-baseline gap-2">
                       <span>{caseNotePct}%</span>
                       <span className="text-sm font-normal text-muted-foreground">
                         {kpiAppt.caseNoteSubmitted}/{kpiAppt.attended}
@@ -1121,13 +1132,13 @@ export default function Pro360AggregatePage() {
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Submitted</span>
-                  <span className="font-medium tabular-nums text-emerald-600">{kpiAppt.caseNoteSubmitted}</span>
+                  <span className="font-medium tabular-nums text-success">{kpiAppt.caseNoteSubmitted}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Missing</span>
-                  <span className="font-medium tabular-nums text-red-500">{kpiAppt.caseNoteNotSubmitted}</span>
+                  <span className="font-medium tabular-nums text-destructive">{kpiAppt.caseNoteNotSubmitted}</span>
                 </div>
-                <div className="border-t border-border pt-1.5 flex justify-between">
+                <div className="border-t border-border pt-2 flex justify-between">
                   <span className="text-muted-foreground font-medium">Total attended</span>
                   <span className="font-semibold tabular-nums">{kpiAppt.attended}</span>
                 </div>
@@ -1146,7 +1157,7 @@ export default function Pro360AggregatePage() {
 
       {/* ── QUALITY ──────────────────────────────────────────────────────── */}
       <div className="space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Quality</h2>
+        <h2 className="text-xs font-semibold text-muted-foreground">Quality</h2>
 
         {/* SLA + Ratings — 2-col */}
         <div className="grid gap-4 lg:grid-cols-2">
@@ -1154,7 +1165,7 @@ export default function Pro360AggregatePage() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                     <CheckCircleBold className="h-4 w-4" />
                   </div>
                   <div>
@@ -1187,7 +1198,7 @@ export default function Pro360AggregatePage() {
           <Card className="flex h-full flex-col">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                   <StarBold className="h-4 w-4" />
                 </div>
                 <div>
@@ -1219,7 +1230,7 @@ export default function Pro360AggregatePage() {
           <Card className="flex h-full flex-col">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                   <MessageSquareBold className="h-4 w-4" />
                 </div>
                 <div>
@@ -1249,7 +1260,7 @@ export default function Pro360AggregatePage() {
           <Card className="flex h-full flex-col">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                   <CalendarBold className="h-4 w-4" />
                 </div>
                 <div>
@@ -1279,15 +1290,15 @@ export default function Pro360AggregatePage() {
         {/* Therapy Outcomes — moved from Service Delivery section */}
         <Card>
           <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
-                  <CalendarBold className="h-4 w-4" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
+                    <CalendarBold className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-sm">Therapy Outcomes</CardTitle>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle className="text-sm">Therapy Outcomes</CardTitle>
-                </div>
-              </div>
               <Button variant="link" size="sm" className="text-xs shrink-0" asChild>
                 <Link href="/appointments">View module <ExternalLink className="ml-1 h-3 w-3" /></Link>
               </Button>
@@ -1322,14 +1333,14 @@ export default function Pro360AggregatePage() {
 
       {/* ── COMMERCIAL ───────────────────────────────────────────────────── */}
       <div className="space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Commercial</h2>
+        <h2 className="text-xs font-semibold text-muted-foreground">Commercial</h2>
 
         {/* Activation + Payout — 2-col */}
         <div className="grid gap-4 lg:grid-cols-2">
           <Card className="flex h-full flex-col">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                   <ZapBold className="h-4 w-4" />
                 </div>
                 <div>
@@ -1360,7 +1371,7 @@ export default function Pro360AggregatePage() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-500/10 text-slate-500">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                     <DollarSignBold className="h-4 w-4" />
                   </div>
                   <div>
@@ -1394,7 +1405,7 @@ export default function Pro360AggregatePage() {
 
       {/* ── ADMINISTRATION ───────────────────────────────────────────────── */}
       <div className="space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Administration</h2>
+        <h2 className="text-xs font-semibold text-muted-foreground">Administration</h2>
         <DetailTabsSection />
       </div>
 
@@ -1489,13 +1500,13 @@ function ServiceQualityLeaders() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <Crown className="h-4 w-4 text-amber-500" />
+          <Crown className="h-4 w-4 text-warning" />
           Service Quality Leaders
         </h3>
 
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-7 gap-1.5 px-2 text-[11px] font-medium text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="h-7 gap-2 px-2 text-xxs font-medium text-muted-foreground hover:text-foreground">
               <Info className="h-3.5 w-3.5" />
               How do we measure?
             </Button>
@@ -1506,7 +1517,7 @@ function ServiceQualityLeaders() {
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Professionals are ranked based on a weighted score of these four performance metrics:
               </p>
-              <ul className="space-y-2 text-[11px] text-muted-foreground list-disc pl-4">
+              <ul className="space-y-2 text-xxs text-muted-foreground list-disc pl-4">
                 <li><span className="font-medium text-foreground">100% Chat Response:</span> Within 12 hours of the first client message.</li>
                 <li><span className="font-medium text-foreground">Top 15 Speed:</span> Shortest average response times across all professionals.</li>
                 <li><span className="font-medium text-foreground">Active Engagement:</span> At least 1 active client with a minimum of 5 messages received per month.</li>
@@ -1525,11 +1536,17 @@ function ServiceQualityLeaders() {
           return (
             <div key={p.id} className={cn(
               "flex flex-col items-center gap-2 rounded-xl p-3 text-center transition-all",
-              isFirst ? "bg-amber-50/50 dark:bg-amber-900/10 scale-110 -translate-y-2 border border-amber-100 dark:border-amber-900/40 min-w-[130px]" : "bg-muted/30 min-w-[110px]"
+              isFirst
+                ? "bg-warning/8 dark:bg-warning/12 scale-110 -translate-y-2 border border-warning/25 min-w-[130px]"
+                : "bg-muted/30 min-w-[110px]"
             )}>
               <div className={cn(
-                "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold",
-                rank === 1 ? "bg-amber-400 text-white" : rank === 2 ? "bg-slate-300 text-slate-700" : "bg-amber-700/60 text-white"
+                "flex h-6 w-6 items-center justify-center rounded-full text-xxxs font-medium",
+                rank === 1
+                  ? "bg-warning text-primary-foreground"
+                  : rank === 2
+                    ? "bg-muted text-muted-foreground"
+                    : "bg-warning/60 text-primary-foreground"
               )}>
                 {rank}
               </div>
@@ -1537,16 +1554,16 @@ function ServiceQualityLeaders() {
                 {p.avatar ? (
                   <Image src={p.avatar} alt={p.name} width={isFirst ? 56 : 44} height={isFirst ? 56 : 44} className="rounded-full border-2 border-background" />
                 ) : (
-                  <div className={cn("rounded-full bg-muted flex items-center justify-center font-bold text-xs uppercase", isFirst ? "h-14 w-14" : "h-11 w-11")}>
+                  <div className={cn("rounded-full bg-muted flex items-center justify-center font-medium text-xs uppercase", isFirst ? "h-14 w-14" : "h-11 w-11")}>
                     {p.name.charAt(0)}
                   </div>
                 )}
               </div>
               <div className="min-w-0">
                 <p className="max-w-[100px] truncate text-xs font-semibold text-foreground">{p.name}</p>
-                <div className="mt-0.5 flex flex-col items-center">
-                  <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 tabular-nums">#{speedRank} speed</span>
-                  <span className="text-[9px] text-muted-foreground uppercase opacity-70">{p.avgServiceResponseHours}h avg</span>
+                <div className="mt-1 flex flex-col items-center">
+                  <span className="text-xxxs font-medium text-warning tabular-nums">#{speedRank} speed</span>
+                  <span className="text-micro text-muted-foreground opacity-70">{p.avgServiceResponseHours}h avg</span>
                 </div>
               </div>
             </div>
@@ -1556,7 +1573,7 @@ function ServiceQualityLeaders() {
 
       {/* Columnar list for 4-10 */}
       <div className="rounded-lg border border-border bg-muted/20 overflow-hidden">
-        <div className="grid grid-cols-[30px_1fr_80px_60px_60px] items-center gap-2 px-3 py-2 border-b border-border bg-muted/40 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+        <div className="grid h-12 grid-cols-[30px_1fr_80px_60px_60px] items-center gap-2 border-b border-border bg-muted/50 px-4 text-sm font-medium text-muted-foreground">
           <span>#</span>
           <span>Professional</span>
           <span className="text-center">Speed Rank</span>
@@ -1568,27 +1585,27 @@ function ServiceQualityLeaders() {
             const overallRank = i + 4;
             const speedRank = overallRank + 2; // Mocking speed rank
             return (
-              <div key={p.id} className="grid grid-cols-[30px_1fr_80px_60px_60px] items-center gap-2 px-3 py-2.5 transition-colors hover:bg-muted/40">
-                <span className="text-[10px] font-bold text-muted-foreground tabular-nums">{overallRank}</span>
+              <div key={p.id} className="grid grid-cols-[30px_1fr_80px_60px_60px] items-center gap-2 px-4 py-4 transition-colors hover:bg-muted/50">
+                <span className="text-xs font-medium text-muted-foreground tabular-nums">{overallRank}</span>
                 <div className="flex items-center gap-2 min-w-0">
                   {p.avatar ? (
                     <Image src={p.avatar} alt="" width={24} height={24} className="rounded-full shadow-sm" />
                   ) : (
-                    <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[8px] uppercase">{p.name.charAt(0)}</div>
+                    <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-nano uppercase">{p.name.charAt(0)}</div>
                   )}
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-medium text-foreground">{p.name}</p>
-                    <p className="text-[9px] text-muted-foreground tabular-nums">{p.responseRate12h}% chat</p>
+                    <p className="truncate text-sm font-medium text-foreground">{p.name}</p>
+                    <p className="text-xs text-muted-foreground tabular-nums">{p.responseRate12h}% chat</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400">#{speedRank}</span>
-                  <span className="text-[8px] text-muted-foreground opacity-70 tabular-nums">{p.avgServiceResponseHours}h</span>
+                  <span className="text-xs font-medium text-warning tabular-nums">#{speedRank}</span>
+                  <span className="text-xs text-muted-foreground/80 tabular-nums">{p.avgServiceResponseHours}h</span>
                 </div>
                 <div className="flex justify-center">
-                  <CheckCircle className="h-3.5 w-3.5 text-green-600" />
+                  <CheckCircle className="h-3.5 w-3.5 text-success" />
                 </div>
-                <div className="flex justify-center text-[10px] font-semibold text-foreground tabular-nums">
+                <div className="flex justify-center text-xs font-semibold text-foreground tabular-nums">
                   {p.msgCount}
                 </div>
               </div>
@@ -1606,8 +1623,8 @@ function ServiceQualityLeaders() {
 
 function KpiMini({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1">
-      <span className="text-[10px] text-muted-foreground">{label}</span>
+    <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2 py-1">
+      <span className="text-xxxs text-muted-foreground">{label}</span>
       <span className="text-xs font-semibold tabular-nums text-foreground">{String(value)}</span>
     </div>
   );
