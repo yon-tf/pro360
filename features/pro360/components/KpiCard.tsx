@@ -127,11 +127,11 @@ export function KpiCard({
         ) : trend != null ? (
               <span
             className={cn(
-              "flex shrink-0 items-center gap-1 whitespace-nowrap text-xxs font-medium leading-none tabular-nums",
+              "flex shrink-0 items-center gap-1 whitespace-nowrap text-xxxs font-medium leading-none tabular-nums",
               isPrimary ? "text-primary-foreground/90" : TREND_STYLE[trendDirection]
             )}
           >
-            {trend} <span className="text-xxs leading-none">{TREND_ARROW[trendDirection]}</span>
+            {trend} <span className="text-xxxs leading-none">{TREND_ARROW[trendDirection]}</span>
           </span>
         ) : badge ? (
           <span className={cn("shrink-0 rounded-full px-2 py-1 text-micro font-medium", isPrimary ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground")}>
@@ -148,12 +148,12 @@ export function KpiCard({
           </p>
           {target && (
             <Badge
-              variant="outline"
+              variant="secondary"
               className={cn(
                 "h-5 whitespace-nowrap px-2 py-0 text-xxxs font-medium leading-none",
                 isPrimary
-                  ? "border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground"
-                  : "border-muted-foreground/20 bg-muted text-muted-foreground"
+                  ? "bg-primary-foreground/15 text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
               )}
             >
               Target {target}

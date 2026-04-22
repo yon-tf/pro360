@@ -963,7 +963,7 @@ export default function Pro360AggregatePage() {
             footer={
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-4">
-                  <span className="text-sm font-normal text-foreground">At-Risk Professionals</span>
+                  <span className="text-sm font-normal text-muted-foreground">At-Risk Professionals</span>
                   <span className="text-sm font-medium text-foreground">{atRiskPros.length}</span>
                 </div>
                 {atRiskPros.length > 0 && (
