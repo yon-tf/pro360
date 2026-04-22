@@ -39,7 +39,7 @@ import { cn } from "@/lib/utils";
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center gap-1.5 text-xs">
+    <div className="flex items-center gap-2 text-xs">
       <span className="text-muted-foreground">{label}:</span>
       <span className="font-medium text-foreground">{value}</span>
     </div>
@@ -62,7 +62,7 @@ function SortableHead({
     >
       <div className="flex items-center gap-1">
         {children}
-        <span className={cn("text-[10px]", isActive ? "text-foreground" : "text-muted-foreground/50")}>
+        <span className={cn("text-xxxs", isActive ? "text-foreground" : "text-muted-foreground/50")}>
           {isActive ? (sortDir === "asc" ? "↑" : "↓") : "↕"}
         </span>
       </div>
@@ -260,7 +260,7 @@ export function QualityByOrganization({ hideMetrics = false }: { hideMetrics?: b
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground">{org.name}</p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
+                      <p className="mt-1 text-xs text-muted-foreground">
                         OMWA <span className="font-medium text-foreground tabular-nums">{org.omwaScore}</span>
                         {" · "}
                         <button
@@ -272,7 +272,7 @@ export function QualityByOrganization({ hideMetrics = false }: { hideMetrics?: b
                       </p>
                     </div>
                     <button
-                      className="shrink-0 rounded-md border border-primary/20 bg-primary/5 px-3 py-1.5 text-lg font-semibold tabular-nums text-primary hover:bg-primary/10"
+                      className="shrink-0 rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-lg font-semibold tabular-nums text-primary hover:bg-primary/10"
                       onClick={() => openPayoutModal(org)}
                     >
                       ${org.payout.toLocaleString()}
@@ -293,7 +293,7 @@ export function QualityByOrganization({ hideMetrics = false }: { hideMetrics?: b
                     <span>Chat Hours <span className="font-medium text-foreground tabular-nums">{org.chatHoursTotal}</span></span>
                   </div>
 
-                  <div className="mt-2.5 flex flex-wrap gap-2">
+                  <div className="mt-3 flex flex-wrap gap-2">
                     <button
                       className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-primary hover:bg-muted/50"
                       onClick={() => { setPayoutTab("coreServices"); setModal({ type: "payout", org }); }}
@@ -476,10 +476,10 @@ function CoreServiceReceiptCard({ service }: { service: OrgCoreServiceRecord }) 
         <div>
           <div className="flex items-center gap-2">
             <span className={cn(
-              "inline-block rounded px-1.5 py-0.5 text-[10px] font-medium",
+              "inline-block rounded px-2 py-1 text-xxxs font-medium",
               service.serviceType === "Video call"
-                ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"
-                : "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
+                ? "bg-chart-2/15 text-chart-2 dark:bg-chart-2/20"
+                : "bg-chart-1/15 text-chart-1 dark:bg-chart-1/20"
             )}>
               {service.serviceType}
             </span>

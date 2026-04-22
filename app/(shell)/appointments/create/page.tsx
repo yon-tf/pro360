@@ -85,7 +85,7 @@ export default function CreateInternalAppointmentPage() {
       <Card>
         <CardHeader><CardTitle className="text-sm">Appointment details</CardTitle></CardHeader>
         <CardContent className="space-y-5">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="kind">Type</Label>
             <Select value={kind} onValueChange={(v) => setKind(v as AppointmentKind)}>
               <SelectTrigger id="kind"><SelectValue placeholder="Select appointment type" /></SelectTrigger>
@@ -97,21 +97,21 @@ export default function CreateInternalAppointmentPage() {
             </Select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="title">Title (optional)</Label>
             <Input id="title" placeholder="e.g. February Townhall, CBT Workshop" value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="date">Date</Label>
               <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="time">Time</Label>
               <Input id="time" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="duration">Duration (min)</Label>
               <Select value={duration} onValueChange={setDuration}>
                 <SelectTrigger id="duration"><SelectValue /></SelectTrigger>
@@ -124,7 +124,7 @@ export default function CreateInternalAppointmentPage() {
             </div>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="notes">Notes (optional)</Label>
             <Textarea id="notes" placeholder="Agenda, topics, or instructions…" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
           </div>
@@ -153,7 +153,7 @@ export default function CreateInternalAppointmentPage() {
             {selectedPod && podMembers.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground">Pod members (auto-selected)</p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {podMembers.map((p) => p && (
                     <Badge key={p.id} variant="secondary" className="text-xs">Dr. {p.name}</Badge>
                   ))}
@@ -173,12 +173,12 @@ export default function CreateInternalAppointmentPage() {
               <span className="text-sm font-medium">All TFPs</span>
             </label>
             {!allTfps && (
-              <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {professionals.map((p) => (
-                  <label key={p.id} className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-muted/50 cursor-pointer transition-colors">
+                  <label key={p.id} className="flex items-center gap-2 rounded-md px-2 py-2 hover:bg-muted/50 cursor-pointer transition-colors">
                     <Checkbox checked={selectedProfessionals.has(p.id)} onCheckedChange={() => toggleProfessional(p.id)} />
                     <span className="text-sm">{p.name}</span>
-                    <Badge variant="outline" className="ml-auto text-[10px]">{p.role}</Badge>
+                    <Badge variant="outline" className="ml-auto text-xxxs">{p.role}</Badge>
                   </label>
                 ))}
               </div>

@@ -22,8 +22,8 @@ import { KpiCard } from "@/features/pro360/components/KpiCard";
 
 const CATEGORY_STYLES: Record<LMSCategory, string> = {
   "Onboarding Trial": "bg-primary/10 text-primary",
-  "Core Training": "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
-  "Continuing Education": "bg-violet-500/15 text-violet-700 dark:text-violet-400",
+  "Core Training": "bg-success/15 text-success dark:bg-success/20",
+  "Continuing Education": "bg-accent/50 text-accent-foreground dark:bg-accent/20",
 };
 
 
@@ -80,7 +80,7 @@ function ModuleCard({ module: m }: { module: LMSModule }) {
         <div className="flex items-start justify-between gap-2">
           <span
             className={cn(
-              "inline-flex shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium",
+              "inline-flex shrink-0 rounded-full px-3 py-1 text-xs font-medium",
               CATEGORY_STYLES[m.category]
             )}
           >
@@ -91,18 +91,18 @@ function ModuleCard({ module: m }: { module: LMSModule }) {
           {m.name}
         </h3>
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1.5">
+          <span className="flex items-center gap-2">
             <Clock className="h-3.5 w-3.5" />
             {m.timeSpentAvg}
           </span>
-          <span className="flex items-center gap-1.5">
+          <span className="flex items-center gap-2">
             <span>Pass rate</span>
             <span className="font-medium text-foreground">{m.passRate}%</span>
           </span>
         </div>
         <div className="h-1.5 overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full rounded-full bg-emerald-500"
+            className="h-full rounded-full bg-success"
             style={{ width: `${m.passRate}%` }}
           />
         </div>

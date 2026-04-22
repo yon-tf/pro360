@@ -67,9 +67,9 @@ import {
 } from "@/features/rules/mock/rules";
 
 const RULE_TYPE_META: Record<RuleType, { icon: ComponentType<{ className?: string }>; tint: string; chip: string }> = {
-  integration: { icon: Zap, tint: "bg-emerald-500/15 text-emerald-700", chip: "Quality" },
-  support: { icon: MessageSquare, tint: "bg-amber-500/15 text-amber-700", chip: "Clinical Ops" },
-  maintenance: { icon: Settings, tint: "bg-slate-500/15 text-slate-700", chip: "Compliance" },
+  integration: { icon: Zap, tint: "bg-success/15 text-success", chip: "Quality" },
+  support: { icon: MessageSquare, tint: "bg-warning/15 text-warning", chip: "Clinical Ops" },
+  maintenance: { icon: Settings, tint: "bg-muted/60 text-muted-foreground", chip: "Compliance" },
   routing: { icon: Users, tint: "bg-teal-500/15 text-teal-700", chip: "Routing" },
   notification: { icon: Bell, tint: "bg-primary/10 text-primary", chip: "Alerts" },
   data: { icon: Archive, tint: "bg-orange-500/15 text-orange-700", chip: "Payout" },
@@ -219,7 +219,7 @@ export function RuleDashboard({
               className="pl-9"
             />
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             <Button variant={statusFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setStatusFilter("all")}>
               All ({totalRules})
             </Button>
@@ -290,7 +290,7 @@ function RuleCard({
                 event.stopPropagation();
               }}
             >
-              <Badge variant={status.variant} className="border-0 uppercase tracking-[0.18em] text-[10px] font-semibold">
+              <Badge variant={status.variant} className="border-0 text-xxxs font-semibold uppercase tracking-label-lg">
                 {status.label}
               </Badge>
               <Switch
@@ -303,17 +303,17 @@ function RuleCard({
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{typeMeta.chip}</p>
+              <p className="text-xxxs font-medium uppercase tracking-label-lg text-muted-foreground">{typeMeta.chip}</p>
               <h3 className="text-lg font-semibold tracking-tight text-foreground">{rule.name}</h3>
             </div>
 
             <div className="grid grid-cols-[12px_1fr] gap-x-3 gap-y-4">
               <div className="flex flex-col items-center gap-1">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-600" />
+                <span className="h-2.5 w-2.5 rounded-full bg-success" />
                 <span className="h-14 w-px bg-border" />
               </div>
               <div className="space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">If</p>
+                <p className="text-xxs font-semibold uppercase tracking-label-md text-muted-foreground">If</p>
                 <p className="text-xs font-medium leading-5 text-foreground">{rule.triggerPreview}</p>
               </div>
 
@@ -321,7 +321,7 @@ function RuleCard({
                 <span className="h-2.5 w-2.5 rounded-full bg-primary" />
               </div>
               <div className="space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Then</p>
+                <p className="text-xxs font-semibold uppercase tracking-label-md text-muted-foreground">Then</p>
                 <p className="text-xs font-medium leading-5 text-foreground">{rule.actionPreview}</p>
               </div>
             </div>
@@ -755,7 +755,7 @@ export function RuleCanvas({
           <Card>
             <CardHeader className="space-y-3">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-700">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-success/15 text-success">
                   <Zap className="h-4 w-4" />
                 </div>
                 <div>
@@ -850,11 +850,11 @@ export function RuleCanvas({
             </CardHeader>
             <CardContent className="space-y-3">
               {rule.conditions.map((condition, index) => (
-                <div key={condition.id} className="space-y-2 rounded-xl border border-border/70 bg-muted/20 p-3.5">
+                <div key={condition.id} className="space-y-2 rounded-xl border border-border/70 bg-muted/20 p-4">
                   <div className="grid items-start gap-3 md:grid-cols-[48px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_56px]">
                     <div className="flex h-full items-center justify-start self-stretch">
                       {index === 0 ? (
-                        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">IF</span>
+                        <span className="text-xs font-semibold uppercase tracking-label-xl text-primary">IF</span>
                       ) : (
                         <Select
                           value={condition.combinator ?? "and"}
@@ -863,7 +863,7 @@ export function RuleCanvas({
                             if (!open) markConditionTouched(condition.id, "operator");
                           }}
                         >
-                          <SelectTrigger className="h-8 w-auto border-0 bg-transparent px-0 py-0 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground shadow-none ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0">
+                          <SelectTrigger className="h-8 w-auto border-0 bg-transparent px-0 py-0 text-xs font-semibold uppercase tracking-label-xl text-muted-foreground shadow-none ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent align="start">
@@ -962,7 +962,7 @@ export function RuleCanvas({
           <Card>
             <CardHeader className="space-y-3">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/15 text-amber-700">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/15 text-warning">
                   <Bell className="h-4 w-4" />
                 </div>
                 <div>
@@ -976,7 +976,7 @@ export function RuleCanvas({
                 <div key={action.id} className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="flex min-w-0 gap-3">
-                      <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                         <Bell className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 space-y-1">
@@ -1120,7 +1120,7 @@ export function RuleCanvas({
                           <div className="min-w-0 pb-5">
                             <p className="text-sm leading-8 text-foreground">
                               {entry.title}
-                              <span className="ml-1.5 text-xs text-muted-foreground">
+                              <span className="ml-2 text-xs text-muted-foreground">
                                 · {entry.actor} · {entry.at}
                               </span>
                             </p>
@@ -1144,8 +1144,8 @@ export function RuleCanvas({
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-border/70 bg-card px-3 py-2.5 shadow-card">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+    <div className="rounded-lg border border-border/70 bg-card px-3 py-3 shadow-card">
+      <p className="text-micro font-semibold uppercase tracking-label-md text-muted-foreground">{label}</p>
       <p className="mt-1 text-lg font-semibold leading-tight tracking-tight text-foreground">{value}</p>
     </div>
   );
@@ -1185,7 +1185,7 @@ function getActivityStyle(kind: RuleDefinition["activity"][number]["kind"]) {
       return { icon: ClockBold, badge: "bg-muted text-muted-foreground" };
     case "triggered":
     case "success":
-      return { icon: CheckCircleBold, badge: "bg-emerald-500/15 text-emerald-700" };
+      return { icon: CheckCircleBold, badge: "bg-success/15 text-success" };
     case "error":
       return { icon: AlertTriangleBold, badge: "bg-destructive/10 text-destructive" };
     default:

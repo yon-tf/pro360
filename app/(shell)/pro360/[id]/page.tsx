@@ -296,7 +296,7 @@ export default function ProfessionalPage() {
                   {podAssignment ? (
                     <Link
                       href={`/team/${podAssignment.id}`}
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                     >
                       <UsersRound className="h-4 w-4" />
                       {podAssignment.name}
@@ -324,42 +324,42 @@ export default function ProfessionalPage() {
           {/* Row 1 left: Performance card — height matches right cards block only (not table) */}
           <div className="flex flex-col min-h-0">
             <Card
-              className="relative flex h-full min-h-0 flex-col overflow-hidden border border-blue-400/25 bg-[length:100%_100%] bg-[radial-gradient(ellipse_100%_80%_at_50%_0%,_rgba(255,255,255,0.25)_0%,_transparent_45%),_radial-gradient(ellipse_80%_60%_at_50%_40%,_rgba(147,197,253,0.35)_0%,_transparent_50%),_linear-gradient(180deg,_#3b82f6_0%,_#2563eb_35%,_#1d4ed8_100%)] shadow-[0_24px_48px_-12px_rgba(37,99,235,0.35),0_12px_24px_-8px_rgba(30,64,175,0.2),0_0_0_1px_rgba(255,255,255,0.15)_inset] dark:border-white/[0.08] dark:bg-[radial-gradient(ellipse_120%_100%_at_50%_0%,_rgba(59,130,246,0.22)_0%,_transparent_50%),_radial-gradient(ellipse_80%_80%_at_50%_30%,_rgba(30,58,138,0.4)_0%,_transparent_55%),_linear-gradient(180deg,_#1e1e3f_0%,_#171733_40%,_#0f0f23_100%)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)_inset]"
+              className="pro360-performance-bg relative flex h-full min-h-0 flex-col overflow-hidden border border-primary/25 shadow-panel dark:border-primary/20"
             >
               <CardHeader className="shrink-0 pb-2">
-                <CardTitle className="text-base text-white">Performance strengths & AI analysis</CardTitle>
+                <CardTitle className="text-base text-primary-foreground">Performance strengths & AI analysis</CardTitle>
               </CardHeader>
               <CardContent className="flex min-h-0 flex-1 flex-col gap-6">
                 {strengthsRadar.length > 0 && (
-                  <div className="flex shrink-0 justify-center rounded-xl bg-white/20 backdrop-blur-md py-4 px-2 ring-1 ring-white/30 dark:bg-white/[0.06] dark:ring-white/[0.08]">
+                  <div className="flex shrink-0 justify-center rounded-xl bg-primary-foreground/20 backdrop-blur-md px-2 py-4 ring-1 ring-primary-foreground/30 dark:bg-primary-foreground/10 dark:ring-primary-foreground/15">
                     <SpiderChart data={strengthsRadar} size={240} className="w-full max-w-[240px]" improvementThreshold={4} />
                   </div>
                 )}
-                <div className="flex min-h-0 flex-1 flex-col border-t border-white/[0.08] pt-4">
-                  <p className="mb-3 shrink-0 text-sm font-medium text-white">AI analysis and how to improve</p>
+                <div className="flex min-h-0 flex-1 flex-col border-t border-primary-foreground/15 pt-4">
+                  <p className="mb-3 shrink-0 text-sm font-medium text-primary-foreground">AI analysis and how to improve</p>
                   {aiAnalysisLoading ? (
                     <div className="flex flex-col items-center justify-center gap-3 py-6">
-                      <Loader2 className="h-8 w-8 animate-spin text-white" />
-                      <p className="text-xs text-white/80">Scanning profile…</p>
+                      <Loader2 className="h-8 w-8 animate-spin text-primary-foreground" />
+                      <p className="text-xs text-primary-foreground/80">Scanning profile…</p>
                       <div className="flex gap-1">
-                        <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" style={{ animationDelay: "0ms" }} />
-                        <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" style={{ animationDelay: "150ms" }} />
-                        <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" style={{ animationDelay: "300ms" }} />
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground animate-pulse" style={{ animationDelay: "0ms" }} />
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground animate-pulse" style={{ animationDelay: "150ms" }} />
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground animate-pulse" style={{ animationDelay: "300ms" }} />
                       </div>
                     </div>
                   ) : aiAnalysisGenerated ? (
                     <div className="flex min-h-0 flex-1 flex-col">
                       <div className="min-h-0 flex-1 overflow-y-auto">
-                        <p className="text-sm text-white/95">{aiImprovementCardBody}</p>
+                        <p className="text-sm text-primary-foreground/95">{aiImprovementCardBody}</p>
                       </div>
-                      <Button variant="secondary" size="sm" className="mt-4 shrink-0 w-full sm:w-auto bg-white/20 text-white border-white/30 hover:bg-white/30" onClick={() => setAiImprovementModalOpen(true)}>
+                      <Button variant="secondary" size="sm" className="mt-4 w-full shrink-0 bg-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/30 sm:w-auto" onClick={() => setAiImprovementModalOpen(true)}>
                         View full analysis
                       </Button>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      <p className="text-xs text-white/80">Get an AI summary of what to improve and why.</p>
-                      <Button size="sm" className="bg-white text-[#2563eb] hover:bg-white/90" onClick={handleGenerateAiAnalysis}>
+                      <p className="text-xs text-primary-foreground/80">Get an AI summary of what to improve and why.</p>
+                      <Button size="sm" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90" onClick={handleGenerateAiAnalysis}>
                         <Sparkles className="h-3.5 w-3.5" />
                         Generate improvement summary
                       </Button>
@@ -454,7 +454,7 @@ export default function ProfessionalPage() {
                   onActivate={() => setRatingModalOpen(true)}
                   {...cardHoverHandlers("rating")}
                 >
-                  <Card className="relative transition-shadow hover:shadow-md">
+                  <Card className="relative transition-shadow hover:shadow-panel">
                     <CardHeader className="pb-2">
                       <CardTitle className="flex flex-wrap items-center gap-2 text-base">
                         <Star className="h-4 w-4 text-foreground" />
@@ -478,7 +478,7 @@ export default function ProfessionalPage() {
                   onActivate={() => setFeedbackModalOpen(true)}
                   {...cardHoverHandlers("feedback")}
                 >
-                  <Card className="relative transition-shadow hover:shadow-md">
+                  <Card className="relative transition-shadow hover:shadow-panel">
                     <CardHeader className="pb-2">
                       <CardTitle className="flex flex-wrap items-center gap-2 text-base">
                         <MessageSquare className="h-4 w-4 text-foreground" />
@@ -702,8 +702,8 @@ export default function ProfessionalPage() {
                           timeZone: "UTC",
                         })}
                       </span>
-                      <span className="flex items-center gap-1 shrink-0 text-sm font-medium text-foreground">
-                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                      <span className="flex shrink-0 items-center gap-1 text-sm font-medium text-foreground">
+                        <Star className="h-4 w-4 fill-warning text-warning" />
                         {f.rating}/5
                       </span>
                     </div>
@@ -735,7 +735,7 @@ export default function ProfessionalPage() {
                         </span>
                       </div>
                       <span className="flex items-center gap-1 text-sm font-medium text-foreground">
-                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        <Star className="h-4 w-4 fill-warning text-warning" />
                         {r.overall}/5 overall
                       </span>
                     </div>
@@ -832,8 +832,8 @@ export default function ProfessionalPage() {
                     <CardContent className="relative flex flex-1 flex-col gap-3 p-5">
                       <span
                         className={clsx(
-                          "absolute right-4 top-4 rounded px-2 py-0.5 text-xs font-medium",
-                          isActive ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-muted text-muted-foreground"
+                          "absolute right-4 top-4 rounded px-2 py-1 text-xs font-medium",
+                          isActive ? "bg-success/15 text-success dark:bg-success/20" : "bg-muted text-muted-foreground"
                         )}
                       >
                         {isActive ? "Active" : "Inactive"}
@@ -941,7 +941,7 @@ export default function ProfessionalPage() {
               <h2 className="text-2xl font-semibold tracking-tight text-foreground">Calendar</h2>
               <p className="mt-1 text-sm text-muted-foreground">Manage your schedule and appointments</p>
             </div>
-            <div className="flex rounded-[10px] bg-muted/30 p-1 shadow-card">
+            <div className="flex rounded-xl bg-muted/30 p-1 shadow-card">
               <Button variant="default" size="sm" className="rounded-lg">Day</Button>
               <Button variant="ghost" size="sm" className="rounded-lg">Week</Button>
               <Button variant="ghost" size="sm" className="rounded-lg">Month</Button>
@@ -977,9 +977,9 @@ export default function ProfessionalPage() {
                       });
                       const eventStyle = event
                         ? event.type === "pod"
-                          ? "border-l-4 border-l-violet-500 bg-violet-50/50 dark:bg-violet-950/20"
+                          ? "border-l-4 border-l-chart-1 bg-chart-1/8 dark:bg-chart-1/12"
                           : event.type === "townhall"
-                            ? "border-l-4 border-l-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20"
+                            ? "border-l-4 border-l-chart-2 bg-chart-2/8 dark:bg-chart-2/12"
                             : "border-l-4 border-l-primary bg-primary/5"
                         : "";
                       return (
@@ -997,8 +997,8 @@ export default function ProfessionalPage() {
                                       variant="outline"
                                       className={clsx(
                                         "text-xs font-medium",
-                                        event.type === "pod" && "border-violet-500 text-violet-700 dark:text-violet-400",
-                                        event.type === "townhall" && "border-emerald-500 text-emerald-700 dark:text-emerald-400",
+                                        event.type === "pod" && "border-chart-1 text-chart-1",
+                                        event.type === "townhall" && "border-chart-2 text-chart-2",
                                         event.type === "f2f" && "border-primary text-primary"
                                       )}
                                     >
@@ -1007,7 +1007,7 @@ export default function ProfessionalPage() {
                                   )}
                                 </div>
                                 <p className="mt-1 text-sm text-muted-foreground">{event.with}</p>
-                                <p className="mt-0.5 text-xs text-muted-foreground">
+                                <p className="mt-1 text-xs text-muted-foreground">
                                   {event.start} - {event.end}
                                 </p>
                               </div>
@@ -1045,7 +1045,7 @@ export default function ProfessionalPage() {
                         key={date}
                         type="button"
                         className={clsx(
-                          "h-8 w-8 rounded-[10px] text-sm font-medium transition-colors",
+                          "h-8 w-8 rounded-lg text-sm font-medium transition-colors",
                           date === calendarSelectedDate
                             ? "bg-primary text-primary-foreground"
                             : "text-muted-foreground hover:bg-muted"
@@ -1071,8 +1071,8 @@ export default function ProfessionalPage() {
                       <div
                         className={clsx(
                           "w-1 shrink-0 rounded-full",
-                          ev.type === "pod" && "bg-violet-500",
-                          ev.type === "townhall" && "bg-emerald-500",
+                          ev.type === "pod" && "bg-chart-1",
+                          ev.type === "townhall" && "bg-chart-2",
                           ev.type === "f2f" && "bg-primary"
                         )}
                       />
@@ -1115,8 +1115,8 @@ export default function ProfessionalPage() {
                         className={clsx(
                           "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
                           c.status === "completed"
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
-                            : "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400"
+                            ? "bg-success/15 text-success dark:bg-success/20"
+                            : "bg-primary/10 text-primary dark:bg-primary/15"
                         )}
                       >
                         {c.status === "completed" ? (
@@ -1157,7 +1157,7 @@ export default function ProfessionalPage() {
                         )}
                         <div className="mt-3">
                           {c.status === "completed" && (
-                            <Button size="sm" className="bg-emerald-600 text-white hover:bg-emerald-700">
+                            <Button size="sm" className="bg-success text-primary-foreground hover:bg-success/90">
                               Completed
                             </Button>
                           )}
@@ -1304,7 +1304,7 @@ export default function ProfessionalPage() {
                         </div>
                         <p className="text-sm text-muted-foreground">{g.description}</p>
                         <div className="grid gap-3 sm:grid-cols-2">
-                          <div className="space-y-1.5 text-xs text-muted-foreground">
+                          <div className="space-y-2 text-xs text-muted-foreground">
                             <div className="flex items-center gap-2">
                               <Calendar className="h-3.5 w-3.5 shrink-0" />
                               {g.dateTime}
@@ -1318,7 +1318,7 @@ export default function ProfessionalPage() {
                               {g.participants}
                             </div>
                           </div>
-                          <div className="space-y-1.5 text-xs text-muted-foreground">
+                          <div className="space-y-2 text-xs text-muted-foreground">
                             <div className="flex items-center gap-2">
                               <Clock className="h-3.5 w-3.5 shrink-0" />
                               Claims available: {g.claimsAvailable}

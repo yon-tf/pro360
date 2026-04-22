@@ -51,7 +51,7 @@ export function MultiSelectDropdown({
 
   return (
     <Field>
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         <FieldLabel>{label}</FieldLabel>
         {helperText && (
           <span
@@ -64,7 +64,7 @@ export function MultiSelectDropdown({
         )}
       </div>
       {selected.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {selected.map((item) => (
             <Badge
               key={item}
@@ -77,7 +77,7 @@ export function MultiSelectDropdown({
                 onClick={() => handleRemove(item)}
                 variant="ghost"
                 size="icon"
-                className="ml-0.5 h-4 w-4 rounded-full p-0 text-primary hover:bg-primary/20 hover:text-primary"
+                className="ml-1 h-4 w-4 rounded-full p-0 text-primary hover:bg-primary/20 hover:text-primary"
                 aria-label={`Remove ${item}`}
               >
                 <X className="h-3 w-3" />

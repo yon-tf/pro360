@@ -315,7 +315,7 @@ function FilterSection({ title, children }: { title: string; children: React.Rea
 
 function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <p className="text-sm font-medium text-foreground">{label}</p>
       {children}
     </div>
@@ -347,7 +347,7 @@ function TriStateSwitch({
           tabIndex={0}
           onClick={cycle}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); cycle(); } }}
-          className="w-8 cursor-pointer select-none text-[11px] tabular-nums text-muted-foreground"
+          className="w-8 cursor-pointer select-none text-xxs tabular-nums text-muted-foreground"
         >
           {value === null ? "Any" : value ? "Yes" : "No"}
         </span>

@@ -19,20 +19,20 @@ export function SeverityBadge({ row }: { row: AttentionRow }) {
 
   if (row.severity === "critical") {
     return (
-      <Badge variant="destructive" className="text-[10px] uppercase tracking-wider shrink-0">
+      <Badge variant="destructive" className="text-xxxs uppercase tracking-wider shrink-0">
         {label}
       </Badge>
     );
   }
   if (row.severity === "high") {
     return (
-      <Badge variant="warning" className="text-[10px] uppercase tracking-wider shrink-0">
+      <Badge variant="warning" className="text-xxxs uppercase tracking-wider shrink-0">
         {label}
       </Badge>
     );
   }
   return (
-    <Badge variant="secondary" className="text-[10px] uppercase tracking-wider shrink-0">
+    <Badge variant="secondary" className="text-xxxs uppercase tracking-wider shrink-0">
       {label}
     </Badge>
   );

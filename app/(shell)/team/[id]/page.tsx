@@ -453,7 +453,7 @@ export default function PodDetailPage() {
                     <div key={h.id} className="flex gap-3">
                       <div className="flex flex-col items-center">
                         <div className={clsx(
-                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold",
+                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xxs font-semibold",
                           h.type === "member_removed"
                             ? "bg-destructive/15 text-destructive"
                             : isSystem
@@ -471,7 +471,7 @@ export default function PodDetailPage() {
                       <div className="min-w-0 pb-5">
                         <p className="text-sm text-foreground leading-8">
                           {formatHistoryEntry(h)}
-                          <span className="ml-1.5 text-xs text-muted-foreground">
+                          <span className="ml-2 text-xs text-muted-foreground">
                             · {new Date(h.at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                             {" "}
                             {new Date(h.at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
@@ -513,7 +513,7 @@ export default function PodDetailPage() {
               </Button>
             </div>
           ) : (
-            <div className="flex items-center justify-between rounded-lg border border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/20 px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg border border-success/35 bg-success/8 dark:bg-success/12 px-4 py-3">
               <div>
                 <p className="text-sm font-medium">Reactivate pod</p>
                 <p className="text-xs text-muted-foreground">
@@ -522,7 +522,7 @@ export default function PodDetailPage() {
               </div>
               <Button
                 size="sm"
-                className="shrink-0 bg-emerald-600 text-white hover:bg-emerald-700"
+                className="shrink-0 bg-success text-white hover:bg-success/90"
                 onClick={() => {
                   setPodStatus("Active");
                   setNotificationSent(true);
@@ -652,7 +652,7 @@ export default function PodDetailPage() {
                     <div key={h.id} className="flex gap-3">
                       <div className="flex flex-col items-center">
                         <div className={clsx(
-                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold",
+                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xxs font-semibold",
                           h.type === "member_removed"
                             ? "bg-destructive/15 text-destructive"
                             : isSystem
@@ -670,7 +670,7 @@ export default function PodDetailPage() {
                       <div className="min-w-0 pb-5">
                         <p className="text-sm text-foreground leading-8">
                           {formatHistoryEntry(h)}
-                          <span className="ml-1.5 text-xs text-muted-foreground">
+                          <span className="ml-2 text-xs text-muted-foreground">
                             · {new Date(h.at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                             {" "}
                             {new Date(h.at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}

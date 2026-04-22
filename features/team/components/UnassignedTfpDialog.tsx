@@ -52,7 +52,7 @@ export function UnassignedTfpDialog({
                 <Card key={p.id} className="overflow-hidden">
                   <CardContent className="p-4">
                     <p className="font-medium text-foreground truncate">{p.name}</p>
-                    <p className="text-sm text-muted-foreground truncate mt-0.5">
+                    <p className="text-sm text-muted-foreground truncate mt-1">
                       {p.email || "—"}
                     </p>
                   </CardContent>

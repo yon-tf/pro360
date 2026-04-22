@@ -71,7 +71,7 @@ export type Annotation = {
 
 function ParticipantChip({ count }: { count: number }) {
   return (
-    <Badge variant="secondary" className="px-2 py-0.5 text-xs font-medium text-muted-foreground">
+    <Badge variant="secondary" className="px-2 py-1 text-xs font-medium text-muted-foreground">
       {count} {count === 1 ? "member" : "members"}
     </Badge>
   );
@@ -112,7 +112,7 @@ function ParticipantNames({
           className="h-auto px-0 text-xs font-medium"
         >
           +{extra}
-          <ChevronDown className="ml-0.5 h-3 w-3" />
+          <ChevronDown className="ml-1 h-3 w-3" />
         </Button>
       )}
       {expanded && total > MAX_NAMES_VISIBLE && (
@@ -127,7 +127,7 @@ function ParticipantNames({
           className="h-auto px-0 text-xs font-medium"
         >
           Show less
-          <ChevronUp className="ml-0.5 h-3 w-3" />
+          <ChevronUp className="ml-1 h-3 w-3" />
         </Button>
       )}
     </div>
@@ -202,7 +202,7 @@ function RevealIdentityModal({
         </DialogHeader>
 
         <div className="space-y-3">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <p className="text-sm font-medium text-foreground">Reason</p>
             <Select value={reason} onValueChange={onReasonChange}>
               <SelectTrigger>
@@ -640,7 +640,7 @@ function ChatContent() {
       <p className="truncate text-sm font-medium text-foreground">{getThreadPrimaryLabel(t)}</p>
       {t.participants ? (
         <>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
+          <p className="mt-1 truncate text-xs text-muted-foreground">
             {t.participants.find((p) => p.role === "Pod leader")?.name ?? t.participants[0]?.name}
           </p>
           <div className="mt-1">
@@ -650,7 +650,7 @@ function ChatContent() {
       ) : getThreadSecondaryLabel(t) ? (
         <p className="truncate text-xs text-muted-foreground">{getThreadSecondaryLabel(t)}</p>
       ) : null}
-      <p className="mt-0.5 truncate text-xs text-muted-foreground">{redactPII(t.lastPreview).redactedText}</p>
+      <p className="mt-1 truncate text-xs text-muted-foreground">{redactPII(t.lastPreview).redactedText}</p>
     </button>
   );
 
@@ -711,18 +711,18 @@ function ChatContent() {
                 className="h-9 pl-8 text-sm"
               />
             </div>
-            <div className="space-y-0.5 overflow-y-auto">
+            <div className="space-y-1 overflow-y-auto">
               {filteredProfessionals.map((p) => (
                 <div
                   key={p.id}
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm"
+                  className="flex items-center gap-2 rounded-md px-2 py-2 text-sm"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
                     {p.initials}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-foreground">{p.name}</p>
-                    <p className={clsx("text-xs", p.online ? "text-emerald-600" : "text-muted-foreground")}>
+                    <p className={clsx("text-xs", p.online ? "text-success" : "text-muted-foreground")}>
                       {p.online ? "Online" : "Offline"}
                     </p>
                   </div>
@@ -834,7 +834,7 @@ function ChatContent() {
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-semibold text-foreground">{getThreadPrimaryLabel(selectedThread)}</h3>
                   {selectedThread.participants ? (
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
                       <ParticipantChip count={selectedThread.participants.length} />
                       <ParticipantNames
                         participants={selectedThread.participants}
@@ -848,12 +848,12 @@ function ChatContent() {
                     <p className="text-xs text-muted-foreground">{getThreadSecondaryLabel(selectedThread)}</p>
                   ) : null}
                   {selectedThread.viewOnly && (
-                    <Badge variant="warning" className="mt-1.5 inline-flex">
+                    <Badge variant="warning" className="mt-2 inline-flex">
                       View-only (privacy-safe)
                     </Badge>
                   )}
                   {!selectedThread.viewOnly && selectedThread.oversight && (
-                    <Badge variant="secondary" className="mt-1.5 inline-flex">
+                    <Badge variant="secondary" className="mt-2 inline-flex">
                       Pod chat · Monitored
                     </Badge>
                   )}
@@ -896,19 +896,19 @@ function ChatContent() {
                       key={m.id}
                       onContextMenu={(e) => handleMessageContextMenu(e, m.id)}
                       className={clsx(
-                        "max-w-[85%] rounded-xl px-4 py-2 selection:bg-amber-200 dark:selection:bg-amber-800",
+                        "max-w-[85%] rounded-xl px-4 py-2 selection:bg-accent/50",
                         isRight ? "ml-auto mr-0" : "ml-0",
                         isPrimary ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
                       )}
                     >
                       <p className="text-xs font-medium opacity-90">{senderLabel}</p>
-                      <p className="mt-0.5 text-sm">{redactedText}</p>
+                      <p className="mt-1 text-sm">{redactedText}</p>
                       {m.attachments && m.attachments.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1.5">
+                        <div className="mt-2 flex flex-wrap gap-2">
                           {m.attachments.map((attachment) => (
                             <span
                               key={attachment.id}
-                              className="inline-flex items-center rounded-md border border-border/70 bg-background/70 px-2 py-0.5 text-xs text-foreground"
+                              className="inline-flex items-center rounded-md border border-border/70 bg-background/70 px-2 py-1 text-xs text-foreground"
                             >
                               {attachment.type === "image" ? <ImagePlus className="mr-1 h-3 w-3" /> : <Paperclip className="mr-1 h-3 w-3" />}
                               {attachment.name}
@@ -1045,11 +1045,11 @@ function ChatContent() {
                 <div className="border-b border-border p-3">
                   <h3 className="text-sm font-semibold text-foreground">Chat details</h3>
                 </div>
-                <div className="flex-1 overflow-y-auto p-3 space-y-4">
+                <div className="flex-1 space-y-4 overflow-y-auto p-3">
                   {metadata && (
                     <div className="space-y-2">
                       <p className="text-xs font-medium uppercase text-muted-foreground">Metadata</p>
-                      <ul className="space-y-1.5 text-sm text-foreground">
+                      <ul className="space-y-2 text-sm text-foreground">
                         <li className="flex items-center gap-2">
                           <span className="text-muted-foreground">Channel:</span>
                           {metadata.channel}
@@ -1069,10 +1069,10 @@ function ChatContent() {
                     <p className="text-xs font-medium uppercase text-muted-foreground">Risk level</p>
                     <div
                       className={clsx(
-                        "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium",
-                        riskLevel === "High" && "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
-                        riskLevel === "Medium" && "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
-                        riskLevel === "Low" && "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200"
+                        "inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
+                        riskLevel === "High" && "bg-destructive/15 text-destructive dark:bg-destructive/20",
+                        riskLevel === "Medium" && "bg-warning/15 text-warning dark:bg-warning/20",
+                        riskLevel === "Low" && "bg-success/15 text-success dark:bg-success/20"
                       )}
                     >
                       <AlertTriangle className="h-4 w-4" />
@@ -1090,7 +1090,7 @@ function ChatContent() {
                       <ul className="space-y-2">
                         {annotations.map((a) => (
                           <li key={a.id} className="rounded-md bg-background p-2 text-sm shadow-card">
-                            <span className="font-medium text-amber-700 dark:text-amber-400">&quot;{a.text}&quot;</span>
+                            <span className="font-medium text-warning">&quot;{a.text}&quot;</span>
                             <span className="ml-1 text-muted-foreground">– {a.label}</span>
                             <p className="mt-1 text-xs text-muted-foreground">
                               {a.author} · {a.date}
@@ -1125,7 +1125,7 @@ function ChatContent() {
               onClick={handleAnnotateDangerous}
               className="h-auto w-full justify-start gap-2 rounded-none px-3 py-2 text-left text-sm text-foreground"
             >
-              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertTriangle className="h-4 w-4 text-warning" />
               Annotate as dangerous
             </Button>
           </div>
@@ -1160,7 +1160,7 @@ function ChatContent() {
 
 export default function ChatPage() {
   return (
-    <Suspense fallback={<div className="flex h-96 items-center justify-center text-slate-500">Loading chat…</div>}>
+    <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground">Loading chat…</div>}>
       <ChatContent />
     </Suspense>
   );

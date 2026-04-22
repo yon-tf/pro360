@@ -63,9 +63,9 @@ const STATUS_LABEL: Record<string, string> = {
 function ReadOnlyField({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <div className="text-xs text-muted-foreground mb-0.5 flex items-center gap-1.5">
+      <div className="text-xs text-muted-foreground mb-1 flex items-center gap-2">
         {label}
-        <Badge variant="secondary" className="text-[10px] px-1 py-0 leading-tight">System</Badge>
+        <Badge variant="secondary" className="text-xxxs px-1 py-0 leading-tight">System</Badge>
       </div>
       <div className="text-sm text-foreground">{value ?? "—"}</div>
     </div>
@@ -290,7 +290,7 @@ export function ProfessionalForm({
             {mode === "edit" && profile && (
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => {
                   navigator.clipboard.writeText(profile.id);
                   setCopiedId(true);
@@ -299,7 +299,7 @@ export function ProfessionalForm({
               >
                 <span className="font-mono font-semibold">ID</span>
                 <span className="font-mono">{profile.id}</span>
-                {copiedId ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+                {copiedId ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
               </button>
             )}
           </div>
@@ -324,10 +324,10 @@ export function ProfessionalForm({
                   </span>
                 )}
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <p className="text-sm font-medium">Profile photo</p>
                 <p className="text-xs text-muted-foreground">JPG, PNG or WebP. Max 2MB.</p>
-                <div className="flex items-center gap-2 pt-0.5">
+                <div className="flex items-center gap-2 pt-1">
                   <Button
                     variant="outline"
                     size="sm"
@@ -507,7 +507,7 @@ export function ProfessionalForm({
             <p className="text-sm font-medium text-foreground mb-3">Check-in times</p>
             <div className="grid gap-3 sm:grid-cols-2">
               {CHECK_IN_TIME_OPTIONS.map((opt) => (
-                <label key={opt} className="flex items-center gap-2.5 cursor-pointer text-sm py-0.5">
+                <label key={opt} className="flex items-center gap-2 cursor-pointer text-sm py-1">
                   <Checkbox
                     checked={form.checkInTimes.includes(opt)}
                     onCheckedChange={() =>
@@ -609,7 +609,7 @@ export function ProfessionalForm({
           <div className="flex items-center justify-between rounded-lg border border-border px-5 py-4">
             <div>
               <p className="text-sm font-medium">Demo account</p>
-              <p className="text-xs text-muted-foreground mt-0.5">For testing and internal use only</p>
+              <p className="text-xs text-muted-foreground mt-1">For testing and internal use only</p>
             </div>
             <Switch checked={form.demoAccount} onCheckedChange={(v) => set("demoAccount", v)} />
           </div>
@@ -647,13 +647,13 @@ export function ProfessionalForm({
               <div className="flex items-center justify-between rounded-lg border border-destructive/40 bg-destructive/10 px-5 py-4">
                 <div>
                   <p className="text-sm font-medium">Undo departure</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-1">
                     This professional is marked as departed (left the platform) since {form.departureDate}. Reverse this if they return.
                   </p>
                 </div>
                 <Button
                   size="sm"
-                  className="shrink-0 bg-emerald-600 text-white hover:bg-emerald-700"
+                  className="shrink-0 bg-success text-white hover:bg-success/90"
                   onClick={() => set("departureDate", "")}
                 >
                   Undo departure
@@ -663,7 +663,7 @@ export function ProfessionalForm({
               <div className="flex items-center justify-between rounded-lg border border-destructive/40 bg-destructive/10 px-5 py-4">
                 <div>
                   <p className="text-sm font-medium">Departure</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Record that this professional has left the platform (soft delete). Can be reversed if they return.
                   </p>
                 </div>
@@ -680,34 +680,34 @@ export function ProfessionalForm({
                 && (form.leaveStartDate <= today)
                 && (!form.leaveEndDate || form.leaveEndDate >= today);
               return isDeactivated ? (
-                <div className="flex items-center justify-between rounded-lg border border-amber-400 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30 px-5 py-4">
+                <div className="flex items-center justify-between rounded-lg border border-warning/35 bg-warning/8 dark:bg-warning/12 px-5 py-4">
                   <div>
                     <p className="text-sm font-medium">Reactivate</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Professional is deactivated{form.leaveEndDate ? ` until ${form.leaveEndDate}` : ""}. Uses Leave planning dates.
                     </p>
                   </div>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="shrink-0 border-amber-500 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/40"
+                    className="shrink-0 border-warning/60 text-warning hover:bg-warning/12 dark:hover:bg-warning/12"
                     onClick={() => { set("leaveStartDate", ""); set("leaveEndDate", ""); set("leaveReason", ""); }}
                   >
                     Reactivate
                   </Button>
                 </div>
               ) : (
-                <div className="flex items-center justify-between rounded-lg border border-amber-400 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30 px-5 py-4">
+                <div className="flex items-center justify-between rounded-lg border border-warning/35 bg-warning/8 dark:bg-warning/12 px-5 py-4">
                   <div>
                     <p className="text-sm font-medium">Deactivate</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Temporarily deactivate (e.g. break, sabbatical). Uses Leave planning dates above.
                     </p>
                   </div>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="shrink-0 border-amber-600 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/40"
+                    className="shrink-0 border-warning/60 text-warning hover:bg-warning/12 dark:hover:bg-warning/12"
                     onClick={() => {
                       const start = new Date().toISOString().slice(0, 10);
                       const end = new Date();

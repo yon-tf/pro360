@@ -77,14 +77,14 @@ export default function CalendarPage() {
                         onClick={() => setSelectedEventId(ev.id)}
                         className={cn(
                           "w-full rounded-xl px-4 py-2 text-left shadow-card transition hover:shadow-panel",
-                          ev.type === "pod" && "bg-violet-50/50 dark:bg-violet-950/30",
+                          ev.type === "pod" && "bg-accent/50 dark:bg-accent/20",
                           ev.type === "townhall" && "bg-primary/5 dark:bg-primary/10",
                           ev.type === "f2f" && "bg-card"
                         )}
                       >
                         <p className="text-sm font-medium text-foreground">{ev.title}</p>
                         <p className="text-xs text-muted-foreground">{ev.with}</p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
+                        <p className="mt-1 text-xs text-muted-foreground">
                           {ev.start} – {ev.end}
                         </p>
                       </button>

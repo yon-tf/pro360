@@ -16,7 +16,7 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
         const isLast = i === items.length - 1;
         return (
           <span key={i}>
-            {i > 0 && <span className="mx-1.5 text-muted-foreground">/</span>}
+            {i > 0 && <span className="mx-2 text-muted-foreground">/</span>}
             {item.href && !isLast ? (
               <Link
                 href={item.href}

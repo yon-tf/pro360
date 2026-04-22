@@ -65,14 +65,14 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
               <Button variant="ghost" size="icon" className="relative shrink-0" aria-label="Notifications">
                 <Bell className="h-4 w-4" />
                 {unreadCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-xxxs font-semibold text-destructive-foreground">
                     {unreadCount}
                   </span>
                 )}
               </Button>
             </PopoverTrigger>
             <PopoverContent align="end" className="w-80 p-0">
-              <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+              <div className="flex items-center justify-between border-b border-border px-4 py-2">
                 <p className="text-sm font-semibold text-foreground">Notifications</p>
                 {notifs.some((n) => !n.read) && (
                   <button type="button" className="text-xs text-primary hover:underline" onClick={markAllRead}>
@@ -94,16 +94,16 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
                             className="flex gap-3 px-4 py-3 transition-colors hover:bg-muted/50"
                             onClick={() => setOpen(false)}
                           >
-                            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted">
+                            <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted">
                               <Icon className="h-3.5 w-3.5 text-muted-foreground" />
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="text-sm font-medium text-foreground leading-snug">
                                 {n.title}
-                                {!n.read && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-primary" />}
+                                {!n.read && <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-primary" />}
                               </p>
                               <p className="text-xs text-muted-foreground line-clamp-2">{n.body}</p>
-                              <p className="mt-0.5 text-[11px] text-muted-foreground/70">{formatTimeAgo(n.timestamp)}</p>
+                              <p className="mt-1 text-xxs text-muted-foreground/70">{formatTimeAgo(n.timestamp)}</p>
                             </div>
                           </Link>
                         </li>
@@ -145,7 +145,7 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
           {/* User avatar + dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button type="button" className="flex items-center gap-2 rounded-lg px-1 py-0.5 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <button type="button" className="flex items-center gap-2 rounded-lg px-1 py-1 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <div className="hidden h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border bg-muted sm:flex">
                   <Image
                     src={TOPBAR_USER_AVATAR}

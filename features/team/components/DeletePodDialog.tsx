@@ -41,7 +41,7 @@ export function DeactivatePodDialog({
               <p>
                 Are you sure you want to deactivate <strong>{podName}</strong>?
               </p>
-              <div className="rounded-lg border border-border bg-muted/50 p-3 space-y-1.5">
+              <div className="rounded-lg border border-border bg-muted/50 p-3 space-y-2">
                 <p className="text-xs font-semibold text-foreground">Impact</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
                   <li>Pod status will change to <strong className="text-foreground">Inactive</strong></li>

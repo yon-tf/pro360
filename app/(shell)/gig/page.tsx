@@ -35,7 +35,7 @@ const CreateJobDialog = dynamic(
 );
 
 const STATUS_STYLES: Record<GigJobStatus, string> = {
-  open: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-0",
+  open: "bg-success/15 text-success border-0 dark:bg-success/20",
   approved: "bg-primary/10 text-primary border-0",
   completed: "bg-muted text-muted-foreground border-0",
 };
@@ -104,17 +104,17 @@ const JobCard = memo(function JobCard({
             <Pencil className="h-4 w-4" />
           </Button>
         </div>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           <span
             className={cn(
-              "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize",
+              "inline-flex rounded-full border px-3 py-1 text-xs font-medium capitalize",
               STATUS_STYLES[job.status]
             )}
           >
             {job.status}
           </span>
           {job.claimableExpenses && (
-            <span className="inline-flex rounded-full border border-amber-300 bg-amber-500/15 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-200">
+            <span className="inline-flex rounded-full border border-warning/35 bg-warning/15 px-3 py-1 text-xs font-medium text-warning dark:bg-warning/20">
               Claimable Expenses
             </span>
           )}
@@ -224,7 +224,7 @@ export default function GigPage() {
               className="pl-9"
             />
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {filters.map((f) => (
               <Button
                 key={f.id}

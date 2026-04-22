@@ -69,9 +69,9 @@ export function ChartTooltipContent({
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="min-w-[8rem] rounded-lg border border-border bg-card px-3 py-2 shadow-md">
+    <div className="min-w-[8rem] rounded-lg border border-border bg-card px-3 py-2 shadow-panel">
       {!hideLabel && label && (
-        <p className="mb-1.5 text-xs font-medium text-muted-foreground">{label}</p>
+        <p className="mb-1 text-xs font-medium text-muted-foreground">{label}</p>
       )}
       <div className="space-y-1">
         {payload.map((entry) => {
@@ -80,7 +80,7 @@ export function ChartTooltipContent({
           const color = cfg?.color ?? entry.color;
           return (
             <div key={entry.dataKey} className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 {indicator === "dot" && (
                   <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
                 )}
@@ -130,7 +130,7 @@ export function ChartLegendContent({
   if (items.length === 0) return null;
 
   return (
-    <div className={cn("flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 pt-2", wrapperClassName)}>
+    <div className={cn("flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-2", wrapperClassName)}>
       {items.map((entry: Record<string, unknown>) => {
         const key = String(entry.dataKey ?? entry.id ?? entry.value ?? "");
         const type = seriesTypes[key] ?? "bar";
@@ -138,7 +138,7 @@ export function ChartLegendContent({
         const isDashed = dashedKeys.includes(key);
         const color = (entry.color as string) ?? "var(--muted-foreground)";
         return (
-          <div key={key} className="flex items-center gap-1.5 text-xs">
+          <div key={key} className="flex items-center gap-2 text-xs">
             {type === "line" ? (
               <span
                 className={cn("h-0.5 w-3 shrink-0 rounded", isDashed && "border-t-2 border-dashed")}

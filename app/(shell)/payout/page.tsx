@@ -132,7 +132,7 @@ export default function PayoutPage() {
             {/* Middle: total to process */}
             <div className="flex flex-col justify-center px-6 border-l border-border shrink-0">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total to process</p>
-              <p className="text-2xl font-bold text-foreground mt-0.5">{payoutStats.totalMtd}</p>
+              <p className="mt-1 text-2xl font-bold text-foreground">{payoutStats.totalMtd}</p>
             </div>
 
             {/* Right: generate button — disabled/loading on click, navigates with ?generate=1 */}
@@ -215,10 +215,10 @@ export default function PayoutPage() {
                       <TableCell className="text-right font-medium">{row.total}</TableCell>
                       <TableCell className="text-right">
                         {row.exceptions > 0 ? (
-                          <span className="text-amber-700 font-medium">{row.exceptions}</span>
+                          <span className="font-medium text-warning">{row.exceptions}</span>
                         ) : (
                           <span className="text-muted-foreground flex items-center justify-end gap-1">
-                            <CheckCircle className="h-3.5 w-3.5 text-emerald-600" /> 0
+                            <CheckCircle className="h-3.5 w-3.5 text-success" /> 0
                           </span>
                         )}
                       </TableCell>

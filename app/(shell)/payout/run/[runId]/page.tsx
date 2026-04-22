@@ -401,28 +401,28 @@ export default function PayoutRunPage() {
       ══════════════════════════════════════════════════════════════════════ */}
       {showLoading && (
         <div className="flex min-h-[60vh] items-center justify-center">
-          <Card className="w-full max-w-xl overflow-hidden border-zinc-200 bg-white shadow-xl">
+          <Card className="w-full max-w-xl overflow-hidden border border-border bg-card shadow-panel">
             {/* Terminal title bar */}
-            <div className="flex items-center gap-2 border-b border-zinc-200 bg-zinc-100 px-4 py-2.5">
-              <div className="flex gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
+            <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-4 py-3">
+              <div className="flex gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-destructive/80" />
+                <span className="h-2.5 w-2.5 rounded-full bg-warning/80" />
+                <span className="h-2.5 w-2.5 rounded-full bg-success/80" />
               </div>
-              <span className="ml-2 font-mono text-xs text-zinc-500">payout generate</span>
+              <span className="ml-2 font-mono text-xs text-muted-foreground">payout generate</span>
             </div>
             <CardContent className="p-4 font-mono text-sm">
-              <div className="space-y-1.5">
-                <div className="text-zinc-600">
-                  <span className="text-emerald-600">$</span> Generating payout draft…
+              <div className="space-y-2">
+                <div className="text-muted-foreground">
+                  <span className="text-success">$</span> Generating payout draft…
                 </div>
                 {ACTIVITY_SOURCES.map(({ key, label }) => {
                   const done = detectedSources.has(key);
                   return (
                     <div key={key} className="flex items-center gap-2">
-                      <span className="text-zinc-500">{done ? "✓" : "○"}</span>
-                      <span className={done ? "text-emerald-600" : "text-zinc-500"}>{label}</span>
-                      {!done && <span className="animate-pulse text-zinc-400">_</span>}
+                      <span className="text-muted-foreground">{done ? "✓" : "○"}</span>
+                      <span className={done ? "text-success" : "text-muted-foreground"}>{label}</span>
+                      {!done && <span className="animate-pulse text-muted-foreground/60">_</span>}
                     </div>
                   );
                 })}
@@ -444,17 +444,17 @@ export default function PayoutRunPage() {
                     onClick={() => canNavigateTo(step.id) ? setCurrentStep(step.id) : undefined}
                     title={step.id === 3 && !canNavigateTo(step.id) ? "Resolve blocking issues before approval" : undefined}
                     className={cn(
-                      "flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-[15px] font-medium transition",
+                      "flex items-center gap-3 rounded-lg px-2 py-2 text-smplus font-medium transition",
                       currentStep === step.id
                         ? "text-primary"
                         : step.id < currentStep
-                          ? "text-emerald-600 dark:text-emerald-400 hover:bg-muted"
+                          ? "text-success hover:bg-muted"
                           : "text-muted-foreground cursor-default",
                       step.id === 3 && !canNavigateTo(step.id) && "cursor-not-allowed opacity-70",
                     )}
                   >
                     {step.id < currentStep ? (
-                      <CheckCircleBold className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden />
+                      <CheckCircleBold className="h-5 w-5 shrink-0 text-success" aria-hidden />
                     ) : currentStep === step.id ? (
                       <CheckCircle className="h-5 w-5 shrink-0 text-primary" aria-hidden />
                     ) : (
@@ -500,7 +500,7 @@ export default function PayoutRunPage() {
                 <span className="text-muted-foreground/60">|</span>
                 <span><span className="text-muted-foreground">Total payout</span> <span className="font-semibold text-foreground">${kpis.totalPayoutUsd.toLocaleString()}</span></span>
                 <span className="text-muted-foreground/60">|</span>
-                <span><span className="text-muted-foreground">Issues detected</span> <span className={cn("font-semibold", kpis.flagged > 0 ? "text-amber-600" : "text-foreground")}>{kpis.flagged}</span></span>
+                <span><span className="text-muted-foreground">Issues detected</span> <span className={cn("font-semibold", kpis.flagged > 0 ? "text-warning" : "text-foreground")}>{kpis.flagged}</span></span>
                 <span className="text-muted-foreground/60">|</span>
                 <span><span className="text-muted-foreground">Confidence</span> <Badge variant={kpis.flagged === 0 ? "default" : kpis.flagged <= 2 ? "secondary" : "destructive"} className="ml-1 text-xs">{kpis.flagged === 0 ? "High" : kpis.flagged <= 2 ? "Medium" : "Low"}</Badge></span>
               </div>
@@ -613,7 +613,7 @@ export default function PayoutRunPage() {
                           className={cn(
                             "cursor-pointer hover:bg-muted/50",
                             selectedTfpIds.has(r.id) && "bg-muted/50",
-                            hasIssue && "bg-amber-50/50 dark:bg-amber-950/20"
+                            hasIssue && "bg-warning/8 dark:bg-warning/12"
                           )}
                           onClick={() => openDrawerTFP(r)}
                         >
@@ -770,8 +770,8 @@ export default function PayoutRunPage() {
             <CardContent className="space-y-4">
               <Tabs
                 tabs={[
-                  { id: "blocking", label: "Blocking", suffix: blockingExceptionCount > 0 ? <Badge variant="destructive" className="ml-1.5 text-xs">{blockingExceptionCount}</Badge> : undefined },
-                  { id: "warnings", label: "Warnings", suffix: warningExceptions.length > 0 ? <Badge variant="secondary" className="ml-1.5 text-xs">{warningExceptions.length}</Badge> : undefined },
+                  { id: "blocking", label: "Blocking", suffix: blockingExceptionCount > 0 ? <Badge variant="destructive" className="ml-2 text-xs">{blockingExceptionCount}</Badge> : undefined },
+                  { id: "warnings", label: "Warnings", suffix: warningExceptions.length > 0 ? <Badge variant="secondary" className="ml-2 text-xs">{warningExceptions.length}</Badge> : undefined },
                   { id: "resolved", label: "Resolved" },
                   { id: "all", label: "All" },
                 ]}
@@ -896,7 +896,7 @@ export default function PayoutRunPage() {
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-1">Professionals</p>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-muted-foreground" />
                     <p className="text-xl font-semibold text-foreground">{kpis.professionalCount}</p>
                   </div>
@@ -907,11 +907,11 @@ export default function PayoutRunPage() {
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-1">Exceptions resolved</p>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {exceptionsResolved === exceptionsTotal ? (
-                      <CheckCircle className="h-4 w-4 text-emerald-600" />
+                      <CheckCircle className="h-4 w-4 text-success" />
                     ) : (
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
+                      <AlertTriangle className="h-4 w-4 text-warning" />
                     )}
                     <p className="text-xl font-semibold text-foreground">{exceptionsResolved} / {exceptionsTotal}</p>
                   </div>
@@ -926,13 +926,13 @@ export default function PayoutRunPage() {
               <CardTitle className="text-base">Review readiness</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+              <p className="flex items-center gap-2 text-success">
                 <CheckCircle className="h-4 w-4" /> All flagged entries reviewed
               </p>
-              <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+              <p className="flex items-center gap-2 text-success">
                 <CheckCircle className="h-4 w-4" /> Exceptions resolved or held
               </p>
-              <p className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+              <p className="flex items-center gap-2 text-success">
                 <CheckCircle className="h-4 w-4" /> Hotline review completed
               </p>
             </CardContent>
@@ -940,7 +940,7 @@ export default function PayoutRunPage() {
 
           {/* Secondary actions — primary Approve is in the stepper row */}
           {!canApprove && (
-            <p className="text-sm text-amber-600 dark:text-amber-400">
+            <p className="text-sm text-warning">
               Resolve all blocking issues (Hold, Too small, Unclaimed) before approving.
             </p>
           )}
@@ -1124,11 +1124,11 @@ export default function PayoutRunPage() {
                   reason: string; onReasonChange: (v: string) => void; adjusted: boolean; showReason: boolean; showRequired: boolean;
                   editable: boolean; children?: React.ReactNode;
                 }) => (
-                  <Card className={cn(adjusted && "ring-1 ring-amber-200 dark:ring-amber-800")}>
+                  <Card className={cn(adjusted && "ring-1 ring-warning/35 dark:ring-warning/45")}>
                     <CardHeader className="py-2 flex flex-row items-center justify-between gap-2">
                       <CardTitle className="text-sm font-medium">{label}</CardTitle>
                       {adjusted && (
-                        <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
+                        <Badge variant="secondary" className="text-xxxs uppercase tracking-wide">
                           Adjusted
                         </Badge>
                       )}
@@ -1169,7 +1169,7 @@ export default function PayoutRunPage() {
                 return (
                   <>
                     {selectedTFP.status === "Flagged" && (
-                      <Card className="border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/20">
+                      <Card className="border-warning/35 bg-warning/8 dark:bg-warning/12">
                         <CardHeader className="pb-2">
                           <CardTitle className="text-sm font-medium">AI recommendation — review</CardTitle>
                         </CardHeader>
@@ -1285,7 +1285,7 @@ export default function PayoutRunPage() {
                       {adjustmentDelta !== 0 && (
                         <div className="flex justify-between">
                           <span>Adjustments</span>
-                          <span className={adjustmentDelta >= 0 ? "text-emerald-600" : "text-destructive"}>{adjustmentDelta >= 0 ? "+" : ""}${adjustmentDelta}</span>
+                          <span className={adjustmentDelta >= 0 ? "text-success" : "text-destructive"}>{adjustmentDelta >= 0 ? "+" : ""}${adjustmentDelta}</span>
                         </div>
                       )}
                       <div className="flex justify-between font-semibold text-foreground pt-2">
@@ -1299,7 +1299,7 @@ export default function PayoutRunPage() {
               {selectedHotline && (
                 <>
                   {selectedHotline.status === "Flagged" && (
-                    <Card className="border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/20">
+                    <Card className="border-warning/35 bg-warning/8 dark:bg-warning/12">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium">AI recommendation — review</CardTitle>
                       </CardHeader>
@@ -1329,7 +1329,7 @@ export default function PayoutRunPage() {
                         {selectedHotline.validationFlags.includes("Missing check-in") ? (
                           <span className="text-destructive">✗</span>
                         ) : (
-                          <Check className="h-4 w-4 text-emerald-600" />
+                          <Check className="h-4 w-4 text-success" />
                         )}
                         Check-in present
                       </li>
@@ -1337,16 +1337,16 @@ export default function PayoutRunPage() {
                         {selectedHotline.validationFlags.some((f) => f.toLowerCase().includes("check-out")) ? (
                           <span className="text-destructive">✗</span>
                         ) : (
-                          <Check className="h-4 w-4 text-emerald-600" />
+                          <Check className="h-4 w-4 text-success" />
                         )}
                         Check-out present
                       </li>
-                      <li className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                      <li className="flex items-center gap-2 text-success">
                         <Check className="h-4 w-4" />
                         Duration reasonable (1–12h per shift)
                       </li>
                       {selectedHotline.validationFlags.map((f) => (
-                        <li key={f} className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                        <li key={f} className="flex items-center gap-2 text-warning">
                           <span className="text-destructive">!</span> {f}
                         </li>
                       ))}
@@ -1405,7 +1405,7 @@ export default function PayoutRunPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="gap-1.5 text-sm shrink-0"
+                  className="shrink-0 gap-2 text-sm"
                   onClick={() => setActivityDrawerOpen(false)}
                 >
                   <ChevronLeft className="h-4 w-4" />

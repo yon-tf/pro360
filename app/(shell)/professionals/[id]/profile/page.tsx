@@ -54,9 +54,9 @@ function formatSystemDate(dateValue: string) {
 function Field({ label, value, system }: { label: string; value: React.ReactNode; system?: boolean }) {
   return (
     <div>
-      <div className="text-xs font-medium text-muted-foreground mb-0.5 flex items-center gap-1.5">
+      <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-2">
         {label}
-        {system && <Badge variant="secondary" className="text-[10px] px-1 py-0 leading-tight">System</Badge>}
+        {system && <Badge variant="secondary" className="text-xxxs px-1 py-0 leading-tight">System</Badge>}
       </div>
       <div className="text-sm text-foreground">{value ?? "—"}</div>
     </div>
@@ -133,7 +133,7 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
               <Info className="h-3.5 w-3.5" />
             </span>
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {profile.specialisations.map((s) => (
               <Badge key={s} variant="secondary">{s}</Badge>
             ))}
@@ -150,7 +150,7 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
               <Info className="h-3.5 w-3.5" />
             </span>
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {profile.therapyApproaches.map((a) => (
               <Badge key={a} variant="secondary">{a}</Badge>
             ))}
@@ -167,7 +167,7 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
               <Info className="h-3.5 w-3.5" />
             </span>
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {profile.treatmentExperiences.map((t) => (
               <Badge key={t} variant="secondary">{t}</Badge>
             ))}
@@ -222,11 +222,11 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
                 <div className="space-y-3 rounded-lg border border-border p-4">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">English (source)</p>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Biography</p>
+                    <p className="text-xs text-muted-foreground mb-1">Biography</p>
                     <p className="text-sm">{profile.biography}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Specialisation</p>
+                    <p className="text-xs text-muted-foreground mb-1">Specialisation</p>
                     <div className="flex flex-wrap gap-1">
                       {profile.specialisations.map((s) => (
                         <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>
@@ -234,7 +234,7 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Therapy approach</p>
+                    <p className="text-xs text-muted-foreground mb-1">Therapy approach</p>
                     <div className="flex flex-wrap gap-1">
                       {profile.therapyApproaches.map((a) => (
                         <Badge key={a} variant="secondary" className="text-xs">{a}</Badge>
@@ -242,7 +242,7 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Special populations</p>
+                    <p className="text-xs text-muted-foreground mb-1">Special populations</p>
                     <div className="flex flex-wrap gap-1">
                       {profile.treatmentExperiences.map((t) => (
                         <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
@@ -254,10 +254,10 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
                 <div className="space-y-3 rounded-lg border border-border p-4">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     {selectedLang} (draft)
-                    {currentDraft.complete && <Badge variant="default" className="ml-2 text-[10px]">Complete</Badge>}
+                    {currentDraft.complete && <Badge variant="default" className="ml-2 text-xxxs">Complete</Badge>}
                   </p>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Biography</p>
+                    <p className="text-xs text-muted-foreground mb-1">Biography</p>
                     <Textarea
                       className="min-h-[80px] resize-y"
                       value={currentDraft.biography}
@@ -266,7 +266,7 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
                     />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Specialisation</p>
+                    <p className="text-xs text-muted-foreground mb-1">Specialisation</p>
                     <Input
                       placeholder="Comma-separated translated labels..."
                       value={currentDraft.specialisations.join(", ")}
@@ -274,7 +274,7 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
                     />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Therapy approach</p>
+                    <p className="text-xs text-muted-foreground mb-1">Therapy approach</p>
                     <Input
                       placeholder="Comma-separated translated labels..."
                       value={currentDraft.therapyApproaches.join(", ")}
@@ -282,7 +282,7 @@ function PublicProfileSection({ profile }: { profile: (typeof professionalProfil
                     />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">Special populations</p>
+                    <p className="text-xs text-muted-foreground mb-1">Special populations</p>
                     <Input
                       placeholder="Comma-separated translated labels..."
                       value={currentDraft.treatmentExperiences.join(", ")}
@@ -441,7 +441,7 @@ export default function ProfessionalViewPage() {
               <p className="text-lg font-semibold">{profile.firstName} {profile.lastName}</p>
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => {
                   navigator.clipboard.writeText(profile.id);
                   setCopiedId(true);
@@ -450,7 +450,7 @@ export default function ProfessionalViewPage() {
               >
                 <span className="font-mono font-semibold">ID</span>
                 <span className="font-mono">{profile.id}</span>
-                {copiedId ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+                {copiedId ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
               </button>
             </div>
           </div>
@@ -570,7 +570,7 @@ export default function ProfessionalViewPage() {
               </div>
               <Button
                 size="sm"
-                className="shrink-0 bg-emerald-600 text-white hover:bg-emerald-700"
+                className="shrink-0 bg-success text-white hover:bg-success/90"
                 onClick={handleUndoDeparture}
               >
                 Undo departure
@@ -597,7 +597,7 @@ export default function ProfessionalViewPage() {
               && (profile.leaveStartDate <= today)
               && (!profile.leaveEndDate || profile.leaveEndDate >= today);
             return isDeactivated ? (
-              <div className="flex items-center justify-between rounded-lg border border-amber-400 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30 px-5 py-4">
+              <div className="flex items-center justify-between rounded-lg border border-warning/35 bg-warning/8 dark:bg-warning/12 px-5 py-4">
                 <div>
                   <p className="text-sm font-medium">Reactivate</p>
                   <p className="text-xs text-muted-foreground">
@@ -607,7 +607,7 @@ export default function ProfessionalViewPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="shrink-0 border-amber-500 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/40"
+                  className="shrink-0 border-warning/60 text-warning hover:bg-warning/12 dark:hover:bg-warning/12"
                   onClick={() => {
                     upsertStoredProfessionalProfile({
                       ...profile,
@@ -622,7 +622,7 @@ export default function ProfessionalViewPage() {
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center justify-between rounded-lg border border-amber-400 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30 px-5 py-4">
+              <div className="flex items-center justify-between rounded-lg border border-warning/35 bg-warning/8 dark:bg-warning/12 px-5 py-4">
                 <div>
                   <p className="text-sm font-medium">Deactivate</p>
                   <p className="text-xs text-muted-foreground">
@@ -632,7 +632,7 @@ export default function ProfessionalViewPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="shrink-0 border-amber-600 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/40"
+                  className="shrink-0 border-warning/60 text-warning hover:bg-warning/12 dark:hover:bg-warning/12"
                   onClick={() => {
                     const start = new Date().toISOString().slice(0, 10);
                     const end = new Date();
