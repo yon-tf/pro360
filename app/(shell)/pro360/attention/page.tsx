@@ -124,9 +124,9 @@ function NeedsAttentionContent() {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
             Needs attention
-            <Badge variant="secondary" className="ml-1 text-xxxs">{totalItems}</Badge>
+            <Badge variant="secondary" className="ml-1 rounded-full px-3 py-1 text-xxxs font-semibold">{totalItems}</Badge>
             {criticalCount > 0 && (
-              <Badge variant="destructive" className="ml-1 text-xxxs">
+              <Badge variant="destructive" className="ml-1 rounded-full px-3 py-1 text-xxxs font-semibold">
                 <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                 {criticalCount} critical
               </Badge>

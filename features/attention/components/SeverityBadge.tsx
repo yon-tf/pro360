@@ -17,11 +17,14 @@ export function SeverityBadge({ row }: { row: AttentionRow }) {
   const label = getSeverityBadgeLabel(row);
   if (!label) return null;
 
+  const pillClassName =
+    "shrink-0 rounded-full px-3 py-1 text-xxxs font-semibold uppercase tracking-wider";
+
   if (row.severity === "critical") {
     return (
       <Badge
         variant="destructive"
-        className="shrink-0 text-xxxs text-destructive-foreground"
+        className={pillClassName}
       >
         {label}
       </Badge>
@@ -29,13 +32,13 @@ export function SeverityBadge({ row }: { row: AttentionRow }) {
   }
   if (row.severity === "high") {
     return (
-      <Badge variant="warning" className="text-[10px] uppercase tracking-wider shrink-0">
+      <Badge variant="warning" className={pillClassName}>
         {label}
       </Badge>
     );
   }
   return (
-    <Badge variant="secondary" className="shrink-0 text-xxxs">
+    <Badge variant="secondary" className={pillClassName}>
       {label}
     </Badge>
   );

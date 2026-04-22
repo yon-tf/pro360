@@ -783,9 +783,9 @@ export default function Pro360AggregatePage() {
                 <CardTitle className="flex items-center gap-2 text-sm">
                   <AlertTriangle className="h-4 w-4 text-destructive" />
                   Needs attention
-                  <Badge variant="secondary" className="ml-1 text-xxxs">{totalAttention}</Badge>
+                  <Badge variant="secondary" className="ml-1 rounded-full px-3 py-1 text-xxxs font-semibold">{totalAttention}</Badge>
                   {criticalCount > 0 && (
-                    <Badge variant="destructive" className="ml-1 text-xxxs">
+                    <Badge variant="destructive" className="ml-1 rounded-full px-3 py-1 text-xxxs font-semibold">
                       <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                       {criticalCount} critical
                     </Badge>
